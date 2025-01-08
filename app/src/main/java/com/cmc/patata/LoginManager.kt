@@ -11,7 +11,7 @@ class LoginManager {
 
     val auth = FirebaseAuth.getInstance()
 
-    private lateinit var oneTapClient: SignInClient
+    lateinit var oneTapClient: SignInClient
     suspend fun signInIntent(activity: Activity) =
         suspendCancellableCoroutine { cancellableContinuation ->
             oneTapClient = Identity.getSignInClient(activity)
