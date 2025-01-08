@@ -6,6 +6,10 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+val properties = Properties().apply {
+    load(project.rootProject.file("local.properties").reader())
+}
+
 android {
     namespace = "com.cmc.patata"
     compileSdk = 34
@@ -17,12 +21,11 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        resValue("string", "my_web_client_id", properties["MY_WEB_CLIENT_ID"] as String)
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
-        val properties = Properties().apply {
-            load(project.rootProject.file("local.properties").reader())
-        }
         getByName("debug") {
             storeFile = file(properties["DEBUG_KEY_STORE_PATH"] as String)
             storePassword = properties["DEBUG_STORE_PASSWORD"] as String
