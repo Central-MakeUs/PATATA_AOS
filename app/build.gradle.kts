@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -17,14 +20,35 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        val properties = Properties().apply {
+            load(project.rootProject.file("local.properties").reader())
+        }
+        getByName("debug") {
+            storeFile = file(properties["DEBUG_KEY_STORE_PATH"] as String)
+            storePassword = properties["DEBUG_STORE_PASSWORD"] as String
+            keyAlias = properties["DEBUG_KEY_ALIAS"] as String
+            keyPassword = properties["DEBUG_KEY_PASSWORD"] as String
+        }
 
+        create("release") {
+            storeFile = file(properties["RELEASE_KEY_STORE_PATH"] as String)
+            storePassword = properties["RELEASE_STORE_PASSWORD"] as String
+            keyAlias = properties["RELEASE_KEY_ALIAS"] as String
+            keyPassword = properties["RELEASE_KEY_PASSWORD"] as String
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -36,6 +60,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
