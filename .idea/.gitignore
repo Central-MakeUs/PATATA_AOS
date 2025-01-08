@@ -1,3 +1,9 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+
+# Google Services (e.g. APIs or Firebase)
+app/google-services.json
+
+# Android Studio
+deploymentTargetSelector.xml
