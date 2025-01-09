@@ -6,7 +6,9 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
 }
-
+val properties = Properties().apply {
+    load(project.rootProject.file("local.properties").reader())
+}
 android {
     namespace = "com.cmc.patata"
     compileSdk = 34
@@ -19,11 +21,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        resValue("string", "naver_map_client_id", properties["NAVER_MAP_CLIENT_ID"] as String)
     }
     signingConfigs {
-        val properties = Properties().apply {
-            load(project.rootProject.file("local.properties").reader())
-        }
         getByName("debug") {
             storeFile = file(properties["DEBUG_KEY_STORE_PATH"] as String)
             storePassword = properties["DEBUG_STORE_PASSWORD"] as String
@@ -78,4 +79,7 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+
+    // Naver Map
+    implementation(libs.map.sdk)
 }
