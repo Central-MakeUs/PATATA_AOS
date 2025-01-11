@@ -71,4 +71,22 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         }
     }
 
+    override fun navigateOnBoarding() {
+        with(navHostFragment.navController) {
+            navigate(R.id.navigate_onboarding)
+        }
+    }
+
+    override fun navigateLogin() {
+        with(navHostFragment.navController) {
+            navigate(R.id.navigate_login)
+        }
+    }
+
+    override fun navigateHome() {
+        with(navHostFragment.navController) {
+            navigate(R.id.navigate_home)
+        }
+    }
+
 }
