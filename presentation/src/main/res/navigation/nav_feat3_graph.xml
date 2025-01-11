@@ -3,20 +3,13 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_feat_graph"
-    app:startDestination="@id/FirstFragment">
+    android:id="@+id/nav_feat3_graph"
+    app:startDestination="@id/ThirdFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.cmc.presentation.FirstFragment"
-        tools:layout="@layout/fragment_first">
-    </fragment>
-
-    <fragment
-        android:id="@+id/FirstDetailFragment"
+        android:id="@+id/ThirdFragment"
         android:name="com.cmc.presentation.ThirdFragment"
         tools:layout="@layout/fragment_third">
     </fragment>
-
 
 </navigation>

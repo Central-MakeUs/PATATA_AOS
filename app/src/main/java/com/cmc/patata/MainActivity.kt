@@ -1,22 +1,17 @@
 package com.cmc.patata
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.cmc.common.base.GlobalNavigation
 import com.cmc.patata.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
+class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener,
+    GlobalNavigation {
 
     private lateinit var binding: ActivityMainBinding
 
@@ -47,8 +42,8 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         destination: NavDestination,
         arguments: Bundle?
     ) {
-        // TODO : 화면별 바텀 내비게이션 Visible 여부 확인 후 처리
-1
+        // TODO : 화면별 Bottom Navigation Visible 여부 확인 후 처리
+
         when (destination.id) {
             com.cmc.presentation.R.id.FirstFragment,
             com.cmc.presentation.R.id.SecondFragment
@@ -59,6 +54,21 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
     private fun setBottomNavVisibility(isVisible: Boolean) {
         binding.bottomNavigationMain.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+
+    /*
+    * Bottom Navigation 에 포함 되지 않은, Feature 이동을 담당
+     */
+    override fun navigateSecond() {
+        with(navHostFragment.navController) {
+            navigate(R.id.navigate_second)
+        }
+    }
+
+    override fun navigateThird() {
+        with(navHostFragment.navController) {
+            navigate(R.id.navigate_third)
+        }
     }
 
 }

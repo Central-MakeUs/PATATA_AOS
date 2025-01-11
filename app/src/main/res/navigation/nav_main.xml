@@ -7,5 +7,14 @@
 
     <include app:graph="@navigation/nav_feat_graph"/>
     <include app:graph="@navigation/nav_feat2_graph"/>
+    <include app:graph="@navigation/nav_feat3_graph"/>
+
+    <action
+        android:id="@+id/navigate_second"
+        app:destination="@+id/nav_feat2_graph"/>
+
+    <action
+        android:id="@+id/navigate_third"
+        app:destination="@+id/nav_feat3_graph"/>
 
 </navigation>
