@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/nav_feat_graph"
+        android:checked="true"
+        android:title="홈"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/nav_feat2_graph"
+        android:title="내 주변"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/nav_archive"
+        android:title="아카이브"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/nav_mypage"
+        android:title="My"
+        app:showAsAction="always" />
+</menu>
