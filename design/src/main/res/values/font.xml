@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- BASE FONT -->
+    <style name="font_regular">
+        <item name="android:fontFamily">@font/pretendard_regular</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_bold">
+        <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_semi_bold">
+        <item name="android:fontFamily">@font/pretendard_semi_bold</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- FONT STYLE -->
+
+    <style name="headline_large" parent="font_bold">
+        <item name="android:textSize">36sp</item>
+        <item name="android:lineSpacingExtra">12sp</item>
+        <item name="android:textColor">@color/gray_100</item>
+    </style>
+
+    <style name="headline_medium" parent="font_semi_bold">
+        <item name="android:textSize">30sp</item>
+        <item name="android:lineSpacingExtra">10sp</item>
+        <item name="android:textColor">@color/gray_100</item>
+    </style>
+
+    <style name="headline_small" parent="font_semi_bold">
+        <item name="android:textSize">24sp</item>
+        <item name="android:lineSpacingExtra">8sp</item>
+        <item name="android:textColor">@color/gray_100</item>
+    </style>
+
+    <style name="subtitle_large" parent="font_semi_bold">
+        <item name="android:textSize">18sp</item>
+        <item name="android:lineSpacingExtra">8sp</item>
+    </style>
+
+    <style name="subtitle_medium" parent="font_semi_bold">
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineSpacingExtra">8sp</item>
+    </style>
+
+    <style name="subtitle_small" parent="font_semi_bold">
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+    </style>
+
+    <style name="subtitle_extra_small" parent="font_semi_bold">
+        <item name="android:textSize">12sp</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+    </style>
+
+    <style name="body_medium" parent="font_regular">
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineSpacingExtra">8sp</item>
+    </style>
+
+    <style name="body_small" parent="font_regular">
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+    </style>
+
+    <style name="caption_medium" parent="font_regular">
+        <item name="android:textSize">12sp</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+    </style>
+
+    <style name="caption_small" parent="font_semi_bold">
+        <item name="android:textSize">10sp</item>
+        <item name="android:lineSpacingExtra">2sp</item>
+    </style>
+
+</resources>
