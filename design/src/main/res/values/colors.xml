@@ -29,4 +29,14 @@
     <color name="red_20">#FBCCCB</color>
     <color name="red_100">#EF4743</color>
 
+    <!-- SEMANTIC COLORS -->
+    <color name="text_default">#1C1C1C</color>
+    <color name="text_sub">#2E3035</color>
+    <color name="text_info">#727883</color>
+    <color name="text_disabled">#B0B5BF</color>
+    <color name="border">#CACFD8</color>
+    <color name="bg_grouped">bg_grouped</color>
+    <color name="bg_overlay">#4D1C1C1C</color>
+
+
 </resources>
