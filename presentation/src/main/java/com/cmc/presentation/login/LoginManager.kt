@@ -9,8 +9,11 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 class LoginManager {
+
     val auth = FirebaseAuth.getInstance()
-    private lateinit var oneTapClient: SignInClient
+
+    lateinit var oneTapClient: SignInClient
+
     suspend fun signInIntent(activity: Activity) =
         suspendCancellableCoroutine { cancellableContinuation ->
             oneTapClient = Identity.getSignInClient(activity)
@@ -23,7 +26,7 @@ class LoginManager {
                 .setGoogleIdTokenRequestOptions(
                     BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                         .setSupported(true)
-//                        .setServerClientId(activity.getString(R.string.my_web_client_id))
+                        .setServerClientId(activity.getString(R.string.my_web_client_id))
                         .setFilterByAuthorizedAccounts(false)
                         .build()
                 )

@@ -1,8 +1,14 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
+}
+
+val properties = Properties().apply {
+    load(project.rootProject.file("local.properties").reader())
 }
 
 android {
@@ -12,6 +18,7 @@ android {
     defaultConfig {
         minSdk = 24
 
+        resValue("string", "my_web_client_id", properties["MY_WEB_CLIENT_ID"] as String)
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }

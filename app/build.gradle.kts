@@ -22,10 +22,7 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        resValue("string", "my_web_client_id", properties["MY_WEB_CLIENT_ID"] as String)
     }
     signingConfigs {
         getByName("debug") {
