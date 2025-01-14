@@ -39,6 +39,9 @@ android {
     dataBinding {
         enable = true
     }
+    hilt {
+        enableAggregatingTask = false
+    }
 }
 
 dependencies {
@@ -57,4 +60,12 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+
+    // Firebase Auth
+    implementation(libs.firebase.auth)
+    implementation(libs.play.services.auth)
 }
