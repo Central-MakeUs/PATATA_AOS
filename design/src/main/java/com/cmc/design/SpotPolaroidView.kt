@@ -4,12 +4,9 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
-import com.cmc.common.model.SpotPolaroid
 import com.cmc.design.databinding.ViewSpotPolaroidBinding
-import org.w3c.dom.Text
 
 class SpotPolaroidView @JvmOverloads constructor(
     context: Context,
@@ -36,14 +33,21 @@ class SpotPolaroidView @JvmOverloads constructor(
         }
     }
 
-    fun setSpotData(data: SpotPolaroid) {
+    fun setSpotData(
+        title: String,
+        location: String,
+        imageResId: Int,
+        tags: List<String>? = null,
+        isArchived: Boolean = false,
+        isBadgeVisible: Boolean = false
+    ) {
         with(binding) {
-            tvSpotTitle.text = data.title
-            tvSpotLocation.text = data.location
-            ivSpotImage.setImageResource(data.imageResId)
-            viewSpotBadge.root.visibility = if (data.isBadgeVisible) View.VISIBLE else View.GONE
-            ivSpotArchive.isSelected = data.isArchived
-            updateTags(data.tags)
+            tvSpotTitle.text = title
+            tvSpotLocation.text = location
+            ivSpotImage.setImageResource(imageResId)
+            viewSpotBadge.root.visibility = if (isBadgeVisible) View.VISIBLE else View.GONE
+            ivSpotArchive.isSelected = isArchived
+            updateTags(tags)
         }
     }
 
@@ -79,4 +83,12 @@ class SpotPolaroidView @JvmOverloads constructor(
         binding.ivSpotImage.setImageResource(imageResId)
     }
 
+    data class SpotPolaroid(
+        val title: String,
+        val location: String,
+        val imageResId: Int,
+        val tags: List<String>?,
+        val isArchived: Boolean,
+        val isBadgeVisible: Boolean = false
+    )
 }

@@ -3,6 +3,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="wrap_content"
     android:layout_width="wrap_content"
     android:clipChildren="false"
@@ -32,7 +33,7 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 android:layout_above="@+id/layout_tag"
-                android:src="@drawable/img_sample"
+                tools:src="@drawable/img_sample"
                 android:background="@drawable/bg_rounded_10"/>
 
             <!-- Title and Location -->
@@ -108,7 +109,7 @@
                 android:src="@drawable/selector_archive"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:contentDescription="@string/spot_archive_description"
+                android:contentDescription="@string/img_desc_spot_archive"
                 android:clickable="true"
                 android:focusable="true"/>
         </RelativeLayout>

@@ -3,6 +3,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- Content Description -->
-    <string name="spot_archive_description">Save this Spot</string>
+    <string name="img_desc_spot_archive">스팟 저장 버튼</string>
     <string name="spot_tag_text">야경명소</string>
 </resources>
