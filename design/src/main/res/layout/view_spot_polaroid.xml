@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/view_spot_card.xml -->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:padding="8dp">
+
+    <!-- Spot Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/layout_spot_recommend"
+        android:layout_width="275dp"
+        android:layout_height="370dp"
+        android:layout_marginTop="@dimen/spot_badge_offset_top"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="13dp"
+            android:paddingHorizontal="12.5dp"
+            android:paddingBottom="17dp">
+
+            <!-- Spot Image -->
+            <ImageView
+                android:id="@+id/iv_spot_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:layout_above="@+id/layout_tag"
+                android:src="@drawable/img_sample"
+                android:background="@drawable/bg_rounded_10"/>
+
+            <!-- Title and Location -->
+            <LinearLayout
+                android:id="@+id/layout_text_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_alignBottom="@+id/iv_spot_image"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/tv_spot_location"
+                    style="@style/caption_small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="서울특별시 마포구"
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:id="@+id/tv_spot_title"
+                    style="@style/subtitle_large"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="마포대교 북단 중앙로"
+                    android:textColor="@color/white"
+                    android:maxLines="1"
+                    android:ellipsize="end"/>
+
+            </LinearLayout>
+            <!-- Tag List -->
+            <LinearLayout
+                android:id="@+id/layout_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignStart="@+id/iv_spot_archive"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:id="@+id/tv_tag_1"
+                    style="@style/caption_small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/bg_tag"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="6dp"
+                    android:text="#야경명소"
+                    android:textColor="@color/gray_80"/>
+
+                <TextView
+                    android:id="@+id/tv_tag_2"
+                    style="@style/caption_small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_tag"
+                    android:text="#한강뷰"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="6dp"
+                    android:textColor="@color/gray_80"/>
+            </LinearLayout>
+            <!-- Spot Archive Button -->
+            <ImageView
+                android:id="@+id/iv_spot_archive"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingHorizontal="2dp"
+                android:paddingVertical="2dp"
+                android:layout_marginHorizontal="2dp"
+                android:src="@drawable/selector_archive"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:contentDescription="@string/spot_archive_description"
+                android:clickable="true"
+                android:focusable="true"/>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- 작가 추천 뱃지 (Spot 카드 위에 배치) -->
+    <include
+        android:id="@+id/view_spot_badge"
+        layout="@layout/view_spot_badge"
+        android:layout_alignEnd="@+id/layout_spot_recommend"
+        android:layout_marginEnd="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>
