@@ -20,10 +20,10 @@ class SpotViewPager @JvmOverloads constructor(
         viewPager = view.findViewById(R.id.vp_inner)
 
         viewPager.offscreenPageLimit = 3
-        val decoration = PageDecoration(ITEM_MARGIN)
+        val decoration = PageDecoration(PREV_WIDTH + ITEM_MARGIN)
 
         viewPager.addItemDecoration(decoration)
-        viewPager.setPageTransformer(ScalePageTransformer())
+        viewPager.setPageTransformer(ScalePageTransformer(PREV_WIDTH, ITEM_MARGIN))
     }
 
     fun setAdapter(adapter: RecyclerView.Adapter<*>) {
@@ -31,6 +31,7 @@ class SpotViewPager @JvmOverloads constructor(
     }
 
     companion object {
-        const val ITEM_MARGIN = 16  // dp로 저장
+        const val PREV_WIDTH = 120
+        const val ITEM_MARGIN = 16
     }
 }

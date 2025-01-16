@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
-            android:text="@string/text_category_recommend"/>
+            android:text="@string/category_recommend"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
-            android:text="@string/text_category_snap"/>
+            android:text="@string/category_snap"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -91,7 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
-            android:text="@string/text_category_night_view"/>
+            android:text="@string/category_night_view"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -120,7 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
-            android:text="@string/text_category_everyday_life"/>
+            android:text="@string/category_everyday_life"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -150,7 +150,7 @@
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
             android:lines="1"
-            android:text="@string/text_category_nature"/>
+            android:text="@string/category_nature"/>
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
