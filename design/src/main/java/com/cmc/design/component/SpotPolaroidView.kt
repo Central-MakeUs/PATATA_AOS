@@ -56,7 +56,7 @@ class SpotPolaroidView @JvmOverloads constructor(
         binding.layoutTag.removeAllViews()
 
         tags?.forEach { tag ->
-            val tagView = LayoutInflater.from(context).inflate(R.layout.view_tag, binding.layoutTag, false)
+            val tagView = LayoutInflater.from(context).inflate(R.layout.view_tag_gray, binding.layoutTag, false)
             val tagTextView = tagView.findViewById<TextView>(R.id.tv_tag)
             tagTextView.text = tag
 
