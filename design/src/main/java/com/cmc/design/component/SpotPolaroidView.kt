@@ -1,4 +1,4 @@
-package com.cmc.design
+package com.cmc.design.component
 
 import android.content.Context
 import android.util.AttributeSet
@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
+import com.cmc.design.R
 import com.cmc.design.databinding.ViewSpotPolaroidBinding
 
 class SpotPolaroidView @JvmOverloads constructor(
