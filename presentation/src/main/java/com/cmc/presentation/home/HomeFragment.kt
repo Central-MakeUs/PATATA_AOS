@@ -78,6 +78,15 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             onHeadButtonClick = { Toast.makeText(context, "헤드 버튼 클릭!", Toast.LENGTH_SHORT).show()},
             onFootButtonClick = { Toast.makeText(context, "푸터 버튼 클릭!", Toast.LENGTH_SHORT).show()}
         )
+
+        binding.searchbarHome.apply {
+            setOnSearchBarClickListener {
+                Toast.makeText(context, "서치바 클릭!", Toast.LENGTH_SHORT).show()
+            }
+            setOnSearchListener { str ->
+                Toast.makeText(context, "검색 성공 $str", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun initObserving() {

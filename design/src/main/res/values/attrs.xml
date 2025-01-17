@@ -2,7 +2,6 @@
 <resources>
     <!-- PatataAppBar 커스텀 속성 -->
     <declare-styleable name="PatataAppBar">
-
         <attr name="bodyType" format="enum">
             <enum name="main" value="0"/>
             <enum name="searchbar" value="1"/>
@@ -19,6 +18,16 @@
             <enum name="more" value="1"/>
             <enum name="none" value="-1"/>
         </attr>
+    </declare-styleable>
 
+
+    <!-- PatataSearchBar 커스텀 속성 -->
+    <declare-styleable name="PatataSearchBar">
+        <attr name="searchBarStyle" format="enum">
+            <enum name="light" value="0"/>
+            <enum name="dark" value="1"/>
+        </attr>
+
+        <attr name="isEnabled" format="boolean"/>
     </declare-styleable>
 </resources>
