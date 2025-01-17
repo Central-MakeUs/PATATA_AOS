@@ -7,6 +7,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.cmc.design.component.PatataAppBar
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:bodyType="main"
+            app:layout_constraintTop_toTopOf="parent"/>
+
         <TextView
             android:id="@+id/tv_spot_polaroid_title"
             style="@style/subtitle_large"
@@ -15,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/horizontal_padding_default_spacing"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appbar"
             app:layout_constraintStart_toStartOf="parent"/>
 
         <!-- 추천, 스팟 폴라로이드 -->

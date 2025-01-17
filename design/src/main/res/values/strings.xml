@@ -3,6 +3,10 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- Content Description -->
+    <string name="img_desc_text_logo">파타타 텍스트 로고</string>
     <string name="img_desc_spot_archive">스팟 저장 버튼</string>
+    <string name="img_desc_back_arrow">뒤로가기 버튼</string>
+    <string name="img_desc_complaint">신고하기 버튼</string>
+    <string name="img_desc_more">더보기 버튼</string>
     <string name="spot_tag_text">야경명소</string>
 </resources>

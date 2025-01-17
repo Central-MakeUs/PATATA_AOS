@@ -1,0 +1,24 @@
+<!-- res/values/attrs.xml -->
+<resources>
+    <!-- PatataAppBar 커스텀 속성 -->
+    <declare-styleable name="PatataAppBar">
+
+        <attr name="bodyType" format="enum">
+            <enum name="main" value="0"/>
+            <enum name="searchbar" value="1"/>
+            <enum name="title" value="2"/>
+        </attr>
+
+        <attr name="headButtonType" format="enum">
+            <enum name="back" value="0"/>
+            <enum name="none" value="-1"/>
+        </attr>
+
+        <attr name="footButtonType" format="enum">
+            <enum name="complaint" value="0"/>
+            <enum name="more" value="1"/>
+            <enum name="none" value="-1"/>
+        </attr>
+
+    </declare-styleable>
+</resources>

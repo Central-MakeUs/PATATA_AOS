@@ -1,7 +1,9 @@
 package com.cmc.presentation.home
 
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.cmc.common.base.BaseFragment
+import com.cmc.design.component.PatataAppBar
 import com.cmc.design.component.SpotPolaroidView
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentHomeBinding
@@ -67,6 +69,15 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         )
 
         binding.vpSpotRecommend.setAdapter(adapter)
+
+        binding.appbar.setupAppBar(
+            title = "테스트 화면2",
+            icon = com.cmc.design.R.drawable.ic_spot_location,
+            iconPosition = PatataAppBar.IconPosition.START,
+            onBackClick = { requireActivity().onBackPressedDispatcher.onBackPressed() },
+            onHeadButtonClick = { Toast.makeText(context, "헤드 버튼 클릭!", Toast.LENGTH_SHORT).show()},
+            onFootButtonClick = { Toast.makeText(context, "푸터 버튼 클릭!", Toast.LENGTH_SHORT).show()}
+        )
     }
 
     override fun initObserving() {

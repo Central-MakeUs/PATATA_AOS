@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingBottom="14dp"
+    android:paddingHorizontal="@dimen/horizontal_padding_default_spacing">
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/appbar_top_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:barrierAllowsGoneWidgets="false"
+        app:constraint_referenced_ids="et_searchbar, tv_appbar_title"/>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/appbar_bottom_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:barrierAllowsGoneWidgets="false"
+        app:constraint_referenced_ids="et_searchbar, tv_appbar_title"/>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/appbar_start_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:barrierAllowsGoneWidgets="false"
+        app:constraint_referenced_ids="iv_back_arrow"/>
+
+    <!-- Head Icon Area -->
+
+    <ImageView
+        android:id="@+id/iv_back_arrow"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:visibility="gone"
+        android:src="@drawable/ic_back_arrow"
+        android:contentDescription="@string/img_desc_spot_archive"
+        app:layout_constraintTop_toTopOf="@+id/appbar_top_barrier"
+        app:layout_constraintBottom_toBottomOf="@+id/appbar_bottom_barrier"/>
+
+    <!-- Body Content Area -->
+
+    <ImageView
+        android:id="@+id/iv_main_text_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:src="@drawable/ic_text_logo"
+        android:contentDescription="@string/img_desc_text_logo"/>
+
+    <View
+        android:id="@+id/et_searchbar"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/appbar_start_barrier"/>
+
+    <TextView
+        android:id="@+id/tv_appbar_title"
+        style="@style/subtitle_large"
+        android:textColor="@color/text_default"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:visibility="gone"
+        android:text="검색 내용"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Foot Icon Area -->
+
+    <ImageView
+        android:id="@+id/iv_complaint"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:visibility="gone"
+        android:src="@drawable/ic_complaint"
+        app:layout_constraintTop_toTopOf="@+id/appbar_top_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/appbar_bottom_barrier"
+        android:contentDescription="@string/img_desc_complaint"/>
+
+    <ImageView
+        android:id="@+id/iv_more"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:visibility="gone"
+        android:src="@drawable/ic_more"
+        app:layout_constraintTop_toTopOf="@+id/appbar_top_barrier"
+        app:layout_constraintBottom_toBottomOf="@+id/appbar_bottom_barrier"
+        android:contentDescription="@string/img_desc_more"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
