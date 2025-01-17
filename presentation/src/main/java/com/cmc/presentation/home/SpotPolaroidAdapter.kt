@@ -22,11 +22,12 @@ class SpotPolaroidAdapter(
     }
 
     override fun onBindViewHolder(holder: SpotPolaroidViewHolder, position: Int) {
-        val spot = spotList[position]
+        val actualPosition = position % spotList.size
+        val spot = spotList[actualPosition]
         holder.bind(spot)
     }
 
-    override fun getItemCount(): Int = spotList.size
+    override fun getItemCount(): Int = Int.MAX_VALUE
 
     inner class SpotPolaroidViewHolder(private val spotView: SpotPolaroidView) :
         RecyclerView.ViewHolder(spotView) {

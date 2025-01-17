@@ -7,6 +7,7 @@ import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.cmc.design.R
+import kotlin.math.ceil
 
 class SpotViewPager @JvmOverloads constructor(
     context: Context,
@@ -28,6 +29,10 @@ class SpotViewPager @JvmOverloads constructor(
 
     fun setAdapter(adapter: RecyclerView.Adapter<*>) {
         viewPager.adapter = adapter
+        post {
+//            viewPager.setCurrentItem(Int.MAX_VALUE / 2, false)
+            viewPager.currentItem = Int.MAX_VALUE / 2
+        }
     }
 
     companion object {
