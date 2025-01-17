@@ -8,6 +8,10 @@ plugins {
     id("dagger.hilt.android.plugin")
 }
 
+val properties = Properties().apply {
+    load(project.rootProject.file("local.properties").reader())
+}
+
 android {
     namespace = "com.cmc.patata"
     compileSdk = 34
@@ -18,13 +22,9 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
-        val properties = Properties().apply {
-            load(project.rootProject.file("local.properties").reader())
-        }
         getByName("debug") {
             storeFile = file(properties["DEBUG_KEY_STORE_PATH"] as String)
             storePassword = properties["DEBUG_STORE_PASSWORD"] as String
@@ -66,6 +66,9 @@ android {
     dataBinding {
         enable = true
     }
+    hilt {
+        enableAggregatingTask = false
+    }
 }
 
 dependencies {
@@ -86,6 +89,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
 

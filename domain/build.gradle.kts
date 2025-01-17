@@ -13,3 +13,9 @@ kotlin {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
     }
 }
+
+dependencies {
+
+    // Hilt
+    implementation(libs.javax.inject)
+}

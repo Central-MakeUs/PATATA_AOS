@@ -47,8 +47,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         // TODO : 화면별 Bottom Navigation Visible 여부 확인 후 처리
 
         when (destination.id) {
-            com.cmc.presentation.R.id.FirstFragment,
-            com.cmc.presentation.R.id.SecondFragment
+            com.cmc.presentation.R.id.HomeFragment
              -> { setBottomNavVisibility(true) }
             else -> { setBottomNavVisibility(false) }
         }
@@ -61,17 +60,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     /*
     * Bottom Navigation 에 포함 되지 않은, Feature 이동을 담당
      */
-    override fun navigateSecond() {
-        with(navHostFragment.navController) {
-            navigate(R.id.navigate_second)
-        }
-    }
-
-    override fun navigateThird() {
-        with(navHostFragment.navController) {
-            navigate(R.id.navigate_third)
-        }
-    }
 
     override fun navigateOnBoarding() {
         with(navHostFragment.navController) {
