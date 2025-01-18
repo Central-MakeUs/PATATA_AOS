@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/layout_category_snap"
-        android:background="@drawable/bg_rounded_10_blue_20">
+        android:background="@drawable/bg_category_selector">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/layout_category_recommend"
         app:layout_constraintEnd_toStartOf="@+id/layout_category_night_view"
-        android:background="@drawable/bg_rounded_10">
+        android:background="@drawable/bg_category_selector">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/layout_category_snap"
         app:layout_constraintEnd_toStartOf="@+id/layout_category_everyday_life"
-        android:background="@drawable/bg_rounded_10">
+        android:background="@drawable/bg_category_selector">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/layout_category_night_view"
         app:layout_constraintEnd_toStartOf="@+id/layout_category_nature"
-        android:background="@drawable/bg_rounded_10">
+        android:background="@drawable/bg_category_selector">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -132,7 +132,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/layout_category_everyday_life"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@drawable/bg_rounded_10">
+        android:background="@drawable/bg_category_selector">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

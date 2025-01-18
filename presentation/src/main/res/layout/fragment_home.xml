@@ -68,7 +68,8 @@
             app:layout_constraintTop_toBottomOf="@+id/vp_spot_recommend"
             app:layout_constraintStart_toStartOf="parent"/>
 
-        <include layout="@layout/view_spot_category"
+        <include android:id="@+id/view_spot_category"
+            layout="@layout/view_spot_category"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"

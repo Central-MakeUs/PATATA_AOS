@@ -1,16 +1,26 @@
 package com.cmc.presentation.home
 
+import android.util.Log
+import android.view.View
 import android.widget.Toast
-import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.cmc.common.base.BaseFragment
 import com.cmc.design.component.PatataAppBar
 import com.cmc.design.component.SpotPolaroidView
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
+
+    private val viewModel: HomeViewModel by viewModels()
+
+    private lateinit var categoryViews: List<Pair<View, SpotCategory>>
+
     override fun initView() {
 
         val spotList = listOf(
@@ -89,11 +99,32 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
 
         binding.tvSpotPolaroidMore.setOnClickListener {
-            TODO("오늘의 추천 스팟 화면으로 이동")
+            Toast.makeText(context, "오늘의 추천 스팟으로 이동!", Toast.LENGTH_SHORT).show()
+        }
+
+        categoryViews = listOf(
+            binding.viewSpotCategory.layoutCategoryRecommend to SpotCategory.RECOMMEND,
+            binding.viewSpotCategory.layoutCategorySnap to SpotCategory.SNAP,
+            binding.viewSpotCategory.layoutCategoryNightView to SpotCategory.NIGHT_VIEW,
+            binding.viewSpotCategory.layoutCategoryEverydayLife to SpotCategory.EVERYDAY_LIFE,
+            binding.viewSpotCategory.layoutCategoryNature to SpotCategory.NATURE
+        )
+
+        categoryViews.forEach { (layout, category) ->
+            layout.setOnClickListener {
+                viewModel.selectCategory(category)
+                Toast.makeText(context, "'${category.name}' 카테고리 화면으로 이동!", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
     override fun initObserving() {
-
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.selectedCategory.collectLatest { selectedCategory ->
+                categoryViews.forEach { (layout, category) ->
+                    layout.isSelected = (category == selectedCategory)
+                }
+            }
+        }
     }
 }
