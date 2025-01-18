@@ -87,6 +87,10 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 Toast.makeText(context, "검색 성공 $str", Toast.LENGTH_SHORT).show()
             }
         }
+
+        binding.tvSpotPolaroidMore.setOnClickListener {
+            TODO("오늘의 추천 스팟 화면으로 이동")
+        }
     }
 
     override fun initObserving() {
