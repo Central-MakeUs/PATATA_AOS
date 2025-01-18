@@ -76,6 +76,21 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_spot_category_title"/>
 
         <!-- 추천 카테고리 별 스팟 -->
+        <TextView
+            android:id="@+id/tv_category_recommend"
+            style="@style/subtitle_large"
+            android:textColor="@color/text_default"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_spot_category"
+            android:layout_marginTop="32dp"
+            android:layout_marginHorizontal="@dimen/horizontal_padding_default_spacing"
+            app:layout_constraintTop_toBottomOf="@+id/view_spot_category"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <!-- 탭 -->
+        <!-- RecyclerView -->
+        <!-- 더보기 -->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="136dp"
+    android:background="@drawable/bg_rounded_8"
+    android:backgroundTint="@color/white"
+    android:padding="8dp"
+    android:clipToPadding="false"
+    android:clipChildren="false">
+
+    <!-- 장소 이미지 -->
+    <ImageView
+        android:id="@+id/iv_spot_image"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/img_desc_location"
+        android:background="@drawable/bg_rounded_8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <!-- 장소 위치 -->
+    <TextView
+        android:id="@+id/tv_spot_location"
+        style="@style/caption_medium"
+        android:textColor="@color/text_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toEndOf="@id/iv_spot_image"
+        app:layout_constraintTop_toTopOf="@id/iv_spot_image"
+        app:layout_constraintEnd_toStartOf="@+id/tv_recommend_label"
+        android:layout_marginStart="12dp"
+        tools:text="서울시 성동구"/>
+
+    <!-- 장소 이름 -->
+    <TextView
+        android:id="@+id/tv_spot_title"
+        style="@style/subtitle_small_medium"
+        android:textColor="@color/black"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        app:layout_constraintStart_toStartOf="@id/tv_spot_location"
+        app:layout_constraintTop_toBottomOf="@id/tv_spot_location"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="서울숲 은행나무길"/>
+
+    <!-- 아카이브 -->
+    <TextView
+        android:id="@+id/tv_archive_count"
+        style="@style/caption_small"
+        android:textColor="@color/text_disabled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_spot_title"
+        app:layout_constraintStart_toStartOf="@+id/tv_spot_title"
+        app:drawableStartCompat="@drawable/ic_archive_s"
+        tools:text="112"/>
+    <!-- 코멘트 -->
+    <TextView
+        android:id="@+id/tv_comment_count"
+        style="@style/caption_small"
+        android:textColor="@color/text_disabled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintTop_toTopOf="@+id/tv_archive_count"
+        app:layout_constraintStart_toEndOf="@+id/tv_archive_count"
+        app:drawableStartCompat="@drawable/ic_comment_s"
+        tools:text="67"/>
+
+    <!-- 태그 리스트 -->
+    <LinearLayout
+        android:id="@+id/layout_tag_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintStart_toStartOf="@+id/tv_spot_location"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:id="@+id/tv_tag_1"
+            style="@style/caption_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_rounded_12_blue_10"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="6dp"
+            android:text="#야경명소"
+            android:textColor="@color/gray_80" />
+
+        <TextView
+            android:id="@+id/tv_tag_2"
+            style="@style/caption_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_rounded_12_blue_10"
+            android:text="#한강뷰"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="6dp"
+            android:textColor="@color/gray_80"/>
+    </LinearLayout>
+
+    <!-- 북마크 아이콘 -->
+    <TextView
+        android:id="@+id/tv_recommend_label"
+        style="@style/caption_small"
+        android:textColor="@color/blue_50"
+        android:layout_width="75dp"
+        android:layout_height="24dp"
+        android:text="@string/label_recommend"
+        android:background="@drawable/bg_rounded_24_navy_100"
+        android:gravity="center"
+        android:layout_margin="2dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible"/>
+
+    <ImageView
+        android:id="@+id/iv_spot_archive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/selector_archive_outline"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

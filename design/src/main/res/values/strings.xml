@@ -9,6 +9,9 @@
     <string name="img_desc_complaint">신고하기 버튼</string>
     <string name="img_desc_more">더보기 버튼</string>
     <string name="img_desc_search">검색 버튼</string>
+    <string name="img_desc_location">장소 이미지</string>
+
+    <string name="label_recommend">작가 추천 스팟</string>
 
     <string name="spot_tag_text">야경명소</string>
     <string name="hint_searchbar">검색어를 입력하세요</string>
