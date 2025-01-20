@@ -16,7 +16,7 @@
         android:id="@+id/et_search_input"
         style="@style/body_small"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginEnd="8dp"
         android:hint="@string/hint_searchbar"
         android:background="@android:color/transparent"

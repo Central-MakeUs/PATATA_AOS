@@ -24,10 +24,6 @@ class PatataAppBar @JvmOverloads constructor(
     private var onFootButtonClickListener: (() -> Unit)? = null
 
     private var bodyType: BodyType = BodyType.TITLE
-        set(value) {
-            field = value
-            setBody()
-        }
 
     init {
         initAttributes(context, attrs)
@@ -43,6 +39,8 @@ class PatataAppBar @JvmOverloads constructor(
             1 -> BodyType.SEARCH
             else -> BodyType.TITLE
         }
+
+        setBody()
 
         // 2. Head 버튼 설정 (back, close, custom)
         when (typedArray.getInt(R.styleable.PatataAppBar_headButtonType, -1)) {
@@ -109,12 +107,40 @@ class PatataAppBar @JvmOverloads constructor(
     }
 
     /**
-     * 앱바의 타이틀, 아이콘, 버튼 리스너를 설정하는 함수 (BodyType이 TITLE인 경우)
+     * 앱바의 타이틀, 아이콘, 버튼 리스너를 설정하는 함수 (일괄 입력)
      *
      * @param title 앱바 타이틀 텍스트 (TITLE 모드에서는 필수)
      * @param icon 타이틀 아이콘 리소스 (nullable)
      * @param iconPosition 아이콘 위치 (start, end, top, bottom), 기본값 START
      * @param onBackClick 뒤로가기 버튼 클릭 리스너 (nullable)
+     * @param onHeadButtonClick 헤드 버튼 클릭 리스너 (nullable)
+     * @param onFootButtonClick 푸터 버튼 클릭 리스너 (nullable)
+     * @param onSearch 검색 실행 리스너 (nullable)
+     * @param onTextChange 검색 텍스트 변경 리스너 (nullable)
+     */
+    fun setupAppBar(
+        title: String,
+        icon: Int? = null,
+        iconPosition: IconPosition = IconPosition.START,
+        onBackClick: (() -> Unit)? = null,
+        onHeadButtonClick: (() -> Unit)? = null,
+        onFootButtonClick: (() -> Unit)? = null,
+        onSearch: ((String) -> Unit)? = null,
+        onTextChange: ((String) -> Unit)? = null,
+    ) {
+        setTitle(title, icon, iconPosition)
+        onBackClickListener = onBackClick
+        onHeadButtonClickListener = onHeadButtonClick
+        onFootButtonClickListener = onFootButtonClick
+
+        binding.searchbar.apply {
+            setOnSearchListener(onSearch)
+            setOnTextChangeListener(onTextChange)
+        }
+    }
+
+    /**
+     * 앱바의 타이틀, 아이콘, 버튼 리스너를 설정하는 함수 (BodyType이 TITLE인 경우)
      */
     fun setupAppBar(
         title: String,
@@ -132,14 +158,6 @@ class PatataAppBar @JvmOverloads constructor(
 
     /**
      * 앱바의 아이콘, 버튼 리스너를 설정하는 함수 (BodyType이 TITLE이 아닌 경우)
-     *
-     * @param icon 타이틀 아이콘 리소스 (nullable)
-     * @param iconPosition 아이콘 위치 (start, end, top, bottom), 기본값 START
-     * @param onBackClick 뒤로가기 버튼 클릭 리스너 (nullable)
-     * @param onHeadButtonClick 헤드 버튼 클릭 리스너 (nullable)
-     * @param onFootButtonClick 푸터 버튼 클릭 리스너 (nullable)
-     * @param onSearch 검색 실행 리스너 (nullable)
-     * @param onTextChange 검색 텍스트 변경 리스너 (nullable)
      */
     fun setupAppBar(
         icon: Int? = null,
@@ -191,7 +209,10 @@ class PatataAppBar @JvmOverloads constructor(
      */
     fun setBodyType(type: BodyType) {
         bodyType = type
+        setBody()
     }
+
+    fun getBodyType(): BodyType = bodyType
 
     /**
      * 검색어 초기화
