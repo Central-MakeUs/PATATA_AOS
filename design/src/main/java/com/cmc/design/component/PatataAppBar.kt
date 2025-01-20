@@ -23,6 +23,8 @@ class PatataAppBar @JvmOverloads constructor(
     private var onHeadButtonClickListener: (() -> Unit)? = null
     private var onFootButtonClickListener: (() -> Unit)? = null
 
+    private var bodyType: BodyType = BodyType.TITLE
+
     init {
         initAttributes(context, attrs)
         initListeners()
@@ -34,18 +36,21 @@ class PatataAppBar @JvmOverloads constructor(
         // 1. Body 타입 설정 (main, searchbar, title)
         when (typedArray.getInt(R.styleable.PatataAppBar_bodyType, -1)) {
             0 -> { // main
+                bodyType = BodyType.MAIN
                 binding.ivMainTextLogo.visibility = View.VISIBLE
-                binding.etSearchbar.visibility = View.GONE
+                binding.searchbar.visibility = View.GONE
                 binding.tvAppbarTitle.visibility = View.GONE
             }
             1 -> { // searchbar
+                bodyType = BodyType.SEARCH
                 binding.ivMainTextLogo.visibility = View.GONE
-                binding.etSearchbar.visibility = View.VISIBLE
+                binding.searchbar.visibility = View.VISIBLE
                 binding.tvAppbarTitle.visibility = View.GONE
             }
             else -> { // title
+                bodyType = BodyType.TITLE
                 binding.ivMainTextLogo.visibility = View.GONE
-                binding.etSearchbar.visibility = View.GONE
+                binding.searchbar.visibility = View.GONE
                 binding.tvAppbarTitle.visibility = View.VISIBLE
             }
         }
@@ -95,13 +100,12 @@ class PatataAppBar @JvmOverloads constructor(
     }
 
     /**
-     * 앱바의 타이틀, 아이콘, 버튼 리스너를 한 번에 설정하는 함수
-     * @param title 앱바 타이틀 텍스트
-     * @param icon 타이틀 아이콘 Drawable (nullable)
-     * @param iconPosition 타이틀 아이콘 위치 (start, end, top, bottom)
-     * @param onBackClick 뒤로가기 버튼 클릭 리스너
-     * @param onHeadButtonClick 헤드 버튼 클릭 리스너 (ex. 닫기 버튼)
-     * @param onFootButtonClick 푸터 버튼 클릭 리스너 (ex. 신고, 더보기 버튼)
+     * 앱바의 타이틀, 아이콘, 버튼 리스너를 설정하는 함수 (BodyType이 TITLE인 경우)
+     *
+     * @param title 앱바 타이틀 텍스트 (TITLE 모드에서는 필수)
+     * @param icon 타이틀 아이콘 리소스 (nullable)
+     * @param iconPosition 아이콘 위치 (start, end, top, bottom), 기본값 START
+     * @param onBackClick 뒤로가기 버튼 클릭 리스너 (nullable)
      */
     fun setupAppBar(
         title: String,
@@ -117,6 +121,39 @@ class PatataAppBar @JvmOverloads constructor(
         onFootButtonClickListener = onFootButtonClick
     }
 
+    /**
+     * 앱바의 아이콘, 버튼 리스너를 설정하는 함수 (BodyType이 TITLE이 아닌 경우)
+     *
+     * @param icon 타이틀 아이콘 리소스 (nullable)
+     * @param iconPosition 아이콘 위치 (start, end, top, bottom), 기본값 START
+     * @param onBackClick 뒤로가기 버튼 클릭 리스너 (nullable)
+     * @param onHeadButtonClick 헤드 버튼 클릭 리스너 (nullable)
+     * @param onFootButtonClick 푸터 버튼 클릭 리스너 (nullable)
+     * @param onSearch 검색 실행 리스너 (nullable)
+     * @param onTextChange 검색 텍스트 변경 리스너 (nullable)
+     */
+    fun setupAppBar(
+        icon: Int? = null,
+        iconPosition: IconPosition = IconPosition.START,
+        onBackClick: (() -> Unit)? = null,
+        onHeadButtonClick: (() -> Unit)? = null,
+        onFootButtonClick: (() -> Unit)? = null,
+        onSearch: ((String) -> Unit)? = null,
+        onTextChange: ((String) -> Unit)? = null,
+    ) {
+        if (bodyType == BodyType.TITLE) {
+            throw IllegalArgumentException("BodyType이 TITLE일 때는 setupAppBar(title: String)를 사용해야 합니다.")
+        }
+
+        onBackClickListener = onBackClick
+        onHeadButtonClickListener = onHeadButtonClick
+        onFootButtonClickListener = onFootButtonClick
+
+        binding.searchbar.apply {
+            setOnSearchListener(onSearch)
+            setOnTextChangeListener(onTextChange)
+        }
+    }
     /**
      * 타이틀 텍스트와 아이콘을 설정하는 함수
      * @param title 타이틀 텍스트
@@ -139,7 +176,25 @@ class PatataAppBar @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 검색어 초기화
+     */
+    fun clearSearch() {
+        binding.searchbar.clearSearch()
+    }
+
+    /**
+     * 검색어 설정
+     */
+    fun setSearchText(text: String) {
+        binding.searchbar.setSearchText(text)
+    }
+
     enum class IconPosition {
         START, END, TOP, BOTTOM
+    }
+
+    enum class BodyType {
+        MAIN, SEARCH, TITLE
     }
 }

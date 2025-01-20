@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         app:barrierDirection="top"
         app:barrierAllowsGoneWidgets="false"
-        app:constraint_referenced_ids="et_searchbar, tv_appbar_title"/>
+        app:constraint_referenced_ids="searchbar, tv_appbar_title"/>
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/appbar_bottom_barrier"
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
         app:barrierAllowsGoneWidgets="false"
-        app:constraint_referenced_ids="et_searchbar, tv_appbar_title"/>
+        app:constraint_referenced_ids="searchbar, tv_appbar_title"/>
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/appbar_start_barrier"
@@ -55,7 +55,7 @@
         android:contentDescription="@string/img_desc_text_logo"/>
 
     <com.cmc.design.component.PatataSearchBar
-        android:id="@+id/et_searchbar"
+        android:id="@+id/searchbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
