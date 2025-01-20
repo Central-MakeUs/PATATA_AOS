@@ -40,8 +40,8 @@ class SpotPolaroidAdapter(
                 tags = spot.tags,
                 isArchived = spot.isArchived,
                 isBadgeVisible = spot.isRecommended,
-                archiveClickListener = { onArchiveClick.invoke(spot) },
-                imageClickListener = { onImageClick.invoke(spot) },
+                archiveClick = { onArchiveClick.invoke(spot) },
+                imageClick = { onImageClick.invoke(spot) },
             )
         }
     }

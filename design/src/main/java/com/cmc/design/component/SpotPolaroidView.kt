@@ -41,8 +41,8 @@ class SpotPolaroidView @JvmOverloads constructor(
         tags: List<String>? = null,
         isArchived: Boolean = false,
         isBadgeVisible: Boolean = false,
-        archiveClickListener: () -> Unit,
-        imageClickListener: () -> Unit,
+        archiveClick: () -> Unit,
+        imageClick: () -> Unit,
     ) {
         with(binding) {
             tvSpotTitle.text = title
@@ -51,8 +51,8 @@ class SpotPolaroidView @JvmOverloads constructor(
             viewSpotBadge.root.visibility = if (isBadgeVisible) View.VISIBLE else View.GONE
             ivSpotArchive.isSelected = isArchived
             updateTags(tags)
-            onArchiveClickListener = archiveClickListener
-            onImageClickListener = imageClickListener
+            onArchiveClickListener = archiveClick
+            onImageClickListener = imageClick
         }
 
     }
