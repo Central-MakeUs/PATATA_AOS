@@ -228,6 +228,13 @@ class PatataAppBar @JvmOverloads constructor(
         binding.searchbar.setSearchText(text)
     }
 
+    /**
+     * 검색바 포커스 및 키보드 노출
+     */
+    fun focusSearchInput() {
+        binding.searchbar.focusSearchInput()
+    }
+
     enum class IconPosition {
         START, END, TOP, BOTTOM
     }

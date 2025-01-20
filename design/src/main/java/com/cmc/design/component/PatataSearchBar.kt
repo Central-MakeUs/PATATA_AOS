@@ -140,6 +140,13 @@ class PatataSearchBar @JvmOverloads constructor(
     fun setSearchText(text: String) {
         binding.etSearchInput.setText(text)
     }
+    /**
+     * 검색바 포커스 및 키보드 노출
+     */
+    fun focusSearchInput() {
+        binding.etSearchInput.requestFocus()
+        showKeyboard()
+    }
 
     // SearchBar 속성 isEnabled 가 false 경우 클릭용 SearchBar 로 판단
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
@@ -150,5 +157,9 @@ class PatataSearchBar @JvmOverloads constructor(
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.etSearchInput.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
     }
-    
+
+    private fun showKeyboard() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(binding.etSearchInput, InputMethodManager.SHOW_IMPLICIT)
+    }
 }
