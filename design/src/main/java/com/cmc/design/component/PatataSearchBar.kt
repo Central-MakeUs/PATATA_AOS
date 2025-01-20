@@ -5,10 +5,12 @@ import android.graphics.drawable.GradientDrawable
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import com.cmc.design.R
@@ -72,13 +74,16 @@ class PatataSearchBar @JvmOverloads constructor(
 
         // 검색 아이콘 클릭 시 검색 실행 (활성화 상태에서만)
         binding.ivSearchIcon.setOnClickListener {
+            hideKeyboard()
             performSearch()
         }
 
         // 키보드 Enter 키 입력 시 검색 실행 (활성화 상태에서만)
         binding.etSearchInput.setOnEditorActionListener { _, actionId, event ->
-            if ((actionId == EditorInfo.IME_ACTION_SEARCH ||
-                        (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN))) {
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                actionId == EditorInfo.IME_ACTION_SEARCH ||
+                (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+                hideKeyboard()
                 performSearch()
                 true
             } else {
@@ -104,21 +109,21 @@ class PatataSearchBar @JvmOverloads constructor(
     /**
      * 검색 실행 리스너 설정
      */
-    fun setOnSearchListener(listener: (String) -> Unit) {
+    fun setOnSearchListener(listener: ((String) -> Unit)? = null) {
         onSearchListener = listener
     }
 
     /**
      * 입력값 변경 리스너 설정
      */
-    fun setOnTextChangeListener(listener: (String) -> Unit) {
+    fun setOnTextChangeListener(listener: ((String) -> Unit)? = null) {
         onTextChangeListener = listener
     }
 
     /**
      * 검색바 클릭 리스너 설정
      */
-    fun setOnSearchBarClickListener(listener: () -> Unit) {
+    fun setOnSearchBarClickListener(listener: (() -> Unit)? = null) {
         onSearchBarClickListener = listener
     }
 
@@ -139,6 +144,11 @@ class PatataSearchBar @JvmOverloads constructor(
     // SearchBar 속성 isEnabled 가 false 경우 클릭용 SearchBar 로 판단
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
         return isEnabled.not()
+    }
+
+    private fun hideKeyboard() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.etSearchInput.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
     }
     
 }

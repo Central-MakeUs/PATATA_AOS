@@ -5,8 +5,8 @@
     android:id="@+id/layout_searchbar_root"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:paddingStart="21dp"
-    android:paddingEnd="21dp"
+    android:paddingStart="@dimen/default_spacing"
+    android:paddingEnd="@dimen/default_spacing"
     android:background="@drawable/bg_searchbar"
     android:clipToPadding="false"
     android:clipChildren="false">
@@ -32,10 +32,11 @@
     <!-- 검색 아이콘 -->
     <ImageView
         android:id="@+id/iv_search_icon"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:src="@drawable/ic_search"
         android:contentDescription="@string/img_desc_search"
+        android:padding="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
