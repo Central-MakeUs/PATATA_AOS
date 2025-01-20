@@ -1,6 +1,8 @@
 <resources>
 
     <string name="title_spot_category">스팟 카테고리</string>
+    <string name="title_category_recommend">카테고리별 추천</string>
+
     <string name="category_recommend">작가 추천</string>
     <string name="category_snap">스냅 스팟</string>
     <string name="category_night_view">시크한 야경</string>

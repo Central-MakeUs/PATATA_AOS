@@ -28,6 +28,7 @@ class SpotHorizontalCardView @JvmOverloads constructor(
     private fun initListeners() {
         // 아카이브 버튼 클릭 리스너
         binding.ivSpotArchive.setOnClickListener {
+            binding.ivSpotArchive.isSelected = binding.ivSpotArchive.isSelected.not()
             onArchiveClickListener?.invoke()
         }
 
@@ -47,6 +48,7 @@ class SpotHorizontalCardView @JvmOverloads constructor(
         archiveCount: Int,
         commentCount: Int,
         tags: List<String>,
+        isArchived: Boolean = false,
         isRecommended: Boolean = false,
         archiveClickListener: () -> Unit,
         cardClickListener: () -> Unit,
@@ -56,6 +58,7 @@ class SpotHorizontalCardView @JvmOverloads constructor(
         binding.tvSpotTitle.text = title
         binding.tvArchiveCount.text = archiveCount.toString()
         binding.tvCommentCount.text = commentCount.toString()
+        binding.ivSpotArchive.isSelected = isArchived
 
         binding.tvRecommendLabel.visibility = if (isRecommended) View.VISIBLE else View.GONE
 
@@ -76,4 +79,16 @@ class SpotHorizontalCardView @JvmOverloads constructor(
             binding.layoutTagContainer.addView(tagView)
         }
     }
+
+    data class SpotHorizontalCardItem(
+        val title: String,
+        val location: String,
+        val imageResId: Int,
+        val category: String,
+        val isArchived: Boolean,
+        val archiveCount: Int,
+        val commentCount: Int,
+        val tags: List<String>,
+        val isRecommended: Boolean = false
+    )
 }
