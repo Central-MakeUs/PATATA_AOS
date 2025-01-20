@@ -4,4 +4,5 @@ interface GlobalNavigation {
     fun navigateOnBoarding()
     fun navigateLogin()
     fun navigateHome()
+    fun navigateSearch()
 }

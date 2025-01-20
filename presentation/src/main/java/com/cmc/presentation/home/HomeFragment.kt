@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmc.common.base.BaseFragment
+import com.cmc.common.base.GlobalNavigation
 import com.cmc.design.component.PatataAppBar
 import com.cmc.design.component.SpotHorizontalCardView
 import com.cmc.design.component.SpotPolaroidView
@@ -97,7 +98,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         // 서치 바
         binding.searchbarHome.apply {
             setOnSearchBarClickListener {
-                Toast.makeText(context, "서치바 클릭!", Toast.LENGTH_SHORT).show()
+                (activity as GlobalNavigation).navigateSearch()
             }
             setOnSearchListener { str ->
                 Toast.makeText(context, "검색 성공 $str", Toast.LENGTH_SHORT).show()

@@ -12,6 +12,7 @@
     <include app:graph="@navigation/nav_onboarding"/>
     <include app:graph="@navigation/nav_login"/>
     <include app:graph="@navigation/nav_home"/>
+    <include app:graph="@navigation/nav_search"/>
 
     <action
         android:id="@+id/navigate_onboarding"
@@ -30,5 +31,10 @@
         app:destination="@+id/nav_home"
         app:popUpTo="@layout/fragment_home"
         app:popUpToInclusive="true"/>
+
+    <action
+        android:id="@+id/nav_search"
+        app:destination="@+id/nav_search"
+        app:popUpTo="@layout/fragment_search"/>
 
 </navigation>

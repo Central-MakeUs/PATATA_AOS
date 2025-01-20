@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     }
 
     private fun initBottomNavigation() {
+        INPUT_METHOD_SERVICE
         with(binding.bottomNavigationMain) {
             setupWithNavController(navHostFragment.navController)
             itemIconTintList = null
@@ -62,22 +63,12 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     * Bottom Navigation 에 포함 되지 않은, Feature 이동을 담당
      */
 
-    override fun navigateOnBoarding() {
-        with(navHostFragment.navController) {
-            navigate(R.id.navigate_onboarding)
-        }
-    }
+    override fun navigateOnBoarding() { navigate(R.id.navigate_onboarding) }
+    override fun navigateLogin() { navigate(R.id.navigate_login) }
+    override fun navigateHome() { navigate(R.id.nav_home) }
+    override fun navigateSearch() { navigate(R.id.nav_search) }
 
-    override fun navigateLogin() {
-        with(navHostFragment.navController) {
-            navigate(R.id.navigate_login)
-        }
+    private fun navigate(navId: Int) {
+        navHostFragment.navController.navigate(navId)
     }
-
-    override fun navigateHome() {
-        with(navHostFragment.navController) {
-            navigate(R.id.nav_home)
-        }
-    }
-
 }
