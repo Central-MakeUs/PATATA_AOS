@@ -1,10 +1,8 @@
 package com.cmc.presentation.home
 
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.core.view.forEachIndexed
 import androidx.fragment.app.viewModels
@@ -32,45 +30,45 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         // 오늘의 추천 스팟, 폴라로이드 뷰
         val spotList = listOf(
-            SpotPolaroidView.SpotPolaroid(
+            SpotPolaroidView.SpotPolaroidItem(
                 title = "마포대교 북단 중앙로",
                 location = "서울시 마포구",
                 imageResId = com.cmc.design.R.drawable.img_sample,
                 tags = listOf("#야경맛집", "#사진찍기좋아요"),
                 isArchived = false,
-                isBadgeVisible = true
+                isRecommended = true
             ),
-            SpotPolaroidView.SpotPolaroid(
+            SpotPolaroidView.SpotPolaroidItem(
                 title = "효사정공원 3번 쉼터    ",
                 location = "서울시 성동구",
                 imageResId = com.cmc.design.R.drawable.img_sample,
                 tags = listOf("#공원", "#데이트코스"),
                 isArchived = true,
-                isBadgeVisible = false
+                isRecommended = false
             ),
-            SpotPolaroidView.SpotPolaroid(
+            SpotPolaroidView.SpotPolaroidItem(
                 title = "서울숲 은행나무길",
                 location = "서울시 성동구",
                 imageResId = com.cmc.design.R.drawable.img_sample,
                 tags = listOf("#가을", "#데이트코스"),
                 isArchived = false,
-                isBadgeVisible = false
+                isRecommended = false
             ),
-            SpotPolaroidView.SpotPolaroid(
+            SpotPolaroidView.SpotPolaroidItem(
                 title = "매봉산 꼭대기",
                 location = "서울시 성동구",
                 imageResId = com.cmc.design.R.drawable.img_sample,
                 tags = listOf("#산", "#야경"),
                 isArchived = true,
-                isBadgeVisible = true
+                isRecommended = true
             ),
-            SpotPolaroidView.SpotPolaroid(
+            SpotPolaroidView.SpotPolaroidItem(
                 title = "덕수궁 벚꽃나무 앞",
                 location = "서울시 성동구",
                 imageResId = com.cmc.design.R.drawable.img_sample,
                 tags = listOf("#벚꽃", "#데이트코스"),
                 isArchived = false,
-                isBadgeVisible = false
+                isRecommended = false
             )
         )
         val adapter = SpotPolaroidAdapter(

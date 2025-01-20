@@ -3,12 +3,12 @@ package com.cmc.presentation.home
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.cmc.design.component.SpotPolaroidView
-import com.cmc.design.component.SpotPolaroidView.SpotPolaroid
+import com.cmc.design.component.SpotPolaroidView.SpotPolaroidItem
 
 class SpotPolaroidAdapter(
-    private val spotList: List<SpotPolaroid>,
-    private val onArchiveClick: (SpotPolaroid) -> Unit,
-    private val onImageClick: (SpotPolaroid) -> Unit
+    private val spotList: List<SpotPolaroidItem>,
+    private val onArchiveClick: (SpotPolaroidItem) -> Unit,
+    private val onImageClick: (SpotPolaroidItem) -> Unit
 ) : RecyclerView.Adapter<SpotPolaroidAdapter.SpotPolaroidViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SpotPolaroidViewHolder {
@@ -32,25 +32,17 @@ class SpotPolaroidAdapter(
     inner class SpotPolaroidViewHolder(private val spotView: SpotPolaroidView) :
         RecyclerView.ViewHolder(spotView) {
 
-        fun bind(spot: SpotPolaroid) {
-            spotView.setSpotData(
+        fun bind(spot: SpotPolaroidItem) {
+            spotView.setSpotPolaroidView(
                 title = spot.title,
                 location = spot.location,
                 imageResId = spot.imageResId,
                 tags = spot.tags,
                 isArchived = spot.isArchived,
-                isBadgeVisible = spot.isBadgeVisible
+                isBadgeVisible = spot.isRecommended,
+                archiveClickListener = { onArchiveClick.invoke(spot) },
+                imageClickListener = { onImageClick.invoke(spot) },
             )
-
-            // 아카이브 버튼 클릭 리스너
-            spotView.setOnArchiveClickListener {
-                onArchiveClick.invoke(spot)
-            }
-
-            // 이미지 클릭 리스너
-            spotView.setOnImageClickListener {
-                onImageClick.invoke(spot)
-            }
         }
     }
 }

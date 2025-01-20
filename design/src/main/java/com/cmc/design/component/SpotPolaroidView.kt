@@ -18,8 +18,8 @@ class SpotPolaroidView @JvmOverloads constructor(
     private val binding: ViewSpotPolaroidBinding =
         ViewSpotPolaroidBinding.inflate(LayoutInflater.from(context), this, true)
 
-    private var onArchiveClick: (() -> Unit)? = null
-    private var onImageClick: (() -> Unit)? = null
+    private var onArchiveClickListener: (() -> Unit)? = null
+    private var onImageClickListener: (() -> Unit)? = null
 
     init {
         initListeners()
@@ -27,20 +27,22 @@ class SpotPolaroidView @JvmOverloads constructor(
 
     private fun initListeners() {
         binding.ivSpotArchive.setOnClickListener {
-            onArchiveClick?.invoke()
+            onArchiveClickListener?.invoke()
         }
         binding.ivSpotImage.setOnClickListener {
-            onImageClick?.invoke()
+            onImageClickListener?.invoke()
         }
     }
 
-    fun setSpotData(
+    fun setSpotPolaroidView(
         title: String,
         location: String,
         imageResId: Int,
         tags: List<String>? = null,
         isArchived: Boolean = false,
-        isBadgeVisible: Boolean = false
+        isBadgeVisible: Boolean = false,
+        archiveClickListener: () -> Unit,
+        imageClickListener: () -> Unit,
     ) {
         with(binding) {
             tvSpotTitle.text = title
@@ -49,7 +51,10 @@ class SpotPolaroidView @JvmOverloads constructor(
             viewSpotBadge.root.visibility = if (isBadgeVisible) View.VISIBLE else View.GONE
             ivSpotArchive.isSelected = isArchived
             updateTags(tags)
+            onArchiveClickListener = archiveClickListener
+            onImageClickListener = imageClickListener
         }
+
     }
 
     private fun updateTags(tags: List<String>?) {
@@ -64,32 +69,16 @@ class SpotPolaroidView @JvmOverloads constructor(
         }
     }
 
-    fun setOnArchiveClickListener(listener: () -> Unit) {
-        onArchiveClick = listener
-    }
-
-    fun setOnImageClickListener(listener: () -> Unit) {
-        onImageClick = listener
-    }
-
     fun setSpotTitle(title: String) {
         binding.tvSpotTitle.text = title
     }
 
-    fun setSpotLocation(location: String) {
-        binding.tvSpotLocation.text = location
-    }
-
-    fun setSpotImage(imageResId: Int) {
-        binding.ivSpotImage.setImageResource(imageResId)
-    }
-
-    data class SpotPolaroid(
+    data class SpotPolaroidItem(
         val title: String,
         val location: String,
         val imageResId: Int,
         val tags: List<String>?,
         val isArchived: Boolean,
-        val isBadgeVisible: Boolean = false
+        val isRecommended: Boolean = false
     )
 }
