@@ -24,6 +24,10 @@ class PatataAppBar @JvmOverloads constructor(
     private var onFootButtonClickListener: (() -> Unit)? = null
 
     private var bodyType: BodyType = BodyType.TITLE
+        set(value) {
+            field = value
+            setBody()
+        }
 
     init {
         initAttributes(context, attrs)
@@ -34,25 +38,10 @@ class PatataAppBar @JvmOverloads constructor(
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.PatataAppBar)
 
         // 1. Body 타입 설정 (main, searchbar, title)
-        when (typedArray.getInt(R.styleable.PatataAppBar_bodyType, -1)) {
-            0 -> { // main
-                bodyType = BodyType.MAIN
-                binding.ivMainTextLogo.visibility = View.VISIBLE
-                binding.searchbar.visibility = View.GONE
-                binding.tvAppbarTitle.visibility = View.GONE
-            }
-            1 -> { // searchbar
-                bodyType = BodyType.SEARCH
-                binding.ivMainTextLogo.visibility = View.GONE
-                binding.searchbar.visibility = View.VISIBLE
-                binding.tvAppbarTitle.visibility = View.GONE
-            }
-            else -> { // title
-                bodyType = BodyType.TITLE
-                binding.ivMainTextLogo.visibility = View.GONE
-                binding.searchbar.visibility = View.GONE
-                binding.tvAppbarTitle.visibility = View.VISIBLE
-            }
+        bodyType = when (typedArray.getInt(R.styleable.PatataAppBar_bodyType, -1)) {
+            0 -> BodyType.MAIN
+            1 -> BodyType.SEARCH
+            else -> BodyType.TITLE
         }
 
         // 2. Head 버튼 설정 (back, close, custom)
@@ -85,6 +74,26 @@ class PatataAppBar @JvmOverloads constructor(
         }
 
         typedArray.recycle()
+    }
+
+    private fun setBody() {
+        when (bodyType) {
+            BodyType.MAIN -> {
+                binding.ivMainTextLogo.visibility = View.VISIBLE
+                binding.searchbar.visibility = View.GONE
+                binding.tvAppbarTitle.visibility = View.GONE
+            }
+            BodyType.SEARCH -> {
+                binding.ivMainTextLogo.visibility = View.GONE
+                binding.searchbar.visibility = View.VISIBLE
+                binding.tvAppbarTitle.visibility = View.GONE
+            }
+            BodyType.TITLE -> {
+                binding.ivMainTextLogo.visibility = View.GONE
+                binding.searchbar.visibility = View.GONE
+                binding.tvAppbarTitle.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun initListeners() {
@@ -174,6 +183,14 @@ class PatataAppBar @JvmOverloads constructor(
                 IconPosition.BOTTOM -> binding.tvAppbarTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, it)
             }
         }
+    }
+
+    /**
+     * Body Type을 변경하는 함수
+     * @param type BodyType
+     */
+    fun setBodyType(type: BodyType) {
+        bodyType = type
     }
 
     /**
