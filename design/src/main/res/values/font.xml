@@ -40,6 +40,7 @@
     <style name="subtitle_large" parent="font_semi_bold">
         <item name="android:textSize">18sp</item>
         <item name="android:lineSpacingExtra">8sp</item>
+        <item name="android:lineSpacingMultiplier">0.7</item>
     </style>
 
     <style name="subtitle_medium" parent="font_semi_bold">
