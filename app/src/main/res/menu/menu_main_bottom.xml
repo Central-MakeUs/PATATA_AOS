@@ -2,23 +2,30 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/nav_feat_graph"
-        android:checked="true"
-        android:title="홈"
+        android:id="@+id/nav_home"
+        android:enabled="true"
+        android:title="@string/title_nav_home"
+        android:icon="@drawable/nav_icon_home_selector"
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/nav_feat2_graph"
-        android:title="내 주변"
+        android:id="@+id/nav_map"
+        android:enabled="true"
+        android:title="@string/title_nav_map"
+        android:icon="@drawable/nav_icon_map_selector"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/nav_archive"
-        android:title="아카이브"
+        android:enabled="true"
+        android:title="@string/title_nav_archive"
+        android:icon="@drawable/selector_archive"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/nav_mypage"
-        android:title="My"
+        android:enabled="true"
+        android:title="@string/title_nav_my"
+        android:icon="@drawable/nav_icon_my_selector"
         app:showAsAction="always" />
 </menu>

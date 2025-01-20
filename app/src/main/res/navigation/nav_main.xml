@@ -23,7 +23,7 @@
         app:popUpToInclusive="true"/>
 
     <action
-        android:id="@+id/navigate_home"
+        android:id="@+id/nav_home"
         app:destination="@+id/nav_home"
         app:popUpTo="@layout/fragment_home"
         app:popUpToInclusive="true"/>

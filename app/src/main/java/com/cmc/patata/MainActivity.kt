@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     private fun initBottomNavigation() {
         with(binding.bottomNavigationMain) {
             setupWithNavController(navHostFragment.navController)
+            itemIconTintList = null
         }
     }
 
@@ -75,7 +76,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
     override fun navigateHome() {
         with(navHostFragment.navController) {
-            navigate(R.id.navigate_home)
+            navigate(R.id.nav_home)
         }
     }
 

@@ -26,9 +26,14 @@
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation_main"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:paddingBottom="24dp"
-            app:menu="@menu/menu_main_bottom" />
+            android:background="@color/white"
+            android:layout_height="80dp"
+            android:paddingBottom="5dp"
+            app:labelVisibilityMode="labeled"
+            app:itemBackground="@color/transparent"
+            app:itemRippleColor="@color/transparent"
+            app:itemActiveIndicatorStyle="@color/transparent"
+            app:menu="@menu/menu_main_bottom"/>
 
     </LinearLayout>
 </layout>
