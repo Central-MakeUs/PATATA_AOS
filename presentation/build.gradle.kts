@@ -76,4 +76,8 @@ dependencies {
     // Firebase Auth
     implementation(libs.firebase.auth)
     implementation(libs.play.services.auth)
+
+    // Glide
+    implementation(libs.glide)
+
 }
