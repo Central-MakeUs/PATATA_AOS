@@ -1,5 +1,6 @@
 package com.cmc.presentation.search
 
+import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
@@ -7,8 +8,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.cmc.common.base.BaseFragment
+import com.cmc.design.component.BottomSheetDialog
 import com.cmc.design.component.PatataAppBar
 import com.cmc.presentation.R
+import com.cmc.presentation.databinding.ContentSheetSortSelectBinding
 import com.cmc.presentation.databinding.FragmentSearchBinding
 import dagger.hilt.android.AndroidEntryPoint
 import com.cmc.presentation.search.SearchViewModel.SearchStatus
@@ -55,6 +58,17 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
     override fun initView() {
         setAppbar()
         setRecyclerView()
+
+        binding.tvSpotResultSortBy.setOnClickListener {
+            BottomSheetDialog(requireContext())
+                .bindBuilder(
+                    ContentSheetSortSelectBinding.inflate(LayoutInflater.from(requireContext()))
+                ) { dialog ->
+                    with(dialog) {
+                        show()
+                    }
+                }
+        }
     }
 
     private fun setAppbar() {

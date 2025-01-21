@@ -1,6 +1,7 @@
 <resources>
 
     <string name="title_spot">스팟</string>
+    <string name="title_sort">정렬</string>
     <string name="title_spot_category">스팟 카테고리</string>
     <string name="title_category_recommend">카테고리별 추천</string>
 
@@ -18,5 +19,8 @@
     <string name="img_desc_category_nature">싱그러운 자연 카테고리 이미지</string>
     <string name="show_more_arrow"><![CDATA[더보기 >]]></string>
     <string name="show_more">더보기</string>
+
+    <string name="sort_by_distance">거리순</string>
+    <string name="sort_by_recommendation">추천순</string>
 
 </resources>

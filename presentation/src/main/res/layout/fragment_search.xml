@@ -85,7 +85,7 @@
             tools:text="6"/>
 
         <TextView
-            android:id="@+id/tv_spot_result_filter"
+            android:id="@+id/tv_spot_result_sort_by"
             style="@style/caption_medium"
             android:textColor="@color/text_info"
             android:layout_width="wrap_content"
@@ -118,7 +118,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="tv_spot_result_count_title,tv_spot_result_count,tv_spot_result_filter,rv_spot_grid"/>
+            app:constraint_referenced_ids="tv_spot_result_count_title,tv_spot_result_count,tv_spot_result_sort_by,rv_spot_grid"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
