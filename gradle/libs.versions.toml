@@ -23,11 +23,13 @@ jetbrainsKotlinJvm = "1.9.24"
 navigationFragmentKtxVersion = "2.8.5"
 navigationUiKtxVersion = "2.8.5"
 okhttp = "4.12.0"
+pagingRuntimeKtx = "3.3.5"
 retrofit = "2.11.0"
 playServicesAuth = "21.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "pagingRuntimeKtx" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }

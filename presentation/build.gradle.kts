@@ -80,4 +80,7 @@ dependencies {
     // Glide
     implementation(libs.glide)
 
+    // Paging3
+    implementation(libs.androidx.paging.runtime.ktx)
+
 }

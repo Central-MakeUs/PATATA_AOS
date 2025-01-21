@@ -5,21 +5,59 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import com.cmc.common.base.BaseFragment
 import com.cmc.design.component.PatataAppBar
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentSearchBinding
-import com.cmc.presentation.search.SearchViewModel.TempSpotResult
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import com.cmc.presentation.search.SearchViewModel.SearchStatus
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_search) {
 
     private val viewModel: SearchViewModel by viewModels()
 
+    private lateinit var spotThumbnailAdapter: SpotThumbnailAdapter
+
+    override fun initObserving() {
+        repeatWhenUiStarted {
+            viewModel.state.collectLatest { state ->
+                when (state.searchStatus) {
+                    SearchStatus.IDLE -> showSearchBarOnly(state.query)
+                    SearchStatus.LOADING -> { }
+                    SearchStatus.SUCCESS -> { }
+                    SearchStatus.EMPTY -> {
+                        showNoResult(state.query)
+                    }
+                    SearchStatus.ERROR -> { }
+                    SearchStatus.LOADED -> {
+                        showSearchResults(state.query)
+                    }
+                }
+                spotThumbnailAdapter.submitData(state.results)
+            }
+        }
+
+        repeatWhenUiStarted {
+            viewModel.sideEffect.collect { effect ->
+                when (effect) {
+                    is SearchViewModel.SearchSideEffect.ShowToast -> {
+                        showToast(effect.message)
+                    }
+                }
+            }
+        }
+    }
+
     override fun initView() {
+        setAppbar()
+        setRecyclerView()
+    }
+
+    private fun setAppbar() {
         binding.appbar.focusSearchInput()
         binding.appbar.setupAppBar(
             title = getString(com.cmc.design.R.string.title_search_content),
@@ -35,45 +73,43 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
         }
     }
 
-    private fun showSearchBarOnly(query: String) {
-        binding.layoutSearchNoResult.isVisible = false
-        if (binding.appbar.getBodyType() != PatataAppBar.BodyType.SEARCH)
-            updateSearchUI(PatataAppBar.BodyType.SEARCH, query, false, com.cmc.design.R.color.transparent)
+    private fun setRecyclerView() {
+        spotThumbnailAdapter = SpotThumbnailAdapter(
+            onArchiveClick = { viewModel.clickToastBtn("Archive Click!") },
+            onImageClick = { viewModel.clickToastBtn("Image Click!") },
+        )
+        viewModel.setPageAdapterLoadStateListener(spotThumbnailAdapter)
+        binding.rvSpotGrid.apply {
+            layoutManager = GridLayoutManager(context, 2)
+            adapter = spotThumbnailAdapter
+        }
     }
 
-    private fun showSearchResults(query: String, results: List<TempSpotResult>) {
-        binding.layoutSearchNoResult.isVisible = false
-        if (binding.appbar.getBodyType() != PatataAppBar.BodyType.TITLE)
-            updateSearchUI(PatataAppBar.BodyType.TITLE, query, true, com.cmc.design.R.color.white)
+    private fun showSearchBarOnly(query: String) {
+        with(binding) {
+            layoutSearchNoResult.isVisible = false
+            groupResultView.isVisible = false
+            if (appbar.getBodyType() != PatataAppBar.BodyType.SEARCH)
+                updateSearchUI(PatataAppBar.BodyType.SEARCH, query, false, com.cmc.design.R.color.transparent)
+        }
+    }
+
+    private fun showSearchResults(query: String) {
+        with(binding) {
+            layoutSearchNoResult.isVisible = false
+            groupResultView.isVisible = true
+            if (binding.appbar.getBodyType() != PatataAppBar.BodyType.TITLE)
+                updateSearchUI(PatataAppBar.BodyType.TITLE, query, true, com.cmc.design.R.color.white)
+        }
     }
 
     private fun showNoResult(query: String) {
-        binding.layoutSearchNoResult.isVisible = true
-        binding.tvSearchNoResult.text = getString(com.cmc.design.R.string.search_no_result_text, query)
-        if (binding.appbar.getBodyType() != PatataAppBar.BodyType.SEARCH)
-            updateSearchUI(PatataAppBar.BodyType.SEARCH, query, false, com.cmc.design.R.color.transparent)
-    }
-
-    override fun initObserving() {
-        repeatWhenUiStarted {
-            viewModel.state.collect { state ->
-                when (state.searchStatus) {
-                    SearchStatus.IDLE -> showSearchBarOnly(state.query)
-                    SearchStatus.LOADING -> { }
-                    SearchStatus.SUCCESS -> showSearchResults(state.query, state.results)
-                    SearchStatus.EMPTY -> showNoResult(state.query)
-                }
-            }
-        }
-
-        repeatWhenUiStarted {
-            viewModel.sideEffect.collect { effect ->
-                when (effect) {
-                    is SearchViewModel.SearchSideEffect.ShowToast -> {
-                        showToast(effect.message)
-                    }
-                }
-            }
+        with(binding) {
+            layoutSearchNoResult.isVisible = true
+            groupResultView.isVisible = false
+            tvSearchNoResult.text = getString(com.cmc.design.R.string.search_no_result_text, query)
+            if (appbar.getBodyType() != PatataAppBar.BodyType.SEARCH)
+                updateSearchUI(PatataAppBar.BodyType.SEARCH, query, false, com.cmc.design.R.color.transparent)
         }
     }
 

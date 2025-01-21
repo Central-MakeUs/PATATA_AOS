@@ -22,7 +22,8 @@
         android:clipToOutline="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:src="@drawable/img_sample"/>
 
     <!-- 장소 위치 -->
     <TextView

@@ -35,9 +35,9 @@ abstract class BaseFragment<T: ViewDataBinding>(@LayoutRes val layoutRes: Int)
         initObserving()
     }
 
-    abstract fun initView()
-
     abstract fun initObserving()
+
+    abstract fun initView()
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -33,8 +33,8 @@
     <!-- 검색 아이콘 -->
     <ImageView
         android:id="@+id/iv_search_icon"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:src="@drawable/ic_search"
         android:contentDescription="@string/img_desc_search"
         android:padding="5dp"
