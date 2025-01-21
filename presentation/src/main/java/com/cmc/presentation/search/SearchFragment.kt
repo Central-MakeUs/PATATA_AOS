@@ -55,8 +55,7 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
     }
 
     override fun initObserving() {
-
-        lifecycleScope.launch {
+        repeatWhenUiStarted {
             viewModel.state.collect { state ->
                 when (state.searchStatus) {
                     SearchStatus.IDLE -> showSearchBarOnly(state.query)
@@ -67,7 +66,7 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
             }
         }
 
-        lifecycleScope.launch {
+        repeatWhenUiStarted {
             viewModel.sideEffect.collect { effect ->
                 when (effect) {
                     is SearchViewModel.SearchSideEffect.ShowToast -> {

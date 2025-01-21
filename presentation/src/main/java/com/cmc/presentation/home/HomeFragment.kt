@@ -197,7 +197,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     override fun initObserving() {
-        viewLifecycleOwner.lifecycleScope.launch {
+        repeatWhenUiStarted {
             viewModel.selectedCategory.collectLatest { selectedCategory ->
                 categoryViews.forEach { (layout, category) ->
                     layout.isSelected = (category == selectedCategory)

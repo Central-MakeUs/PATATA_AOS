@@ -19,7 +19,6 @@ import com.cmc.presentation.login.LoginManager
 import com.cmc.presentation.login.viewmodel.LoginViewModel
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -37,7 +36,7 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
 
     private fun setLoginButton() {
         binding.btnGoogleLogin.setOnClickListener {
-            viewLifecycleOwner.lifecycleScope.launch {
+            repeatWhenUiStarted {
                 try {
                     startForResult.launch(
                         IntentSenderRequest.Builder(loginManager.signInIntent(requireActivity()))
@@ -54,7 +53,7 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
     }
 
     override fun initObserving() {
-        lifecycleScope.launch {
+        repeatWhenUiStarted {
             viewModel.userState.collect {
                 binding.tvLogin.text = it?.nickName ?: "Null"
             }
@@ -74,7 +73,7 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
                 result.data?.let { intent ->
                     val credential = loginManager.oneTapClient.getSignInCredentialFromIntent(intent)
                     credential.googleIdToken?.let { idToken ->
-                        lifecycleScope.launch {
+                        repeatWhenUiStarted {
                             viewModel.googleLogin(idToken)
                         }
                     }
