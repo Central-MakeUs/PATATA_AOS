@@ -1,6 +1,5 @@
 package com.cmc.presentation.search
 
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
@@ -12,7 +11,6 @@ import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentSearchBinding
 import com.cmc.presentation.search.SearchViewModel.TempSpotResult
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
 import com.cmc.presentation.search.SearchViewModel.SearchStatus
 
@@ -38,44 +36,22 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
     }
 
     private fun showSearchBarOnly(query: String) {
-        with(binding) {
-            layoutSearchNoResult.isVisible = false
-
-            if (appbar.getBodyType() == PatataAppBar.BodyType.SEARCH) return
-
-            appbar.setBodyType(PatataAppBar.BodyType.SEARCH)
-            appbar.setSearchText(query)
-            appbar.background = AppCompatResources.getDrawable(requireContext(), com.cmc.design.R.color.transparent)
-            layoutSearchbar.isVisible = false
-
-        }
+        binding.layoutSearchNoResult.isVisible = false
+        if (binding.appbar.getBodyType() != PatataAppBar.BodyType.SEARCH)
+            updateSearchUI(PatataAppBar.BodyType.SEARCH, query, false, com.cmc.design.R.color.transparent)
     }
 
     private fun showSearchResults(query: String, results: List<TempSpotResult>) {
-        with(binding) {
-            layoutSearchNoResult.isVisible = false
-
-            if (appbar.getBodyType() == PatataAppBar.BodyType.TITLE) return
-
-            searchbarSecond.setSearchText(query)
-            appbar.setBodyType(PatataAppBar.BodyType.TITLE)
-            appbar.background = AppCompatResources.getDrawable(requireContext(), com.cmc.design.R.color.white)
-            layoutSearchbar.isVisible = true
-        }
+        binding.layoutSearchNoResult.isVisible = false
+        if (binding.appbar.getBodyType() != PatataAppBar.BodyType.TITLE)
+            updateSearchUI(PatataAppBar.BodyType.TITLE, query, true, com.cmc.design.R.color.white)
     }
 
     private fun showNoResult(query: String) {
-        with(binding) {
-            tvSearchNoResult.text = getString(com.cmc.design.R.string.search_no_result_text, query)
-            layoutSearchNoResult.isVisible = true
-
-            if (appbar.getBodyType() == PatataAppBar.BodyType.SEARCH) return
-            appbar.setBodyType(PatataAppBar.BodyType.SEARCH)
-            appbar.setSearchText(query)
-            appbar.background = AppCompatResources.getDrawable(requireContext(), com.cmc.design.R.color.transparent)
-            layoutSearchbar.isVisible = false
-
-        }
+        binding.layoutSearchNoResult.isVisible = true
+        binding.tvSearchNoResult.text = getString(com.cmc.design.R.string.search_no_result_text, query)
+        if (binding.appbar.getBodyType() != PatataAppBar.BodyType.SEARCH)
+            updateSearchUI(PatataAppBar.BodyType.SEARCH, query, false, com.cmc.design.R.color.transparent)
     }
 
     override fun initObserving() {
@@ -102,7 +78,27 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
         }
     }
 
+    private fun updateSearchUI(
+        bodyType: PatataAppBar.BodyType,
+        query: String,
+        isSearchBarVisible: Boolean,
+        backgroundResId: Int
+    ) {
+        with(binding) {
+            appbar.setBodyType(bodyType)
+            if (bodyType == PatataAppBar.BodyType.TITLE) {
+                searchbarSecond.setSearchText(query)
+            } else {
+                appbar.setSearchText(query)
+            }
+            appbar.background = AppCompatResources.getDrawable(requireContext(), backgroundResId)
+            layoutSearchbar.isVisible = isSearchBarVisible
+        }
+    }
+
+
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
+
 }
