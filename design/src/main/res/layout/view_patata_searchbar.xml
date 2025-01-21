@@ -23,6 +23,7 @@
         android:textColor="@color/text_info"
         android:textColorHint="@color/text_disabled"
         android:inputType="text"
+        android:imeOptions="actionDone"
         android:singleLine="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/iv_search_icon"
