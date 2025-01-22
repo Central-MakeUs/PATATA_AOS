@@ -9,6 +9,16 @@
         android:id="@+id/HomeFragment"
         android:name="com.cmc.presentation.home.HomeFragment"
         tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/navigate_today_spot_recommendation"
+            app:destination="@id/TodaySpotRecommendationFragment"/>
     </fragment>
 
+    <fragment
+        android:id="@+id/TodaySpotRecommendationFragment"
+        android:name="com.cmc.presentation.home.TodaySpotRecommendationFragment"
+        tools:layout="@layout/fragment_today_spot_recommendation">
+
+    </fragment>
 </navigation>

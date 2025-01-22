@@ -102,7 +102,7 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
     private fun setAppbar() {
         binding.appbar.focusSearchInput()
         binding.appbar.setupAppBar(
-            title = getString(com.cmc.design.R.string.title_search_content),
+            title = getString(R.string.title_search_content),
             onBackClick = { requireActivity().onBackPressedDispatcher.onBackPressed() },
             onSearch = { text ->
                 viewModel.performSearch(text)

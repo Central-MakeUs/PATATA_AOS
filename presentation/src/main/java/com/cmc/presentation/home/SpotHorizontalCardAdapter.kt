@@ -5,30 +5,30 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cmc.design.component.SpotHorizontalCardView
 import com.cmc.design.component.SpotHorizontalCardView.SpotHorizontalCardItem
 
-class CategoryRecommendAdapter(
+class SpotHorizontalCardAdapter(
     private val spotList: List<SpotHorizontalCardItem>,
     private val onArchiveClick: (SpotHorizontalCardItem) -> Unit,
     private val onImageClick: (SpotHorizontalCardItem) -> Unit
-) : RecyclerView.Adapter<CategoryRecommendAdapter.CategoryRecommendViewHolder>() {
+) : RecyclerView.Adapter<SpotHorizontalCardAdapter.SpotHorizontalCardViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryRecommendViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SpotHorizontalCardViewHolder {
         val spotView = SpotHorizontalCardView(parent.context).apply {
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
         }
-        return CategoryRecommendViewHolder(spotView)
+        return SpotHorizontalCardViewHolder(spotView)
     }
 
-    override fun onBindViewHolder(holder: CategoryRecommendViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: SpotHorizontalCardViewHolder, position: Int) {
         val spot = spotList[position]
         holder.bind(spot)
     }
 
     override fun getItemCount(): Int = spotList.size
 
-    inner class CategoryRecommendViewHolder(private val cardView: SpotHorizontalCardView) :
+    inner class SpotHorizontalCardViewHolder(private val cardView: SpotHorizontalCardView) :
         RecyclerView.ViewHolder(cardView) {
 
         fun bind(item: SpotHorizontalCardItem) {

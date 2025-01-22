@@ -6,7 +6,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.forEachIndexed
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
@@ -18,7 +18,6 @@ import com.cmc.presentation.databinding.FragmentHomeBinding
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
@@ -106,7 +105,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
 
         binding.tvSpotPolaroidMore.setOnClickListener {
-            Toast.makeText(context, "오늘의 추천 스팟으로 이동!", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.navigate_today_spot_recommendation)
         }
         
         // 스팟 카테고리
@@ -151,7 +150,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             )
         )
 
-        val categoryRecommendAdapter = CategoryRecommendAdapter(
+        val categoryRecommendAdapter = SpotHorizontalCardAdapter(
             spotCardList,
             onArchiveClick = {
                 Toast.makeText(context, "서울숲 은행나무길 아카이브 클릭됨", Toast.LENGTH_SHORT).show()
