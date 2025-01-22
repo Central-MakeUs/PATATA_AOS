@@ -1,4 +1,4 @@
-package com.cmc.data.auth.model
+package com.cmc.data.base
 
 import com.google.gson.annotations.SerializedName
 

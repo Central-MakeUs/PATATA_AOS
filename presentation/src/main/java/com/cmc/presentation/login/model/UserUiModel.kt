@@ -7,17 +7,15 @@ data class UserUiModel(
     val email: String,
     val accessToken: String,
     val refreshToken: String,
-) {
-    companion object {
-        fun toUiModel(data: User): UserUiModel {
-            return data.run {
-                UserUiModel(
-                    nickName = nickName,
-                    email = email,
-                    accessToken = accessToken,
-                    refreshToken = refreshToken,
-                )
-            }
-        }
+)
+
+fun User.toUiModel(): UserUiModel {
+    return this.run {
+        UserUiModel(
+            nickName = nickName,
+            email = email,
+            accessToken = accessToken,
+            refreshToken = refreshToken,
+        )
     }
 }

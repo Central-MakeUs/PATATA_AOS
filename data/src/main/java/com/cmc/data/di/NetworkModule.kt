@@ -1,6 +1,7 @@
 package com.cmc.data.di
 
 import com.cmc.data.auth.remote.AuthApiService
+import com.cmc.data.base.ApiConfig.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,8 +15,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
-    private const val BASE_URL = "https://patata.kr/"  // 서버 주소로 변경
 
     @Provides
     @Singleton

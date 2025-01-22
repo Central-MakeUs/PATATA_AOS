@@ -18,4 +18,7 @@ dependencies {
 
     // Hilt
     implementation(libs.javax.inject)
+    // Kotlin Coroutines
+    implementation(libs.kotlinx.coroutines.core)
+
 }
