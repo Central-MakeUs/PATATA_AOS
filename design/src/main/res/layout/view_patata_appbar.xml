@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_root"
     android:paddingBottom="14dp"
     android:paddingHorizontal="@dimen/horizontal_padding_default_spacing">
 

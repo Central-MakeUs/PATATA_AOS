@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.cmc.design.R
 import com.cmc.design.databinding.ViewPatataAppbarBinding
@@ -80,16 +81,19 @@ class PatataAppBar @JvmOverloads constructor(
                 binding.ivMainTextLogo.visibility = View.VISIBLE
                 binding.searchbar.visibility = View.GONE
                 binding.tvAppbarTitle.visibility = View.GONE
+                binding.layoutRoot.background = AppCompatResources.getDrawable(context, R.color.transparent)
             }
             BodyType.SEARCH -> {
                 binding.ivMainTextLogo.visibility = View.GONE
                 binding.searchbar.visibility = View.VISIBLE
                 binding.tvAppbarTitle.visibility = View.GONE
+                binding.layoutRoot.background = AppCompatResources.getDrawable(context, R.color.transparent)
             }
             BodyType.TITLE -> {
                 binding.ivMainTextLogo.visibility = View.GONE
                 binding.searchbar.visibility = View.GONE
                 binding.tvAppbarTitle.visibility = View.VISIBLE
+                binding.layoutRoot.background = AppCompatResources.getDrawable(context, R.color.white)
             }
         }
     }

@@ -132,7 +132,7 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
             layoutSearchNoResult.isVisible = false
             groupResultView.isVisible = false
             if (appbar.getBodyType() != PatataAppBar.BodyType.SEARCH)
-                updateSearchUI(PatataAppBar.BodyType.SEARCH, query, false, com.cmc.design.R.color.transparent)
+                updateSearchUI(PatataAppBar.BodyType.SEARCH, query, false)
         }
     }
 
@@ -141,7 +141,7 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
             layoutSearchNoResult.isVisible = false
             groupResultView.isVisible = true
             if (binding.appbar.getBodyType() != PatataAppBar.BodyType.TITLE)
-                updateSearchUI(PatataAppBar.BodyType.TITLE, query, true, com.cmc.design.R.color.white)
+                updateSearchUI(PatataAppBar.BodyType.TITLE, query, true)
         }
     }
 
@@ -151,7 +151,7 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
             groupResultView.isVisible = false
             tvSearchNoResult.text = getString(com.cmc.design.R.string.search_no_result_text, query)
             if (appbar.getBodyType() != PatataAppBar.BodyType.SEARCH)
-                updateSearchUI(PatataAppBar.BodyType.SEARCH, query, false, com.cmc.design.R.color.transparent)
+                updateSearchUI(PatataAppBar.BodyType.SEARCH, query, false)
         }
     }
 
@@ -159,7 +159,6 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
         bodyType: PatataAppBar.BodyType,
         query: String,
         isSearchBarVisible: Boolean,
-        backgroundResId: Int
     ) {
         with(binding) {
             appbar.setBodyType(bodyType)
@@ -168,7 +167,6 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
             } else {
                 appbar.setSearchText(query)
             }
-            appbar.background = AppCompatResources.getDrawable(requireContext(), backgroundResId)
             layoutSearchbar.isVisible = isSearchBarVisible
         }
     }
