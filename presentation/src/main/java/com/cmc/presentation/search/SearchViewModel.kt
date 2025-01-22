@@ -40,9 +40,9 @@ class SearchViewModel @Inject constructor() : ViewModel() {
         LOADED,
     }
 
-    enum class SortType {
-        DISTANCE,
-        ARCHIVE
+    enum class SortType(val text: String) {
+        DISTANCE("거리순"),
+        RECOMMEND("추천순")
     }
 
     sealed class SearchSideEffect {
@@ -123,6 +123,18 @@ class SearchViewModel @Inject constructor() : ViewModel() {
                     )
                 )
             }
+        }
+    }
+
+    fun getSortType(): SortType = state.value.sortType
+
+    fun setSortType(sortType: SortType) {
+        viewModelScope.launch {
+            _state.emit(
+                state.value.copy(
+                    sortType = sortType
+                )
+            )
         }
     }
 

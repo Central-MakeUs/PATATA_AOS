@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 abstract class BaseFragment<T: ViewDataBinding>(@LayoutRes val layoutRes: Int)
@@ -44,10 +45,10 @@ abstract class BaseFragment<T: ViewDataBinding>(@LayoutRes val layoutRes: Int)
         _binding = null
     }
 
-    fun LifecycleOwner.repeatWhenUiStarted(block: suspend () -> Unit) {
+    fun LifecycleOwner.repeatWhenUiStarted(block: suspend CoroutineScope.() -> Unit) {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                block.invoke()
+                block()
             }
         }
     }

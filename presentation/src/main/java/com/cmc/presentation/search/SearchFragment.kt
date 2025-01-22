@@ -1,8 +1,11 @@
 package com.cmc.presentation.search
 
+import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -15,8 +18,10 @@ import com.cmc.presentation.databinding.ContentSheetSortSelectBinding
 import com.cmc.presentation.databinding.FragmentSearchBinding
 import dagger.hilt.android.AndroidEntryPoint
 import com.cmc.presentation.search.SearchViewModel.SearchStatus
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_search) {
@@ -27,28 +32,28 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
 
     override fun initObserving() {
         repeatWhenUiStarted {
-            viewModel.state.collectLatest { state ->
-                when (state.searchStatus) {
-                    SearchStatus.IDLE -> showSearchBarOnly(state.query)
-                    SearchStatus.LOADING -> { }
-                    SearchStatus.SUCCESS -> { }
-                    SearchStatus.EMPTY -> {
-                        showNoResult(state.query)
-                    }
-                    SearchStatus.ERROR -> { }
-                    SearchStatus.LOADED -> {
-                        showSearchResults(state.query)
-                    }
-                }
-                spotThumbnailAdapter.submitData(state.results)
-            }
-        }
+            launch {
+                viewModel.state.collectLatest { state ->
+                    updateSortText(state.sortType.text)
 
-        repeatWhenUiStarted {
-            viewModel.sideEffect.collect { effect ->
-                when (effect) {
-                    is SearchViewModel.SearchSideEffect.ShowToast -> {
-                        showToast(effect.message)
+                    when (state.searchStatus) {
+                        SearchStatus.IDLE -> showSearchBarOnly(state.query)
+                        SearchStatus.LOADING -> { }
+                        SearchStatus.SUCCESS -> { }
+                        SearchStatus.EMPTY -> showNoResult(state.query)
+                        SearchStatus.ERROR -> { }
+                        SearchStatus.LOADED -> showSearchResults(state.query)
+                    }
+                    spotThumbnailAdapter.submitData(state.results)
+                }
+            }
+
+            launch {
+                viewModel.sideEffect.collect { effect ->
+                    when (effect) {
+                        is SearchViewModel.SearchSideEffect.ShowToast -> {
+                            showToast(effect.message)
+                        }
                     }
                 }
             }
@@ -65,6 +70,29 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
                     ContentSheetSortSelectBinding.inflate(LayoutInflater.from(requireContext()))
                 ) { dialog ->
                     with(dialog) {
+                        fun getTextColor(isSelected: Boolean): Int {
+                            val colorId = if (isSelected) com.cmc.design.R.color.black else com.cmc.design.R.color.text_disabled
+                            return context.getColor(colorId)
+                        }
+
+                        val type = viewModel.getSortType()
+
+                        tvSortByDistance.apply {
+                            setTextColor(getTextColor(type == SearchViewModel.SortType.DISTANCE))
+                            setOnClickListener {
+                                viewModel.setSortType(SearchViewModel.SortType.DISTANCE)
+                                hide()
+                            }
+                        }
+
+                        tvSortByRecommend.apply {
+                            setTextColor(getTextColor(type == SearchViewModel.SortType.RECOMMEND))
+                            setOnClickListener {
+                                viewModel.setSortType(SearchViewModel.SortType.RECOMMEND)
+                                hide()
+                            }
+                        }
+
                         show()
                     }
                 }
@@ -145,6 +173,9 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
         }
     }
 
+    private fun updateSortText(sortText: String) {
+        binding.tvSpotResultSortBy.text = sortText
+    }
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()

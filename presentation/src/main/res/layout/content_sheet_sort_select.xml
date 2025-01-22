@@ -19,6 +19,7 @@
         android:background="@color/gray_20"/>
 
     <TextView
+        android:id="@+id/tv_sort_by_distance"
         android:layout_width="match_parent"
         style="@style/subtitle_small"
         android:textColor="@color/black"
@@ -32,6 +33,7 @@
         android:background="@color/gray_20"/>
 
     <TextView
+        android:id="@+id/tv_sort_by_recommend"
         android:layout_width="match_parent"
         style="@style/subtitle_small"
         android:textColor="@color/text_disabled"

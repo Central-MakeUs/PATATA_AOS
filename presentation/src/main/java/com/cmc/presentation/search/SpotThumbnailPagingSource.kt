@@ -1,5 +1,4 @@
 package com.cmc.presentation.search
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import kotlinx.coroutines.delay
@@ -60,7 +59,7 @@ class SpotPagingSource(
             // 정렬 적용
             val sortedData = when (sortType) {
                 SearchViewModel.SortType.DISTANCE -> filteredData.sortedBy { it.distance }
-                SearchViewModel.SortType.ARCHIVE -> filteredData.sortedByDescending { it.scraps }
+                SearchViewModel.SortType.RECOMMEND -> filteredData.sortedByDescending { it.scraps }
             }
 
             val startIndex = (page - 1) * params.loadSize
