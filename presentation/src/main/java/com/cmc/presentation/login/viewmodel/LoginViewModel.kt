@@ -1,19 +1,15 @@
 package com.cmc.presentation.login.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.cmc.domain.auth.usecase.LoginUseCase
 import com.cmc.domain.exception.ApiException
 import com.cmc.presentation.login.model.UserUiModel
 import com.cmc.presentation.login.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,14 +17,14 @@ class LoginViewModel @Inject constructor(
     private val googleLoginUseCase: LoginUseCase,
 ): ViewModel() {
 
-    private val _userState = MutableStateFlow<UserUiModel?>(null)
-    val userState: StateFlow<UserUiModel?> = _userState
+    private val _state = MutableStateFlow<LoginState>(LoginState.Initialize)
+    val state: StateFlow<LoginState> = _state.asStateFlow()
 
     suspend fun googleLogin(idToken: String) {
         googleLoginUseCase(idToken)
             .collectLatest { result ->
                 result.onSuccess { user ->
-                    _userState.emit(user.toUiModel())
+                    _state.emit(LoginState.Success)
                 }.onFailure { error ->
                     when(error) {
                         is ApiException.NotFound -> { }
@@ -38,4 +34,10 @@ class LoginViewModel @Inject constructor(
                 }
             }
     }
+}
+
+sealed interface LoginState {
+    data object Initialize : LoginState
+    data object Success : LoginState
+    class Error(val message : String) : LoginState
 }

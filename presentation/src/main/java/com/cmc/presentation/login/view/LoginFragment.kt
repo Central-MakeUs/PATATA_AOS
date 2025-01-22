@@ -10,16 +10,17 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentLoginBinding
 import com.cmc.presentation.login.LoginManager
+import com.cmc.presentation.login.viewmodel.LoginState
 import com.cmc.presentation.login.viewmodel.LoginViewModel
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login) {
@@ -28,14 +29,11 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
     private val loginManager = LoginManager()
 
     override fun initView() {
-        binding.btnNext.setOnClickListener {
-            (activity as GlobalNavigation).navigateHome()
-        }
         setLoginButton()
     }
 
     private fun setLoginButton() {
-        binding.btnGoogleLogin.setOnClickListener {
+        binding.layoutGoogleLogin.setOnClickListener {
             repeatWhenUiStarted {
                 try {
                     startForResult.launch(
@@ -54,8 +52,15 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
 
     override fun initObserving() {
         repeatWhenUiStarted {
-            viewModel.userState.collect {
-                binding.tvLogin.text = it?.nickName ?: "Null"
+            viewModel.state.collect { state  ->
+                when (state) {
+                    is LoginState.Success -> {
+                        withContext(Dispatchers.Main) {
+                            (activity as GlobalNavigation).navigateHome()
+                        }
+                    }
+                    else -> {}
+                }
             }
         }
     }
