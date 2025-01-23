@@ -5,4 +5,5 @@ interface GlobalNavigation {
     fun navigateLogin()
     fun navigateHome()
     fun navigateSearch()
+    fun navigateSpotDetail(spotId: Int)
 }

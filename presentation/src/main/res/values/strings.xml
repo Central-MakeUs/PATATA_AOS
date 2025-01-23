@@ -6,6 +6,10 @@
     <string name="title_category_recommend">카테고리별 추천</string>
     <string name="title_today_spot_recommend">오늘의 추천 스팟</string>
     <string name="title_search_content">검색 내용</string>
+    <string name="title_complaint_post">게시글 신고하기</string>
+    <string name="title_complaint_user">사용자 신고하기</string>
+    <string name="title_edit_post">게시글 수정하기</string>
+    <string name="title_delete">삭제하기</string>
 
     <string name="category_recommend">작가 추천</string>
     <string name="category_snap">스냅 스팟</string>

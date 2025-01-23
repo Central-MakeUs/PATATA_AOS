@@ -8,6 +8,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.cmc.common.base.GlobalNavigation
+import com.cmc.common.constants.NavigationKeys
 import com.cmc.patata.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -67,8 +68,11 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     override fun navigateLogin() { navigate(R.id.navigate_login) }
     override fun navigateHome() { navigate(R.id.nav_home) }
     override fun navigateSearch() { navigate(R.id.nav_search) }
+    override fun navigateSpotDetail(spotId: Int) {
+        navigate(R.id.nav_spot_detail, Bundle().apply { putInt(NavigationKeys.SPOT_DETAIL_ARGUMENT_SPOT_ID, spotId) })
+    }
 
-    private fun navigate(navId: Int) {
-        navHostFragment.navController.navigate(navId)
+    private fun navigate(navId: Int, bundle: Bundle? = null) {
+        navHostFragment.navController.navigate(navId, bundle)
     }
 }

@@ -83,4 +83,8 @@ dependencies {
     // Paging3
     implementation(libs.androidx.paging.runtime.ktx)
 
+    // ViewPager
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.dotsindicator)
+
 }

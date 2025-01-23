@@ -1,6 +1,7 @@
 [versions]
 agp = "8.7.3"
 converterGson = "2.11.0"
+dotsindicator = "5.0"
 firebaseBom = "33.7.0"
 glide = "4.16.0"
 hiltAndroid = "2.48"
@@ -26,11 +27,14 @@ okhttp = "4.12.0"
 pagingRuntimeKtx = "3.3.5"
 retrofit = "2.11.0"
 playServicesAuth = "21.3.0"
+viewpager2 = "1.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "pagingRuntimeKtx" }
+androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+dotsindicator = { module = "com.tbuonomo:dotsindicator", version.ref = "dotsindicator" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }

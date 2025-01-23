@@ -30,4 +30,12 @@
 
         <attr name="isEnabled" format="boolean"/>
     </declare-styleable>
+
+    <!-- PatataEditor 커스텀 속성 -->
+    <declare-styleable name="PatataEditor">
+        <attr name="editorStyle" format="enum">
+            <enum name="light" value="0"/>
+            <enum name="dark" value="1"/>
+        </attr>
+    </declare-styleable>
 </resources>
