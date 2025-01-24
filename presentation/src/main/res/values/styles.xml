@@ -1,16 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="ChipTabLayout" parent="Widget.Design.TabLayout">
-        <item name="tabBackground">@drawable/selector_tab</item>
-        <item name="tabTextAppearance">@style/caption_medium</item>
-        <item name="tabTextColor">@color/text_info</item>
-        <item name="tabSelectedTextColor">@color/blue_100</item>
-        <item name="tabMinWidth">30dp</item>
-        <item name="tabPaddingStart">16dp</item>
-        <item name="tabPaddingEnd">16dp</item>
-        <item name="tabIndicatorHeight">0dp</item>
-        <item name="tabRippleColor">@color/transparent</item>
-        <item name="tabMode">scrollable</item>
-    </style>
 
 </resources>

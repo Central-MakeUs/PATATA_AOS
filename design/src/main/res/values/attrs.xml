@@ -30,7 +30,6 @@
             <enum name="transparent" value="0"/>
             <enum name="white" value="1"/>
         </attr>
-
     </declare-styleable>
 
 
@@ -50,5 +49,15 @@
             <enum name="light" value="0"/>
             <enum name="dark" value="1"/>
         </attr>
+    </declare-styleable>
+
+    <!-- CustomTab Layout 커스텀 속성 -->
+    <declare-styleable name="CustomTabLayout">
+        <attr name="customTabIndicatorColor" format="color"/>
+        <attr name="customTabSelectedTextColor" format="color"/>
+        <attr name="customTabUnselectedTextColor" format="color"/>
+        <attr name="customTabBackground" format="reference"/>
+        <attr name="customTabSelectedTextAppearance" format="reference"/>
+        <attr name="customTabUnselectedTextAppearance" format="reference"/>
     </declare-styleable>
 </resources>
