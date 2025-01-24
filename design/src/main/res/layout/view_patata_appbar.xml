@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         app:barrierDirection="end"
         app:barrierAllowsGoneWidgets="false"
-        app:constraint_referenced_ids="iv_back_arrow"/>
+        app:constraint_referenced_ids="iv_back_arrow, iv_list, iv_map"/>
 
     <!-- Head Icon Area -->
 
@@ -40,6 +40,29 @@
         android:src="@drawable/ic_back_arrow"
         android:contentDescription="@string/img_desc_spot_archive"
         android:paddingEnd="6dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@+id/appbar_top_barrier"
+        app:layout_constraintBottom_toBottomOf="@+id/appbar_bottom_barrier"/>
+
+    <ImageView
+        android:id="@+id/iv_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_list"
+        android:contentDescription="@string/img_desc_spot_archive"
+        android:paddingEnd="6dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@+id/appbar_top_barrier"
+        app:layout_constraintBottom_toBottomOf="@+id/appbar_bottom_barrier"/>
+
+    <ImageView
+        android:id="@+id/iv_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_map"
+        android:contentDescription="@string/img_desc_spot_archive"
+        android:paddingEnd="6dp"
+        android:visibility="gone"
         app:layout_constraintTop_toTopOf="@+id/appbar_top_barrier"
         app:layout_constraintBottom_toBottomOf="@+id/appbar_bottom_barrier"/>
 

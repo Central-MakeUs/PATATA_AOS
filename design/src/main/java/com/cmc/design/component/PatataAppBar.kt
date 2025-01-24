@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import com.cmc.design.R
 import com.cmc.design.databinding.ViewPatataAppbarBinding
 
@@ -32,32 +33,81 @@ class PatataAppBar @JvmOverloads constructor(
     }
 
     private fun initAttributes(context: Context, attrs: AttributeSet?) {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.PatataAppBar)
+        context.obtainStyledAttributes(attrs, R.styleable.PatataAppBar).apply {
+            try {
+                val headType = getInt(R.styleable.PatataAppBar_headButtonType, -1)
+                bodyType = when (getInt(R.styleable.PatataAppBar_bodyType, -1)) {
+                    0 -> BodyType.MAIN
+                    1 -> BodyType.SEARCH
+                    else -> BodyType.TITLE
+                }
+                val footerType = getInt(R.styleable.PatataAppBar_footButtonType, -1)
 
-        // 1. Body 타입 설정 (main, searchbar, title)
-        bodyType = when (typedArray.getInt(R.styleable.PatataAppBar_bodyType, -1)) {
-            0 -> BodyType.MAIN
-            1 -> BodyType.SEARCH
-            else -> BodyType.TITLE
+                val bgStyle = getInt(R.styleable.PatataAppBar_appBarBackgroundStyle, 0)
+                val searchBarStyle = getInt(R.styleable.PatataAppBar_appbarSearchBarStyle, 0)
+
+                setHead(headType)
+                setBody(bodyType)
+                setFooter(footerType)
+
+                applySearchBarStyle(searchBarStyle)
+                applyBackgroundStyle(bgStyle)
+
+            } finally {
+                recycle()
+            }
+        }
+    }
+
+    private fun setHead(type: Int) {
+        fun setHeadViewVisible(
+            isBackVisible: Boolean = false,
+            isListVisible: Boolean = false,
+            isMapVisible: Boolean = false,
+        ) {
+            binding.ivBackArrow.isVisible = isBackVisible
+            binding.ivList.isVisible = isListVisible
+            binding.ivMap.isVisible = isMapVisible
         }
 
-        setBody()
-
-        // 2. Head 버튼 설정 (back, close, custom)
-        when (typedArray.getInt(R.styleable.PatataAppBar_headButtonType, -1)) {
+        when (type) {
             0 -> { // back
-                binding.ivBackArrow.visibility = View.VISIBLE
+                setHeadViewVisible(isBackVisible = true)
             }
-            1 -> { // close
-                binding.ivBackArrow.visibility = View.GONE
+            1 -> { // list
+                setHeadViewVisible(isListVisible = true)
+            }
+            2 -> { // map
+                setHeadViewVisible(isMapVisible = true)
             }
             else -> { // none or custom
-                binding.ivBackArrow.visibility = View.GONE
+                setHeadViewVisible()
             }
         }
+    }
 
-        // 3. Foot 버튼 설정 (complaint, more)
-        when (typedArray.getInt(R.styleable.PatataAppBar_footButtonType, -1)) {
+    private fun setBody(bodyType: BodyType) {
+        when (bodyType) {
+            BodyType.MAIN -> {
+                binding.ivMainTextLogo.visibility = View.VISIBLE
+                binding.searchbar.visibility = View.GONE
+                binding.tvAppbarTitle.visibility = View.GONE
+            }
+            BodyType.SEARCH -> {
+                binding.ivMainTextLogo.visibility = View.GONE
+                binding.searchbar.visibility = View.VISIBLE
+                binding.tvAppbarTitle.visibility = View.GONE
+            }
+            BodyType.TITLE -> {
+                binding.ivMainTextLogo.visibility = View.GONE
+                binding.searchbar.visibility = View.GONE
+                binding.tvAppbarTitle.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun setFooter(type: Int) {
+        when (type) {
             0 -> { // complaint
                 binding.ivComplaint.visibility = View.VISIBLE
                 binding.ivMore.visibility = View.GONE
@@ -71,30 +121,19 @@ class PatataAppBar @JvmOverloads constructor(
                 binding.ivMore.visibility = View.GONE
             }
         }
-
-        typedArray.recycle()
     }
 
-    private fun setBody() {
-        when (bodyType) {
-            BodyType.MAIN -> {
-                binding.ivMainTextLogo.visibility = View.VISIBLE
-                binding.searchbar.visibility = View.GONE
-                binding.tvAppbarTitle.visibility = View.GONE
-                binding.layoutRoot.background = AppCompatResources.getDrawable(context, R.color.transparent)
-            }
-            BodyType.SEARCH -> {
-                binding.ivMainTextLogo.visibility = View.GONE
-                binding.searchbar.visibility = View.VISIBLE
-                binding.tvAppbarTitle.visibility = View.GONE
-                binding.layoutRoot.background = AppCompatResources.getDrawable(context, R.color.transparent)
-            }
-            BodyType.TITLE -> {
-                binding.ivMainTextLogo.visibility = View.GONE
-                binding.searchbar.visibility = View.GONE
-                binding.tvAppbarTitle.visibility = View.VISIBLE
-                binding.layoutRoot.background = AppCompatResources.getDrawable(context, R.color.white)
-            }
+    private fun applySearchBarStyle(style: Int) {
+        when (style) {
+            0 -> { binding.searchbar.setMode(false) }
+            1 -> { binding.searchbar.setMode(true) }
+        }
+    }
+
+    private fun applyBackgroundStyle(style: Int) {
+        when (style) {
+            0 -> { binding.layoutRoot.background = AppCompatResources.getDrawable(context, R.color.transparent) }
+            1 -> { binding.layoutRoot.background = AppCompatResources.getDrawable(context, R.color.white) }
         }
     }
 
@@ -213,7 +252,7 @@ class PatataAppBar @JvmOverloads constructor(
      */
     fun setBodyType(type: BodyType) {
         bodyType = type
-        setBody()
+        setBody(bodyType)
     }
 
     fun getBodyType(): BodyType = bodyType
