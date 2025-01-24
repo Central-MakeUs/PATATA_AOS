@@ -8,10 +8,12 @@
     app:startDestination="@id/nav_splash">
     -->
 
+    <include app:graph="@navigation/nav_home"/>
+    <include app:graph="@navigation/nav_map"/>
+
     <include app:graph="@navigation/nav_splash"/>
     <include app:graph="@navigation/nav_onboarding"/>
     <include app:graph="@navigation/nav_login"/>
-    <include app:graph="@navigation/nav_home"/>
     <include app:graph="@navigation/nav_search"/>
     <include app:graph="@navigation/nav_spot_detail"/>
 

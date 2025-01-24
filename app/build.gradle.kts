@@ -23,6 +23,8 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        resValue("string", "naver_map_client_id", properties["NAVER_MAP_CLIENT_ID"] as String)
     }
     signingConfigs {
         getByName("debug") {
@@ -109,5 +111,8 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+
+    // Naver
+    implementation(libs.map.sdk)
 
 }

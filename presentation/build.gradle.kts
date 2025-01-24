@@ -87,4 +87,6 @@ dependencies {
     implementation(libs.androidx.viewpager2)
     implementation(libs.dotsindicator)
 
+    // Naver
+    implementation(libs.map.sdk)
 }

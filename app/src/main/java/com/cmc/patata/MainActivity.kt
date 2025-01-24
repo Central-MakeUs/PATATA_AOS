@@ -10,6 +10,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.cmc.common.base.GlobalNavigation
 import com.cmc.common.constants.NavigationKeys
 import com.cmc.patata.databinding.ActivityMainBinding
+import com.cmc.presentation.map.AroundMeFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -50,7 +51,8 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         // TODO : 화면별 Bottom Navigation Visible 여부 확인 후 처리
 
         when (destination.id) {
-            com.cmc.presentation.R.id.HomeFragment
+            com.cmc.presentation.R.id.HomeFragment,
+            com.cmc.presentation.R.id.AroundMeFragment
              -> { setBottomNavVisibility(true) }
             else -> { setBottomNavVisibility(false) }
         }
