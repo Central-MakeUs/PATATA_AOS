@@ -51,6 +51,17 @@
         </attr>
     </declare-styleable>
 
+    <!-- PatataEditText 커스텀 속성 -->
+    <declare-styleable name="PatataEditText">
+        <attr name="customEditTextStyle" format="enum">
+            <enum name="light" value="0"/>
+            <enum name="dark" value="1"/>
+        </attr>
+
+        <attr name="showCancelButton" format="boolean"/>
+        <attr name="editTextHint" format="reference"/>
+    </declare-styleable>
+
     <!-- CustomTab Layout 커스텀 속성 -->
     <declare-styleable name="CustomTabLayout">
         <attr name="customTabIndicatorColor" format="color"/>

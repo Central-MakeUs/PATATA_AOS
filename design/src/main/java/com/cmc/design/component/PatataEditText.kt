@@ -1,0 +1,175 @@
+package com.cmc.design.component
+
+import android.content.Context
+import android.graphics.drawable.GradientDrawable
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.AttributeSet
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import com.cmc.design.R
+import com.cmc.design.databinding.ViewPatataEditTextBinding
+
+class PatataEditText @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr) {
+
+    private val binding: ViewPatataEditTextBinding =
+        ViewPatataEditTextBinding.inflate(LayoutInflater.from(context), this, true)
+
+    private var onSubmitListener: ((String) -> Unit)? = null
+    private var onTextChangeListener: ((String) -> Unit)? = null
+
+    private var helperView: PatataEditTextHelperView? = null
+
+    init {
+        applyStyle(false)
+        initAttributes(context, attrs)
+        initListeners()
+    }
+
+    private fun initAttributes(context: Context, attrs: AttributeSet?) {
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.PatataEditText)
+
+        when (typedArray.getInt(R.styleable.PatataEditText_customEditTextStyle, 0)) {
+            0 -> applyStyle(false)
+            1 -> applyStyle(true)
+        }
+
+        setCancelButtonVisibility(
+            typedArray.getBoolean(R.styleable.PatataEditText_showCancelButton, false)
+        )
+
+        setHint(typedArray.getText(R.styleable.PatataEditText_editTextHint).toString())
+
+        typedArray.recycle()
+    }
+
+    private fun applyStyle(isDarkMode: Boolean) {
+        val backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.bg_rounded_8) as GradientDrawable
+
+        if (isDarkMode) {
+            backgroundDrawable.setColor(ContextCompat.getColor(context, R.color.gray_20))  // 다크 모드
+        } else {
+            backgroundDrawable.setColor(ContextCompat.getColor(context, R.color.white))  // 라이트 모드 배경
+        }
+
+        binding.root.background = backgroundDrawable
+    }
+
+    private fun setCancelButtonVisibility(isVisible: Boolean) {
+        binding.ivCancel.isVisible = isVisible
+    }
+
+
+    private fun initListeners() {
+        binding.ivCancel.setOnClickListener {
+            clearEditText()
+        }
+
+        // 키보드 Enter 키 입력 시 검색 실행 (활성화 상태에서만)
+        binding.etEditTextInput.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                actionId == EditorInfo.IME_ACTION_SEARCH ||
+                (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+                hideKeyboard()
+                performSubmit()
+                true
+            } else {
+                false
+            }
+        }
+
+        // 입력값 변경 리스너 (활성화 상태에서만)
+        binding.etEditTextInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                setErrorState(false)
+                onTextChangeListener?.invoke(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
+    private fun performSubmit() {
+        val query = binding.etEditTextInput.text.toString().trim()
+        onSubmitListener?.invoke(query)
+    }
+
+    private fun clearEditText() {
+        binding.etEditTextInput.setText("")
+    }
+
+    private fun setHint(hint: String?) {
+        binding.etEditTextInput.hint = hint
+    }
+
+    /**
+     * 검색 실행 리스너 설정
+     */
+    fun setOnSubmitListener(listener: ((String) -> Unit)? = null) {
+        onSubmitListener = listener
+    }
+
+    /**
+     * 입력값 변경 리스너 설정
+     */
+    fun setOnTextChangeListener(listener: ((String) -> Unit)? = null) {
+        onTextChangeListener = listener
+    }
+
+    /**
+     * 검색어 초기화
+     */
+    fun clearEditor() {
+        binding.etEditTextInput.text.clear()
+    }
+
+    /**
+     * 검색어 설정
+     */
+    fun setEditorText(text: String) {
+        binding.etEditTextInput.setText(text)
+    }
+    /**
+     * 검색바 포커스 및 키보드 노출
+     */
+    fun focusEditorInput() {
+        binding.etEditTextInput.requestFocus()
+        showKeyboard()
+    }
+
+    fun setErrorState(isError: Boolean) {
+        helperView?.setVisible(isError)
+        binding.layoutEditTextRoot.setBackgroundResource(
+            if (isError) {
+                R.drawable.bg_rounded_8_stroke_red
+            } else {
+                R.drawable.bg_rounded_8
+            }
+        )
+        binding.layoutEditTextRoot.requestLayout()
+
+    }
+
+    fun connectHelperView(patataEditTextHelperView: PatataEditTextHelperView) {
+        helperView = patataEditTextHelperView
+    }
+
+    private fun hideKeyboard() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.etEditTextInput.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+    }
+
+    private fun showKeyboard() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(binding.etEditTextInput, InputMethodManager.SHOW_IMPLICIT)
+    }
+}
