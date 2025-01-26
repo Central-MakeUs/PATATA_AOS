@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.cmc.design.R
+import com.cmc.design.databinding.ViewPatataEditTextHelperBinding
 
 class PatataEditTextHelperView@JvmOverloads constructor(
     context: Context,
@@ -15,17 +16,15 @@ class PatataEditTextHelperView@JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
-    private val textView: TextView
+    private val binding: ViewPatataEditTextHelperBinding =
+        ViewPatataEditTextHelperBinding.inflate(LayoutInflater.from(context), this)
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_patata_edit_text_helper, this, true)
-        textView = findViewById(R.id.tv_helper)
-
         initText()
     }
 
     private fun initText() {
-        with(textView) {
+        with(binding.tvHelper) {
             setTextColor(ContextCompat.getColor(context, R.color.red_100))
             setTextAppearance(R.style.caption_medium)
         }
@@ -37,14 +36,14 @@ class PatataEditTextHelperView@JvmOverloads constructor(
 
     // 텍스트 설정 메서드
     fun setText(text: String) {
-        textView.text = text
+        binding.tvHelper.text = text
     }
 
     fun setCustomTextColor(color: Int) {
-        textView.setTextColor(color)
+        binding.tvHelper.setTextColor(color)
     }
 
     fun setCustomTextSize(size: Float) {
-        textView.textSize = size
+        binding.tvHelper.textSize = size
     }
 }
