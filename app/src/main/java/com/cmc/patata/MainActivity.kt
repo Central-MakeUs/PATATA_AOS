@@ -66,8 +66,8 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     * Bottom Navigation 에 포함 되지 않은, Feature 이동을 담당
      */
 
-    override fun navigateOnBoarding() { navigate(R.id.navigate_onboarding) }
-    override fun navigateLogin() { navigate(R.id.navigate_login) }
+    override fun navigateOnBoarding() { navigate(R.id.nav_onboarding) }
+    override fun navigateLogin() { navigate(R.id.nav_login) }
     override fun navigateHome() { navigate(R.id.nav_home) }
     override fun navigateSearch() { navigate(R.id.nav_search) }
     override fun navigateSpotDetail(spotId: Int) {

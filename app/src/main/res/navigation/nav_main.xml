@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/nav_home">
+    app:startDestination="@id/nav_onboarding">
     <!--
     app:startDestination="@id/nav_splash">
     -->
@@ -18,13 +18,13 @@
     <include app:graph="@navigation/nav_spot_detail"/>
 
     <action
-        android:id="@+id/navigate_onboarding"
+        android:id="@+id/nav_onboarding"
         app:destination="@+id/nav_onboarding"
         app:popUpTo="@layout/fragment_splash"
         app:popUpToInclusive="true"/>
 
     <action
-        android:id="@+id/navigate_login"
+        android:id="@+id/nav_login"
         app:destination="@+id/nav_login"
         app:popUpTo="@layout/fragment_onboarding"
         app:popUpToInclusive="true"/>
