@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
+import androidx.navigation.fragment.findNavController
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
 import com.cmc.domain.exception.ApiException
@@ -38,14 +39,16 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
     private val loginManager = LoginManager()
 
     override fun initView() {
-
+        findNavController().navigate(R.id.navigate_profile_setting)
         loginAnimationStart()
         setLoginButton()
 
     }
 
     private fun setLoginButton() {
-
+        binding.layoutGoogleLogin.setOnClickListener {
+            findNavController().navigate(R.id.navigate_profile_setting)
+        }
         binding.layoutGoogleLogin.setOnClickListener {
             repeatWhenUiStarted {
                 try {
@@ -70,7 +73,11 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
                 when (state) {
                     is LoginState.Success -> {
                         withContext(Dispatchers.Main) {
-                            (activity as GlobalNavigation).navigateHome()
+                            state.user.nickName?.let {
+                                (activity as GlobalNavigation).navigateHome()
+                            } ?: run {
+                                findNavController().navigate(R.id.navigate_profile_setting)
+                            }
                         }
                     }
                     else -> {}
@@ -93,7 +100,7 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
                     val credential = loginManager.oneTapClient.getSignInCredentialFromIntent(intent)
                     credential.googleIdToken?.let { idToken ->
                         repeatWhenUiStarted {
-                            viewModel.googleLogin(idToken)
+                            val name = viewModel.googleLogin(idToken)
                         }
                     }
                 }

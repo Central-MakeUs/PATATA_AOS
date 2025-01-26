@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class UserResponseDto(
     @SerializedName("nickName")
-    val nickName: String,
+    var nickName: String? = null,
     @SerializedName("email")
     val email: String,
     @SerializedName("accessToken")

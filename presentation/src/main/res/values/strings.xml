@@ -10,6 +10,7 @@
     <string name="title_complaint_user">사용자 신고하기</string>
     <string name="title_edit_post">게시글 수정하기</string>
     <string name="title_delete">삭제하기</string>
+    <string name="title_profile_setting">프로필 설정</string>
 
     <string name="category_recommend">작가 추천</string>
     <string name="category_snap">스냅 스팟</string>
@@ -22,10 +23,18 @@
     <string name="img_desc_category_night_view">시크한 야경 카테고리 이미지</string>
     <string name="img_desc_category_everyday_life">일상 속 공간 카테고리 이미지</string>
     <string name="img_desc_category_nature">싱그러운 자연 카테고리 이미지</string>
+
     <string name="show_more_arrow"><![CDATA[더보기 >]]></string>
     <string name="show_more">더보기</string>
+    <string name="complete">완료</string>
+    <string name="confirm">확인</string>
 
     <string name="sort_by_distance">거리순</string>
     <string name="sort_by_recommendation">추천순</string>
+    <string name="title_changeable_profile">프로필을 바꿀 수 있어요.</string>
+    <string name="title_choose_nickname">닉네임을 정해주세요!</string>
 
+    <string name="hint_choose_nickname">최소 2글자, 최대 10로 입력해 주세요</string>
+    <string name="title_signup_success">가입이 완료되었어요!</string>
+    <string name="desc_signup_success">파타타 회원이 되신 것을 환영해요.\n타타와 함께 최고의 스팟을 찾아봐요!</string>
 </resources>

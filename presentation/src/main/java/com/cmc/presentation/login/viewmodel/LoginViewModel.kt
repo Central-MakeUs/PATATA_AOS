@@ -24,7 +24,7 @@ class LoginViewModel @Inject constructor(
         googleLoginUseCase(idToken)
             .collectLatest { result ->
                 result.onSuccess { user ->
-                    _state.emit(LoginState.Success)
+                    _state.emit(LoginState.Success(user.toUiModel()))
                 }.onFailure { error ->
                     when(error) {
                         is ApiException.NotFound -> { }
@@ -38,6 +38,6 @@ class LoginViewModel @Inject constructor(
 
 sealed interface LoginState {
     data object Initialize : LoginState
-    data object Success : LoginState
+    class Success(val user: UserUiModel) : LoginState
     class Error(val message : String) : LoginState
 }
