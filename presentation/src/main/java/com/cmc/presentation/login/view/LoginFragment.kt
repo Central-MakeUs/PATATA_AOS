@@ -16,7 +16,6 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
@@ -29,7 +28,6 @@ import com.cmc.presentation.login.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
@@ -39,7 +37,6 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
     private val loginManager = LoginManager()
 
     override fun initView() {
-        findNavController().navigate(R.id.navigate_profile_setting)
         loginAnimationStart()
         setLoginButton()
 
@@ -109,7 +106,7 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
 
 
     private fun loginAnimationStart() {
-        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+        repeatWhenUiStarted {
             repeat(5) {
                 delay(2000)
                 animateViewBounce(binding.ivAnimationPrinter)
