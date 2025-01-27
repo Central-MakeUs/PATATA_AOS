@@ -20,11 +20,4 @@
     <string name="hint_comment">댓글을 입력하세요</string>
 
     <string name="search_no_result_text">"'"%s"'"에 대한\n검색 결과가 없습니다.</string>
-
-    <string name="category_all">전체</string>
-    <string name="category_recommend">작가 추천</string>
-    <string name="category_snap">스냅 스팟</string>
-    <string name="category_night_view">시크한 야경</string>
-    <string name="category_everyday_life">일상 속 공간</string>
-    <string name="category_nature">싱그러운 자연</string>
 </resources>

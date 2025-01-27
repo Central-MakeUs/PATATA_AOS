@@ -12,6 +12,7 @@
     <string name="title_delete">삭제하기</string>
     <string name="title_profile_setting">프로필 설정</string>
 
+    <string name="category_all">전체</string>
     <string name="category_recommend">작가 추천</string>
     <string name="category_snap">스냅 스팟</string>
     <string name="category_night_view">시크한 야경</string>

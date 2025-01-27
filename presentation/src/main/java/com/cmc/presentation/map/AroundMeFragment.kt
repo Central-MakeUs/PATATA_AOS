@@ -2,9 +2,10 @@ package com.cmc.presentation.map
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.util.Log
+import android.graphics.drawable.Drawable
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.cmc.common.base.BaseFragment
@@ -16,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import com.cmc.presentation.map.AroundMeViewModel.AroundMeSideEffect
+import com.cmc.presentation.model.SpotCategoryItem
 
 @AndroidEntryPoint
 class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_around_me) {
@@ -63,8 +65,11 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     }
 
     private fun setCategory() {
-        val categoryTabs: List<Pair<Int, Int?>> = SpotCategory.entries
-            .map { it.stringId to it.resId}
+        val categoryTabs: List<Pair<String, Drawable?>> = SpotCategory.entries
+            .map {
+                val item = SpotCategoryItem(it)
+                getString(item.getName()) to item.getIcon()?.let { resId -> ContextCompat.getDrawable(requireContext(), resId) }
+            }
 
         binding.tabMapFilter.setTabList(categoryTabs)
     }

@@ -1,13 +1,13 @@
 package com.cmc.design.component
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -29,7 +29,7 @@ class CustomTabLayout @JvmOverloads constructor(
         ViewCustomTabLayoutBinding.inflate(LayoutInflater.from(context), this, true)
 
     private val tabLayout: TabLayout = binding.tabLayout
-    private val tabList: MutableList<Pair<Int, Int?>> = mutableListOf()
+    private val tabList: MutableList<Pair<String, Drawable?>> = mutableListOf()
 
     private var textColor: Int = R.color.text_info
     private var tabBackground: Int = R.drawable.selector_tab
@@ -77,7 +77,7 @@ class CustomTabLayout @JvmOverloads constructor(
         }
     }
 
-    fun setTabList(tabs: List<Pair<Int, Int?>>) {
+    fun setTabList(tabs: List<Pair<String, Drawable?>>) {
         tabList.clear()
         tabList.addAll(tabs)
 
@@ -93,7 +93,7 @@ class CustomTabLayout @JvmOverloads constructor(
                     text = it.first,
                     textColor = textColor,
                     textAppearance = textAppearance,
-                    iconResId = it.second
+                    icon = it.second
                 )
             )
         }
@@ -101,10 +101,10 @@ class CustomTabLayout @JvmOverloads constructor(
 
     private fun newTabs(
         @DrawableRes background: Int,
-        @StringRes text: Int,
+        text: String,
         @ColorRes textColor: Int,
         @StyleRes textAppearance: Int,
-        @DrawableRes iconResId: Int?,
+        icon: Drawable?,
     ): Tab {
         return tabLayout.newTab().apply {
             setCustomView(
@@ -113,14 +113,14 @@ class CustomTabLayout @JvmOverloads constructor(
 
                     layoutRoot.background = AppCompatResources.getDrawable(context, background)
                     tabText.setTextColor(context.getColor(textColor))
-                    tabText.text = context.getString(text)
+                    tabText.text = text
                     tabText.setTextAppearance(textAppearance)
 
                     // Icon이 없다면 좌우 Padding 16dp이 되도록 추가 Margin 부여
-                    iconResId?.let { resId ->
+                    icon?.let {
                         layoutParams.setMargins(3.dp,0,0,0)
                         tabIcon.isVisible = true
-                        tabIcon.setImageResource(resId)
+                        tabIcon.setImageDrawable(it)
                     } ?: run {
                         layoutParams.setMargins(4.dp,0,4.dp,0)
                     }
