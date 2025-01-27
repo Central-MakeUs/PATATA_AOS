@@ -9,7 +9,7 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.cmc.common.base.BaseFragment
-import com.cmc.common.model.SpotCategory
+import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentAroundMeBinding
 import com.naver.maps.map.MapView
@@ -23,13 +23,21 @@ import com.cmc.presentation.model.SpotCategoryItem
 class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_around_me) {
 
     private val viewModel: AroundMeViewModel by viewModels()
+
     private lateinit var mapView: MapView
+    private lateinit var markerManager: MarkerManager
 
     override fun initObserving() {
         repeatWhenUiStarted {
             launch {
-                viewModel.state.collectLatest {
-
+                viewModel.state.collectLatest { state ->
+                    when (state.aroundMeStatus) {
+                        AroundMeViewModel.AroundMeStatus.LOADING -> {}
+                        AroundMeViewModel.AroundMeStatus.SUCCESS -> {
+                            markerManager.updateMarkersWithData(state.results)
+                        }
+                        AroundMeViewModel.AroundMeStatus.ERROR -> {}
+                    }
                 }
             }
 
@@ -54,13 +62,16 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     private fun setMap() {
         mapView = binding.viewMap
         mapView.getMapAsync { naverMap ->
+            viewModel.checkLocationPermission()
+
             naverMap.uiSettings.apply {
                 isZoomControlEnabled = false
                 isScaleBarEnabled = false
                 isLogoClickEnabled = false
             }
 
-            viewModel.checkLocationPermission()
+            markerManager = MarkerManager(naverMap)
+
         }
     }
 
@@ -76,7 +87,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     
     private fun setButton() {
         binding.layoutAddLocation.setOnClickListener {
-            viewModel.checkLocationPermission()
+            viewModel.getDumpData()
             // TODO: 장소 추가하기 화면으로 이동
         }
         
