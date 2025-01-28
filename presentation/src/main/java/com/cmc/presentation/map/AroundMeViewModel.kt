@@ -1,8 +1,9 @@
 package com.cmc.presentation.map
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.domain.location.GetCurrentLocationUseCase
+import com.cmc.domain.location.Location
 import com.cmc.presentation.model.SpotUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,7 +18,9 @@ import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-class AroundMeViewModel @Inject constructor(): ViewModel() {
+class AroundMeViewModel @Inject constructor(
+    private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
+): ViewModel() {
 
     private val _state = MutableStateFlow(AroundMeState())
     val state: StateFlow<AroundMeState> = _state.asStateFlow()
@@ -27,6 +30,25 @@ class AroundMeViewModel @Inject constructor(): ViewModel() {
 
     fun checkLocationPermission() {
         sendSideEffect(AroundMeSideEffect.RequestLocationPermission)
+    }
+
+    fun getCurrentLocation() {
+        viewModelScope.launch {
+            _state.emit(
+                state.value.copy(
+                    currentLocation = null
+                )
+            )
+
+            val result = getCurrentLocationUseCase.invoke()
+            result.onSuccess { location ->
+                _state.emit(
+                    state.value.copy(
+                        currentLocation = location
+                    )
+                )
+            }.onFailure { exception ->  }
+        }
     }
 
     fun getDumpData() {
@@ -141,7 +163,6 @@ class AroundMeViewModel @Inject constructor(): ViewModel() {
             _state.update {
                 state.value.copy(
                     results = dummySpots,
-                    aroundMeStatus = AroundMeStatus.SUCCESS,
                 )
             }
         }
@@ -154,16 +175,11 @@ class AroundMeViewModel @Inject constructor(): ViewModel() {
     }
 
     data class AroundMeState(
+        val currentLocation: Location? = null,
         val results: List<SpotUiModel>? = null,
         val errorMessage: String? = null,
-        val aroundMeStatus: AroundMeStatus = AroundMeStatus.LOADING
+        val isLoading: Boolean = false
     )
-
-    enum class AroundMeStatus {
-        LOADING,
-        SUCCESS,
-        ERROR,
-    }
 
     sealed class AroundMeSideEffect {
         data object RequestLocationPermission : AroundMeSideEffect()

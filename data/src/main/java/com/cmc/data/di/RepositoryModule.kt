@@ -1,7 +1,9 @@
 package com.cmc.data.di
 
 import com.cmc.data.auth.repository.AuthRepositoryImpl
+import com.cmc.data.location.LocationRepositoryImpl
 import com.cmc.domain.auth.repository.AuthRepository
+import com.cmc.domain.location.LocationRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -12,6 +14,9 @@ import dagger.hilt.components.SingletonComponent
 internal interface RepositoryModule {
 
     @Binds
-    fun provideRepositoryImpl(authRepository: AuthRepositoryImpl): AuthRepository
+    fun provideAuthRepositoryImpl(authRepository: AuthRepositoryImpl): AuthRepository
+
+    @Binds
+    fun provideLocationRepositoryImpl(locationRepository: LocationRepositoryImpl): LocationRepository
 
 }

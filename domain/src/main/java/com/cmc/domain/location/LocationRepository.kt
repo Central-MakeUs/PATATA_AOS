@@ -1,4 +1,9 @@
 package com.cmc.domain.location
 
-class LocationRepository {
+import kotlinx.coroutines.flow.Flow
+
+interface LocationRepository {
+
+    suspend fun getCurrentLocation(): Result<Location>
+
 }

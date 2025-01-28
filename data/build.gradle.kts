@@ -68,4 +68,7 @@ dependencies {
     // Security Crypto
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.security.crypto)
+
+    // Location
+    implementation(libs.play.services.location)
 }

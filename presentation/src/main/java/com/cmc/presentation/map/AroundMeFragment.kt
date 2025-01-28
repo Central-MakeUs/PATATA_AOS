@@ -3,12 +3,13 @@ package com.cmc.presentation.map
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.cmc.common.base.BaseFragment
+import com.cmc.domain.location.Location
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentAroundMeBinding
@@ -18,25 +19,29 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import com.cmc.presentation.map.AroundMeViewModel.AroundMeSideEffect
 import com.cmc.presentation.model.SpotCategoryItem
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraUpdate
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.OnMapReadyCallback
 
 @AndroidEntryPoint
-class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_around_me) {
+class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_around_me), OnMapReadyCallback {
 
     private val viewModel: AroundMeViewModel by viewModels()
 
     private lateinit var mapView: MapView
+    private lateinit var naverMap: NaverMap
     private lateinit var markerManager: MarkerManager
 
     override fun initObserving() {
         repeatWhenUiStarted {
             launch {
                 viewModel.state.collectLatest { state ->
-                    when (state.aroundMeStatus) {
-                        AroundMeViewModel.AroundMeStatus.LOADING -> {}
-                        AroundMeViewModel.AroundMeStatus.SUCCESS -> {
-                            markerManager.updateMarkersWithData(state.results)
-                        }
-                        AroundMeViewModel.AroundMeStatus.ERROR -> {}
+                    when {
+                        state.isLoading -> {}
+                        state.errorMessage != null -> {}
+                        state.results.isNullOrEmpty().not() -> { markerManager.updateMarkersWithData(state.results) }
+                        state.currentLocation != null -> { moveCameraPosition(state.currentLocation) }
                     }
                 }
             }
@@ -54,25 +59,25 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     }
 
     override fun initView() {
+        showLocationPermissionCheck()
         setMap()
         setCategory()
         setButton()
     }
 
+    private fun showLocationPermissionCheck() {
+        viewModel.checkLocationPermission()
+    }
+
     private fun setMap() {
         mapView = binding.viewMap
-        mapView.getMapAsync { naverMap ->
-            viewModel.checkLocationPermission()
+        mapView.getMapAsync(this)
+    }
 
-            naverMap.uiSettings.apply {
-                isZoomControlEnabled = false
-                isScaleBarEnabled = false
-                isLogoClickEnabled = false
-            }
-
-            markerManager = MarkerManager(naverMap)
-
-        }
+    private fun moveCameraPosition(location: Location) {
+        val latLng = LatLng(location.latitude, location.longitude)
+        val cameraUpdate = CameraUpdate.scrollTo(latLng)
+        naverMap.moveCamera(cameraUpdate)
     }
 
     private fun setCategory() {
@@ -92,7 +97,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
         }
         
         binding.ivCurrentLocation.setOnClickListener {
-            // TODO: 현재 위치로 지도 이동하기 구현
+            viewModel.getCurrentLocation()
         }
     }
 
@@ -115,6 +120,17 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
                 ContextCompat.checkSelfPermission(requireContext(), it) != PackageManager.PERMISSION_GRANTED
             }) {
             locationPermissionRequest.launch(permissions)
+        }
+    }
+
+    override fun onMapReady(map: NaverMap) {
+        naverMap = map
+        markerManager = MarkerManager(naverMap)
+
+        naverMap.uiSettings.apply {
+            isZoomControlEnabled = false
+            isScaleBarEnabled = false
+            isLogoClickEnabled = false
         }
     }
 }
