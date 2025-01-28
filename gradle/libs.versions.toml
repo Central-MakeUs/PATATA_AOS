@@ -1,6 +1,7 @@
 [versions]
 agp = "8.7.3"
 converterGson = "2.11.0"
+datastorePreferences = "1.1.2"
 dotsindicator = "5.0"
 firebaseBom = "33.7.0"
 glide = "4.16.0"
@@ -27,12 +28,15 @@ okhttp = "4.12.0"
 pagingRuntimeKtx = "3.3.5"
 retrofit = "2.11.0"
 playServicesAuth = "21.3.0"
+securityCrypto = "1.1.0-alpha06"
 viewpager2 = "1.1.0"
 mapSdk = "3.20.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "pagingRuntimeKtx" }
+androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 dotsindicator = { module = "com.tbuonomo:dotsindicator", version.ref = "dotsindicator" }

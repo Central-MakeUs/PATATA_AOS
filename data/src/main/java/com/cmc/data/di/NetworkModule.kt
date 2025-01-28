@@ -1,5 +1,6 @@
 package com.cmc.data.di
 
+import com.cmc.data.auth.TokenStorage
 import com.cmc.data.auth.remote.AuthApiService
 import com.cmc.data.base.ApiConfig.BASE_URL
 import dagger.Module
@@ -25,9 +26,19 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient =
+    fun provideAuthInterceptor(tokenStorage: TokenStorage): AuthInterceptor {
+        return AuthInterceptor(tokenStorage)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor,
+        authInterceptor: AuthInterceptor
+    ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(authInterceptor)
             .build()
 
     @Provides

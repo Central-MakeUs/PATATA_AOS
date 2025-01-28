@@ -10,11 +10,13 @@ import java.io.IOException
 
 suspend fun <T, R> apiRequestCatching(
     apiCall: suspend () -> ApiResponse<T>,
-    transform: (T) -> R
+    transform: (T) -> R,
+    successCallBack: suspend (T) ->  Unit = {},
 ): Result<R> {
     return runCatching {
         val response = apiCall()
         if (response.isSuccess && response.result != null) {
+            successCallBack(response.result)
             Result.success(transform(response.result))
         } else {
             Result.failure(ApiException.ServerError(response.message))

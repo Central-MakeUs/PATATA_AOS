@@ -44,9 +44,6 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
 
     private fun setLoginButton() {
         binding.layoutGoogleLogin.setOnClickListener {
-            findNavController().navigate(R.id.navigate_profile_setting)
-        }
-        binding.layoutGoogleLogin.setOnClickListener {
             repeatWhenUiStarted {
                 try {
                     startForResult.launch(
@@ -92,12 +89,15 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
 
     private val startForResult: ActivityResultLauncher<IntentSenderRequest> =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->
+            Log.e("testLog", "startResult || ${result.resultCode}  || ${result.resultCode == Activity.RESULT_OK}")
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.let { intent ->
                     val credential = loginManager.oneTapClient.getSignInCredentialFromIntent(intent)
                     credential.googleIdToken?.let { idToken ->
+
+                        Log.e("testLog", "googleIdToken $idToken")
                         repeatWhenUiStarted {
-                            val name = viewModel.googleLogin(idToken)
+                            viewModel.googleLogin(idToken)
                         }
                     }
                 }

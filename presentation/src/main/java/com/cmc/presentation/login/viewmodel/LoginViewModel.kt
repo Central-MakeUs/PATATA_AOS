@@ -3,7 +3,7 @@ package com.cmc.presentation.login.viewmodel
 import androidx.lifecycle.ViewModel
 import com.cmc.domain.auth.usecase.LoginUseCase
 import com.cmc.domain.exception.ApiException
-import com.cmc.presentation.login.model.UserUiModel
+import com.cmc.presentation.login.model.AuthResponseUiModel
 import com.cmc.presentation.login.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +38,6 @@ class LoginViewModel @Inject constructor(
 
 sealed interface LoginState {
     data object Initialize : LoginState
-    class Success(val user: UserUiModel) : LoginState
+    class Success(val user: AuthResponseUiModel) : LoginState
     class Error(val message : String) : LoginState
 }

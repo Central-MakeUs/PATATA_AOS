@@ -1,17 +1,17 @@
 package com.cmc.presentation.login.model
 
-import com.cmc.domain.auth.model.User
+import com.cmc.domain.auth.model.AuthResponse
 
-data class UserUiModel(
+data class AuthResponseUiModel(
     val nickName: String? = null,
     val email: String,
     val accessToken: String,
     val refreshToken: String,
 )
 
-fun User.toUiModel(): UserUiModel {
+fun AuthResponse.toUiModel(): AuthResponseUiModel {
     return this.run {
-        UserUiModel(
+        AuthResponseUiModel(
             nickName = nickName,
             email = email,
             accessToken = accessToken,

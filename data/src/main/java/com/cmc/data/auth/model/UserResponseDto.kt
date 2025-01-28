@@ -1,6 +1,6 @@
 package com.cmc.data.auth.model
 
-import com.cmc.domain.auth.model.User
+import com.cmc.domain.auth.model.AuthResponse
 import com.google.gson.annotations.SerializedName
 
 data class UserResponseDto(
@@ -14,8 +14,8 @@ data class UserResponseDto(
     val refreshToken: String,
 )
 
-fun UserResponseDto.toDomain(): User {
-    return User(
+fun UserResponseDto.toDomain(): AuthResponse {
+    return AuthResponse(
         nickName = nickName,
         email = email,
         accessToken = accessToken,
