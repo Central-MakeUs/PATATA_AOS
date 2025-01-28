@@ -25,7 +25,7 @@ import javax.inject.Inject
 val Context.userDataStore by preferencesDataStore(name = "user_data")
 
 internal class AuthRepositoryImpl @Inject constructor(
-    private val context: Context,
+    @ApplicationContext private val context: Context,
     private val authApiService: AuthApiService,
     private val tokenStorage: TokenStorage,
 ): AuthRepository {
