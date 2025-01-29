@@ -10,4 +10,8 @@ object Util {
             TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), Resources.getSystem().displayMetrics
         ).toInt()
 
+    inline val Int.dpToFloat: Float
+        get() = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), Resources.getSystem().displayMetrics
+        )
 }

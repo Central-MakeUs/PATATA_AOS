@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.cmc.design.R
 import com.cmc.design.databinding.ViewPatataEditTextBinding
+import com.cmc.design.util.Util.dpToFloat
 
 class PatataEditText @JvmOverloads constructor(
     context: Context,
@@ -43,11 +44,15 @@ class PatataEditText @JvmOverloads constructor(
             1 -> applyStyle(true)
         }
 
+        setHeight(typedArray.getDimension(R.styleable.PatataEditText_editTextHeight, 48.dpToFloat))
+
+        setTextAppearance(typedArray.getResourceId(R.styleable.PatataEditText_editTextTextAppearance, R.style.subtitle_small))
+
         setCancelButtonVisibility(
             typedArray.getBoolean(R.styleable.PatataEditText_showCancelButton, false)
         )
 
-        setHint(typedArray.getText(R.styleable.PatataEditText_editTextHint).toString())
+        typedArray.getText(R.styleable.PatataEditText_editTextHint)?.let { setHint(it.toString()) }
 
         typedArray.recycle()
     }
@@ -62,6 +67,16 @@ class PatataEditText @JvmOverloads constructor(
         }
 
         binding.root.background = backgroundDrawable
+    }
+
+    private fun setHeight(height: Float) {
+        binding.layoutEditTextRoot.layoutParams = binding.layoutEditTextRoot.layoutParams.apply {
+            this.height = height.toInt()
+        }
+    }
+
+    private fun setTextAppearance(resourceId: Int) {
+        binding.etEditTextInput.setTextAppearance(resourceId)
     }
 
     private fun setCancelButtonVisibility(isVisible: Boolean) {

@@ -18,6 +18,7 @@
         <attr name="footButtonType" format="enum">
             <enum name="complaint" value="0"/>
             <enum name="more" value="1"/>
+            <enum name="cancel" value="2"/>
             <enum name="none" value="-1"/>
         </attr>
 
@@ -58,6 +59,8 @@
             <enum name="dark" value="1"/>
         </attr>
 
+        <attr name="editTextHeight" format="dimension"/>
+        <attr name="editTextTextAppearance" format="reference"/>
         <attr name="showCancelButton" format="boolean"/>
         <attr name="editTextHint" format="reference"/>
     </declare-styleable>
