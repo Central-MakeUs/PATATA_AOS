@@ -5,17 +5,17 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_rounded_20"
     android:orientation="vertical"
-    android:paddingHorizontal="@dimen/default_spacing"
-    android:paddingTop="24dp"
-    android:paddingBottom="24dp">
+    android:paddingTop="24dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/default_spacing">
 
         <TextView
-            android:id="@+id/dialogTitle"
+            android:id="@+id/tv_dialog_title"
             style="@style/subtitle_small"
+            android:textColor="@color/text_default"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -25,31 +25,34 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/dialogCloseBtn"
+            android:id="@+id/iv_dialog_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_cancel"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/dialogTitle"
+            app:layout_constraintBottom_toBottomOf="@id/tv_dialog_title"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/dialogTitle" />
+            app:layout_constraintTop_toTopOf="@id/tv_dialog_title" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
-        android:id="@+id/dialogContentLay"
+        android:id="@+id/layout_dialog_content"
         style="@style/caption_medium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        android:paddingHorizontal="@dimen/default_spacing"
         android:orientation="vertical"
         android:visibility="gone" />
 
     <LinearLayout
-        android:id="@+id/dialogButtonLay"
+        android:id="@+id/layout_dialog_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
         android:clipToPadding="false"
+        android:clipToOutline="true"
         android:orientation="vertical" />
 </LinearLayout>

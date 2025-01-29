@@ -12,7 +12,6 @@ import android.widget.LinearLayout
 import android.widget.Space
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.cmc.design.R
@@ -37,7 +36,7 @@ class PatataAlert(private val context: Context) {
     private var dismissWithCancel: Boolean = false
 
     fun title(title: String): PatataAlert {
-        binding.dialogTitle.text = title
+        binding.tvDialogTitle.text = title
         return this
     }
 
@@ -46,7 +45,7 @@ class PatataAlert(private val context: Context) {
     }
 
     fun setCloseButton(isVisible: Boolean = true): PatataAlert {
-        with(binding.dialogCloseBtn) {
+        with(binding.ivDialogClose) {
             visibility = if (isVisible) View.VISIBLE else View.GONE
             setOnClickListener { dismiss() }
         }
@@ -73,11 +72,15 @@ class PatataAlert(private val context: Context) {
         TextView(context).apply {
             gravity = Gravity.CENTER
             text = content
+            setTextAppearance(R.style.caption_medium)
+            setTextColor(ContextCompat.getColor(context, R.color.text_info))
             setLineSpacing(0f, 1.2f)
         }.let {
-            binding.dialogContentLay.removeAllViewsInLayout()
-            binding.dialogContentLay.isVisible = true
-            binding.dialogContentLay.addView(it)
+            binding.layoutDialogContent.apply {
+                removeAllViewsInLayout()
+                isVisible = true
+                addView(it)
+            }
         }
         return this
     }
@@ -93,8 +96,8 @@ class PatataAlert(private val context: Context) {
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )
             }
-            if (binding.dialogTitle.text.isNullOrEmpty()) {
-                binding.dialogTitle.isVisible = false
+            if (binding.tvDialogTitle.text.isNullOrEmpty()) {
+                binding.tvDialogTitle.isVisible = false
             }
             dialog?.show()
         }
@@ -117,31 +120,20 @@ class PatataAlert(private val context: Context) {
 
 
     inner class MultiButtonBuilder {
-        var leftButton: AppCompatButton? = null
-        var rightButton: AppCompatButton? = null
+        var leftButtonText: String? = null
+        var rightButtonText: String? = null
+        var leftButtonClick: (View) -> Unit = {}
+        var rightButtonClick: (View) -> Unit = {}
 
         fun leftButton(
             text: String,
             autoDismiss: Boolean = true,
             onClick: (View) -> Unit = {}
         ) {
-            leftButton = AppCompatButton(context).apply {
-                this.text = text
-                this.stateListAnimator = null
-                this.layoutParams =
-                    LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
-                        height = 48.dp
-                    }
-                this.background = ContextCompat.getDrawable(
-                        context,
-                        R.drawable.bg_dialog_button_main
-                    )
-
-                this.setTextColor(ContextCompat.getColor(context, R.color.white))
-                this.setOnClickListener {
-                    onClick(it)
-                    if (autoDismiss) dismiss()
-                }
+            leftButtonText = text
+            leftButtonClick = {
+                onClick(it)
+                if (autoDismiss) dismiss()
             }
         }
 
@@ -150,44 +142,72 @@ class PatataAlert(private val context: Context) {
             autoDismiss: Boolean = true,
             onClick: (View) -> Unit = {}
         ) {
-            rightButton = AppCompatButton(context).apply {
-                this.text = text
-                this.layoutParams =
-                    LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
-                        leftMargin = 12.dp
-                        height = 48.dp
-                    }
-                this.background =
-                    ContextCompat.getDrawable(context, R.drawable.bg_dialog_button_main)
-                this.setTextColor(ContextCompat.getColor(context, R.color.text_default))
-                this.setOnClickListener {
-                    onClick(it)
-                    if (autoDismiss) dismiss()
-                }
+            rightButtonText = text
+            rightButtonClick = {
+                onClick(it)
+                if (autoDismiss) dismiss()
             }
         }
     }
 
     fun multiButton(addButton: MultiButtonBuilder.() -> Unit): PatataAlert {
-        var buttons = MultiButtonBuilder().apply(addButton)
+        val buttons = MultiButtonBuilder().apply(addButton)
+
         LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
-            setPadding(0, context.resources.getDimensionPixelSize(R.dimen.default_spacing), 0, 0)
+            clipToOutline = true
+            setPadding(0, 0, 0, 0)
             weightSum = 2f
-            if (buttons.leftButton != null) {
-                this.addView(buttons.leftButton)
+
+            if (buttons.leftButtonText != null) {
+                addView(createDialogButton(buttons.leftButtonText!!, buttons.leftButtonClick, R.color.text_info))
             } else {
-                this.addView(Space(context).apply {
-                    layoutParams =
-                        LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                addView(Space(context).apply {
+                    layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f)
                 })
             }
-            buttons.rightButton?.let { rightButton ->
-                this.addView(rightButton)
+
+            // 🔹 버튼 사이 Divider 추가
+            addView(View(context).apply {
+                layoutParams = LinearLayout.LayoutParams(1.dp, LinearLayout.LayoutParams.MATCH_PARENT)
+                setBackgroundColor(ContextCompat.getColor(context, R.color.gray_30))
+            })
+
+            buttons.rightButtonText?.let { rightButtonText ->
+                addView(createDialogButton(rightButtonText, buttons.rightButtonClick, R.color.red_100))
             }
         }.let {
-            binding.dialogButtonLay.addView(it)
+            binding.layoutDialogButton.apply {
+                removeAllViews()
+                addView(View(context).apply {
+                    layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1.dp)
+                    setBackgroundColor(ContextCompat.getColor(context, R.color.gray_30))
+                })
+                addView(it)
+            }
+
         }
         return this
+    }
+
+    private fun createDialogButton(str: String, onClick: (View) -> Unit, textColor: Int): View {
+        return LinearLayout(context).apply {
+            layoutParams = LinearLayout.LayoutParams(0, 48.dp, 1f).apply {
+                setMargins(0, 14, 0, 14)
+            }
+
+            gravity = Gravity.CENTER
+            isClickable = true
+            isFocusable = true
+            setBackgroundResource(android.R.color.transparent) // 투명 배경
+            setOnClickListener { onClick(it) }
+
+            addView(TextView(context).apply {
+                textSize = 16f
+                text = str
+                setTextColor(ContextCompat.getColor(context, textColor))
+                gravity = Gravity.CENTER
+            })
+        }
     }
 }
