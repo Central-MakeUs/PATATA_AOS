@@ -70,7 +70,7 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
                             state.user.nickName?.let {
                                 (activity as GlobalNavigation).navigateHome()
                             } ?: run {
-                                findNavController().navigate(R.id.navigate_profile_setting)
+                                navigate(R.id.navigate_profile_setting)
                             }
                         }
                     }

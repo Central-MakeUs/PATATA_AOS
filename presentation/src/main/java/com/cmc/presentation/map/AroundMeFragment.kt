@@ -97,7 +97,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     private fun setButton() {
         binding.layoutAddLocation.setOnClickListener {
 //            viewModel.getDumpData()
-            findNavController().navigate(R.id.navigate_add_spot)
+            navigate(R.id.navigate_add_spot)
         }
         
         binding.ivCurrentLocation.setOnClickListener {

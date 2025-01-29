@@ -105,7 +105,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
 
         binding.tvSpotPolaroidMore.setOnClickListener {
-            findNavController().navigate(R.id.navigate_today_spot_recommendation)
+            navigate(R.id.navigate_today_spot_recommendation)
         }
         
         // 스팟 카테고리
