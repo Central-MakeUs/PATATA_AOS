@@ -107,19 +107,21 @@ class PatataAppBar @JvmOverloads constructor(
     }
 
     private fun setFooter(type: Int) {
+        fun configureVisibility(
+            isComplaintVisible: Boolean = false,
+            isMoreVisible: Boolean = false,
+            isCancelVisible: Boolean = false,
+        ) {
+            binding.ivComplaint.isVisible = isComplaintVisible
+            binding.ivMore.isVisible = isMoreVisible
+            binding.ivCancel.isVisible = isCancelVisible
+        }
+
         when (type) {
-            0 -> { // complaint
-                binding.ivComplaint.visibility = View.VISIBLE
-                binding.ivMore.visibility = View.GONE
-            }
-            1 -> { // more
-                binding.ivComplaint.visibility = View.GONE
-                binding.ivMore.visibility = View.VISIBLE
-            }
-            else -> { // 아무것도 표시 안 함
-                binding.ivComplaint.visibility = View.GONE
-                binding.ivMore.visibility = View.GONE
-            }
+            0 -> { configureVisibility(isComplaintVisible = true) }
+            1 -> { configureVisibility(isMoreVisible = true) }
+            2 -> { configureVisibility(isCancelVisible = true) }
+            else -> { configureVisibility() }
         }
     }
 

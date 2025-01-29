@@ -120,7 +120,19 @@
         android:visibility="gone"
         android:src="@drawable/ic_more"
         app:layout_constraintTop_toTopOf="@+id/appbar_top_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@+id/appbar_bottom_barrier"
         android:contentDescription="@string/img_desc_more"/>
+
+    <ImageView
+        android:id="@+id/iv_cancel"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:visibility="gone"
+        android:src="@drawable/ic_cancel"
+        app:layout_constraintTop_toTopOf="@+id/appbar_top_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/appbar_bottom_barrier"
+        android:contentDescription="@string/img_desc_cancel"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
