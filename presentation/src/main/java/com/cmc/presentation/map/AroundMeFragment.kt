@@ -1,14 +1,20 @@
 package com.cmc.presentation.map
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity.RESULT_CANCELED
+import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.cmc.common.base.BaseFragment
+import com.cmc.design.component.PatataAlert
 import com.cmc.domain.location.Location
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
@@ -41,7 +47,6 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
                         state.isLoading -> {}
                         state.errorMessage != null -> {}
                         state.results.isNullOrEmpty().not() -> { markerManager.updateMarkersWithData(state.results) }
-                        state.currentLocation != null -> { moveCameraPosition(state.currentLocation) }
                     }
                 }
             }
@@ -49,9 +54,8 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
             launch {
                 viewModel.sideEffect.collectLatest { effect ->
                     when (effect) {
-                        is AroundMeSideEffect.RequestLocationPermission -> {
-                            checkLocationRequest()
-                        }
+                        is AroundMeSideEffect.RequestLocationPermission -> { checkLocationRequest() }
+                        is AroundMeSideEffect.UpdateCurrentLocation -> { moveCameraPosition(effect.location) }
                     }
                 }
             }
@@ -105,8 +109,11 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
 
+        Log.d("testLog", "locationPermissionRequest")
         if (permissions.all { it.value }) {
             Toast.makeText(context, "위치 권한이 허용되었습니다!", Toast.LENGTH_SHORT).show()
+        } else {
+            showLocationPermissionDialog()
         }
     }
 
@@ -115,11 +122,43 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
+        Log.d("testLog", "checkLocationRequest start")
 
         if (permissions.all {
                 ContextCompat.checkSelfPermission(requireContext(), it) != PackageManager.PERMISSION_GRANTED
             }) {
+            Log.d("testLog", "checkLocationRequest : permission denied")
             locationPermissionRequest.launch(permissions)
+        } else {
+
+            Log.d("testLog", "checkLocationRequest : else")
+        }
+    }
+
+    private fun showLocationPermissionDialog() {
+        PatataAlert(requireContext())
+            .title("위치 권한 요청")
+            .content("위치 권한 설정 창으로 이동할까요?")
+            .multiButton {
+                leftButton("네") {
+                    val intent = Intent(
+                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.fromParts("package", activity?.packageName, null)
+                    )
+                    openAppSettingsLauncher.launch(intent)
+                }
+                rightButton("아니오") {
+                    Toast.makeText(requireContext(), "위치 권한이 꼭 필요합니다.", Toast.LENGTH_SHORT).show()
+                }
+            }.show()
+    }
+
+    private val openAppSettingsLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        // 설정창에서 뒤로가기로 앱에 돌아오는 경우 CANCELED로 처리됨
+        if (result.resultCode == RESULT_OK || result.resultCode == RESULT_CANCELED) {
+            checkLocationRequest()
         }
     }
 

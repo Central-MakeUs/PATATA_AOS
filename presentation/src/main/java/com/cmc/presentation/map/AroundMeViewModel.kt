@@ -34,20 +34,17 @@ class AroundMeViewModel @Inject constructor(
 
     fun getCurrentLocation() {
         viewModelScope.launch {
-            _state.emit(
-                state.value.copy(
-                    currentLocation = null
-                )
-            )
-
             val result = getCurrentLocationUseCase.invoke()
             result.onSuccess { location ->
-                _state.emit(
-                    state.value.copy(
-                        currentLocation = location
-                    )
+                _sideEffect.emit(
+                    AroundMeSideEffect.UpdateCurrentLocation(location)
                 )
-            }.onFailure { exception ->  }
+            }.onFailure { exception ->
+                // TODO: exception 별 처리 추가
+                _sideEffect.emit(
+                    AroundMeSideEffect.RequestLocationPermission
+                )
+            }
         }
     }
 
@@ -175,7 +172,6 @@ class AroundMeViewModel @Inject constructor(
     }
 
     data class AroundMeState(
-        val currentLocation: Location? = null,
         val results: List<SpotUiModel>? = null,
         val errorMessage: String? = null,
         val isLoading: Boolean = false
@@ -183,5 +179,6 @@ class AroundMeViewModel @Inject constructor(
 
     sealed class AroundMeSideEffect {
         data object RequestLocationPermission : AroundMeSideEffect()
+        class UpdateCurrentLocation(val location: Location): AroundMeSideEffect()
     }
 }
