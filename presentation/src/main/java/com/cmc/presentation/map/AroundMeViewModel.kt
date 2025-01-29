@@ -36,14 +36,10 @@ class AroundMeViewModel @Inject constructor(
         viewModelScope.launch {
             val result = getCurrentLocationUseCase.invoke()
             result.onSuccess { location ->
-                _sideEffect.emit(
-                    AroundMeSideEffect.UpdateCurrentLocation(location)
-                )
+                sendSideEffect(AroundMeSideEffect.UpdateCurrentLocation(location))
             }.onFailure { exception ->
                 // TODO: exception 별 처리 추가
-                _sideEffect.emit(
-                    AroundMeSideEffect.RequestLocationPermission
-                )
+                sendSideEffect(AroundMeSideEffect.RequestLocationPermission)
             }
         }
     }

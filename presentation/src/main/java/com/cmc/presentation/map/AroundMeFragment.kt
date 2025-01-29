@@ -63,7 +63,6 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     }
 
     override fun initView() {
-        showLocationPermissionCheck()
         setMap()
         setCategory()
         setButton()
@@ -108,8 +107,6 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-
-        Log.d("testLog", "locationPermissionRequest")
         if (permissions.all { it.value }) {
             Toast.makeText(context, "위치 권한이 허용되었습니다!", Toast.LENGTH_SHORT).show()
         } else {
@@ -122,16 +119,10 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
-        Log.d("testLog", "checkLocationRequest start")
-
         if (permissions.all {
                 ContextCompat.checkSelfPermission(requireContext(), it) != PackageManager.PERMISSION_GRANTED
             }) {
-            Log.d("testLog", "checkLocationRequest : permission denied")
             locationPermissionRequest.launch(permissions)
-        } else {
-
-            Log.d("testLog", "checkLocationRequest : else")
         }
     }
 
@@ -163,6 +154,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     }
 
     override fun onMapReady(map: NaverMap) {
+        showLocationPermissionCheck()
         naverMap = map
         markerManager = MarkerManager(naverMap)
 
