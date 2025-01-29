@@ -90,6 +90,7 @@ class AddSpotViewModel @Inject constructor(): ViewModel() {
     sealed class AddSpotSideEffect {
         object ShowCategoryPicker : AddSpotSideEffect()
         object NavigateToPhotoPicker : AddSpotSideEffect()
+        object NavigateToSpotAddedSuccess : AddSpotSideEffect()
         data class ShowSnackbar(val message: String) : AddSpotSideEffect()
     }
 }

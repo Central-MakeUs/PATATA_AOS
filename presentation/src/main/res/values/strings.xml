@@ -53,5 +53,7 @@
     <string name="add_picture">사진 추가하기</string>
 
     <string name="title_signup_success">가입이 완료되었어요!</string>
+    <string name="title_spot_added_success">스팟이 등록되었어요!</string>
     <string name="desc_signup_success">파타타 회원이 되신 것을 환영해요.\n타타와 함께 최고의 스팟을 찾아봐요!</string>
+    <string name="desc_spot_added_success">스팟이 정상적으로 등록되었습니다.\n다른 스팟들을 둘러보러 가볼까요?</string>
 </resources>

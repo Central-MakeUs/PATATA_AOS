@@ -18,6 +18,24 @@
     <fragment
         android:id="@+id/AddSpotFragment"
         android:name="com.cmc.presentation.map.AddSpotFragment"
-        tools:layout="@layout/fragment_add_spot"/>
+        tools:layout="@layout/fragment_add_spot">
+
+        <action
+            android:id="@+id/navigate_spot_added_success"
+            app:destination="@id/SpotAddedSuccessFragment"
+            app:popUpTo="@id/AddSpotFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/SpotAddedSuccessFragment"
+        android:name="com.cmc.presentation.map.SpotAddedSuccessFragment"
+        tools:layout="@layout/fragment_spot_added_success">
+        <action
+            android:id="@+id/navigate_around_me"
+            app:destination="@id/AroundMeFragment"
+            app:popUpTo="@id/SpotAddedSuccessFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
 
 </navigation>

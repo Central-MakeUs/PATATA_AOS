@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -51,5 +52,15 @@ abstract class BaseFragment<T: ViewDataBinding>(@LayoutRes val layoutRes: Int)
                 block()
             }
         }
+    }
+
+    /**
+     * 프래그먼트 navigate
+     *
+     * @param direction 다음 프래그먼트로 이동할 Direction
+     * */
+    protected fun navigate(destinationId: Int) {
+        val controller = findNavController()
+        controller.navigate(destinationId)
     }
 }

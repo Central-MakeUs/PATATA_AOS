@@ -39,6 +39,7 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
                 viewModel.sideEffect.collect { effect ->
                     when (effect) {
                         is AddSpotSideEffect.ShowCategoryPicker -> { showCategoryFilter() }
+                        is AddSpotSideEffect.NavigateToSpotAddedSuccess -> { navigate(R.id.navigate_spot_added_success) }
                         else -> {}
                     }
                 }
