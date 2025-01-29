@@ -8,6 +8,16 @@
     <fragment
         android:id="@+id/AroundMeFragment"
         android:name="com.cmc.presentation.map.AroundMeFragment"
-        tools:layout="@layout/fragment_around_me"/>
+        tools:layout="@layout/fragment_around_me">
+
+        <action
+            android:id="@+id/navigate_add_spot"
+            app:destination="@id/AddSpotFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/AddSpotFragment"
+        android:name="com.cmc.presentation.map.AddSpotFragment"
+        tools:layout="@layout/fragment_add_spot"/>
 
 </navigation>

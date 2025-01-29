@@ -35,7 +35,6 @@ class BottomSheetDialog(
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
         behavior.skipCollapsed = true
         behavior.setPeekHeight(0, false)
-        behavior.maxHeight = getBottomSheetDialogDefaultHeight()
     }
 
     val isShowing: Boolean

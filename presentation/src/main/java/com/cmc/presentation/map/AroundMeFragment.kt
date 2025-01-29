@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity.RESULT_CANCELED
 import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.cmc.common.base.BaseFragment
 import com.cmc.design.component.PatataAlert
 import com.cmc.domain.location.Location
@@ -95,8 +96,8 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     
     private fun setButton() {
         binding.layoutAddLocation.setOnClickListener {
-            viewModel.getDumpData()
-            // TODO: 장소 추가하기 화면으로 이동
+//            viewModel.getDumpData()
+            findNavController().navigate(R.id.navigate_add_spot)
         }
         
         binding.ivCurrentLocation.setOnClickListener {

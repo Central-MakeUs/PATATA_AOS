@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        style="@style/subtitle_medium"
+        android:textColor="@color/text_default"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:gravity="center"
+        android:text="@string/title_select_category"/>
+
+    <include layout="@layout/view_divider_gray_20"/>
+
+    <TextView
+        android:id="@+id/tv_category_snap_spot"
+        style="@style/subtitle_small"
+        android:textColor="@color/text_disabled"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="@string/category_snap"/>
+
+    <include layout="@layout/view_divider_gray_20"/>
+
+    <TextView
+        android:id="@+id/tv_category_night_view"
+        style="@style/subtitle_small"
+        android:textColor="@color/text_disabled"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="@string/category_night_view"/>
+
+    <include layout="@layout/view_divider_gray_20"/>
+
+    <TextView
+        android:id="@+id/tv_category_everyday_life"
+        style="@style/subtitle_small"
+        android:textColor="@color/text_disabled"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="@string/category_everyday_life"/>
+
+    <include layout="@layout/view_divider_gray_20"/>
+
+    <TextView
+        android:id="@+id/tv_category_nature"
+        style="@style/subtitle_small"
+        android:textColor="@color/text_disabled"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="@string/category_nature"/>
+</LinearLayout>
