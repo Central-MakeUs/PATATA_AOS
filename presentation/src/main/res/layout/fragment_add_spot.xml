@@ -44,6 +44,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:editTextHint="@string/hint_input_title"
+                    app:editTextMaxLength="15"
                     android:layout_marginTop="10dp"
                     app:layout_constraintTop_toBottomOf="@+id/tv_input_title"/>
 
@@ -124,7 +125,8 @@
                     app:editTextTextAppearance="@style/body_small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:editTextHeight="120dp"
+                    app:customEditTextMode="multiLine"
+                    app:editTextMaxLength="300"
                     android:layout_marginTop="10dp"
                     app:layout_constraintTop_toBottomOf="@+id/tv_content_desc_title"/>
 

@@ -3,8 +3,10 @@ package com.cmc.design.component
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
@@ -30,6 +32,20 @@ class PatataEditText @JvmOverloads constructor(
 
     private var helperView: PatataEditTextHelperView? = null
 
+    enum class EditTextMode(val id: Int) {
+        SINGLE_LINE(0), MULTI_LINE(1);
+        companion object {
+            fun fromId(id:Int) = entries.first { it.id == id}
+        }
+    }
+
+    private var mode = EditTextMode.SINGLE_LINE
+
+    private var heightMap = mapOf(
+        EditTextMode.SINGLE_LINE to 48.dpToFloat,
+        EditTextMode.MULTI_LINE to 120.dpToFloat,
+    )
+
     init {
         applyStyle(false)
         initAttributes(context, attrs)
@@ -44,10 +60,11 @@ class PatataEditText @JvmOverloads constructor(
             1 -> applyStyle(true)
         }
 
-        setHeight(typedArray.getDimension(R.styleable.PatataEditText_editTextHeight, 48.dpToFloat))
+        mode = EditTextMode.fromId(typedArray.getInt(R.styleable.PatataEditText_customEditTextMode, 0))
+        configureEditTextMode()
 
+        setTextMaxLength(typedArray.getInteger(R.styleable.PatataEditText_editTextMaxLength, -1))
         setTextAppearance(typedArray.getResourceId(R.styleable.PatataEditText_editTextTextAppearance, R.style.subtitle_small))
-
         setCancelButtonVisibility(
             typedArray.getBoolean(R.styleable.PatataEditText_showCancelButton, false)
         )
@@ -55,6 +72,14 @@ class PatataEditText @JvmOverloads constructor(
         typedArray.getText(R.styleable.PatataEditText_editTextHint)?.let { setHint(it.toString()) }
 
         typedArray.recycle()
+    }
+
+    private fun configureEditTextMode() {
+        binding.etEditTextInput.isSingleLine = mode == EditTextMode.SINGLE_LINE
+        binding.layoutEditTextRoot.layoutParams = binding.layoutEditTextRoot.layoutParams.apply {
+            this.height = heightMap[mode]!!.toInt()
+        }
+        binding.etEditTextInput.gravity = if (mode == EditTextMode.SINGLE_LINE) Gravity.CENTER_VERTICAL else Gravity.TOP
     }
 
     private fun applyStyle(isDarkMode: Boolean) {
@@ -69,10 +94,8 @@ class PatataEditText @JvmOverloads constructor(
         binding.root.background = backgroundDrawable
     }
 
-    private fun setHeight(height: Float) {
-        binding.layoutEditTextRoot.layoutParams = binding.layoutEditTextRoot.layoutParams.apply {
-            this.height = height.toInt()
-        }
+    private fun setTextMaxLength(length: Int) {
+        binding.etEditTextInput.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(length))
     }
 
     private fun setTextAppearance(resourceId: Int) {
