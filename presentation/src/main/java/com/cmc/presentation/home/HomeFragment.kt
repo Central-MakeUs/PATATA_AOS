@@ -90,7 +90,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             title = "테스트 화면2",
             icon = com.cmc.design.R.drawable.ic_spot_location,
             iconPosition = PatataAppBar.IconPosition.START,
-            onBackClick = { requireActivity().onBackPressedDispatcher.onBackPressed() },
+            onBackClick = { finish() },
             onHeadButtonClick = { Toast.makeText(context, "헤드 버튼 클릭!", Toast.LENGTH_SHORT).show()},
             onFootButtonClick = { Toast.makeText(context, "푸터 버튼 클릭!", Toast.LENGTH_SHORT).show()}
         )

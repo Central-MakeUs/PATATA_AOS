@@ -46,7 +46,7 @@ class OnBoardingFragment : BaseFragment<FragmentOnboardingBinding>(R.layout.frag
                     if (binding.viewpager.currentItem != 0) {
                         binding.viewpager.currentItem = currentItem - 1
                     } else {
-                        requireActivity().onBackPressedDispatcher.onBackPressed()
+                        finish()
                     }
                 }
             }

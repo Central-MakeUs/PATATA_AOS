@@ -71,7 +71,7 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
         binding.appbar.setupAppBar(
             title = title,
             titleIconResId,
-            onBackClick = { requireActivity().onBackPressedDispatcher.onBackPressed() },
+            onBackClick = { finish() },
             onFootButtonClick = {
                 // TODO: 스팟 등록자 확인
                 viewModel.clickFooterButton(true)

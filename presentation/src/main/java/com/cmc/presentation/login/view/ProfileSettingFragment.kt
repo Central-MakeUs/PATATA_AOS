@@ -20,7 +20,7 @@ class ProfileSettingFragment: BaseFragment<FragmentProfileSettingBinding>(R.layo
     private fun setAppbar() {
         binding.appbar.setupAppBar(
             title = getString(R.string.title_profile_setting),
-            onBackClick = { requireActivity().onBackPressedDispatcher.onBackPressed() },
+            onBackClick = { finish() },
         )
     }
 
