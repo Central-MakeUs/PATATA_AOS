@@ -81,13 +81,30 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
     }
 
     private fun updateUI(state: AddSpotViewModel.AddSpotState) {
-        state.selectedCategory?.let {
-            binding.tvChooseCategory.text = resources.getString(SpotCategoryItem(it).getName())
-        }
+        binding.apply {
+            // 카테고리 선택 UI 업데이트
+            tvChooseCategory.apply {
+                text = state.selectedCategory?.let { getString(SpotCategoryItem(it).getName()) } ?: getString(R.string.hint_choose_category)
+                setTextAppearance(
+                    if (state.selectedCategory != null) com.cmc.design.R.style.subtitle_small
+                    else com.cmc.design.R.style.body_small
+                )
+                setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        if (state.selectedCategory != null) com.cmc.design.R.color.text_sub
+                        else com.cmc.design.R.color.text_disabled
+                    )
+                )
+            }
 
-        updateTags(state.tags)
-        imageAdapter.updateImages(state.selectedImages)
-        binding.layoutRegisterButton.isEnabled = state.isRegisterEnabled
+            // 태그 및 이미지 업데이트
+            updateTags(state.tags)
+            imageAdapter.updateImages(state.selectedImages)
+
+            // 등록 버튼 활성화 상태 업데이트
+            layoutRegisterButton.isEnabled = state.isRegisterEnabled
+        }
     }
     private fun handleSideEffect(effect: AddSpotViewModel.AddSpotSideEffect) {
         when (effect) {
