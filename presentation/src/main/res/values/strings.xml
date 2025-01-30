@@ -12,6 +12,7 @@
     <string name="title_edit_post">게시글 수정하기</string>
     <string name="title_delete">삭제하기</string>
     <string name="title_profile_setting">프로필 설정</string>
+    <string name="title_add_a_spot">스팟 추가하기</string>
     <string name="title_changeable_profile">프로필을 바꿀 수 있어요.</string>
     <string name="title_choose_category">카테고리를 선택해주세요</string>
     <string name="title_choose_nickname">닉네임을 정해주세요!</string>

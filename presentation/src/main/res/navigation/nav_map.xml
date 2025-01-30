@@ -25,6 +25,12 @@
             app:destination="@id/SpotAddedSuccessFragment"
             app:popUpTo="@id/AddSpotFragment"
             app:popUpToInclusive="true"/>
+
+        <action
+            android:id="@+id/navigate_add_spot_to_around_me"
+            app:destination="@id/AroundMeFragment"
+            app:popUpTo="@id/AroundMeFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -32,7 +38,7 @@
         android:name="com.cmc.presentation.map.SpotAddedSuccessFragment"
         tools:layout="@layout/fragment_spot_added_success">
         <action
-            android:id="@+id/navigate_around_me"
+            android:id="@+id/navigate_added_success_to_around_me"
             app:destination="@id/AroundMeFragment"
             app:popUpTo="@id/SpotAddedSuccessFragment"
             app:popUpToInclusive="true"/>

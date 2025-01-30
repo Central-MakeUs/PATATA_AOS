@@ -63,4 +63,6 @@ abstract class BaseFragment<T: ViewDataBinding>(@LayoutRes val layoutRes: Int)
         val controller = findNavController()
         controller.navigate(destinationId)
     }
+
+    protected fun finish() = requireActivity().onBackPressedDispatcher.onBackPressed()
 }

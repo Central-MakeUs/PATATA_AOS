@@ -56,6 +56,12 @@ class AddSpotViewModel @Inject constructor(): ViewModel() {
         }
     }
 
+    fun onCancelButtonClicked() {
+        viewModelScope.launch {
+            _sideEffect.emit(AddSpotSideEffect.NavigateToAroundMe)
+        }
+    }
+
     fun updateSelectedImages(images: List<Uri>) {
         val updatedList = (_state.value.selectedImages + images).distinct()
 
@@ -126,9 +132,10 @@ class AddSpotViewModel @Inject constructor(): ViewModel() {
     )
 
     sealed class AddSpotSideEffect {
-        object ShowCategoryPicker : AddSpotSideEffect()
-        object ShowPhotoPicker : AddSpotSideEffect()
-        object NavigateToSpotAddedSuccess : AddSpotSideEffect()
+        data object ShowCategoryPicker : AddSpotSideEffect()
+        data object ShowPhotoPicker : AddSpotSideEffect()
+        data object NavigateToAroundMe : AddSpotSideEffect()
+        data object NavigateToSpotAddedSuccess : AddSpotSideEffect()
         data class ShowSnackbar(val message: String) : AddSpotSideEffect()
     }
 

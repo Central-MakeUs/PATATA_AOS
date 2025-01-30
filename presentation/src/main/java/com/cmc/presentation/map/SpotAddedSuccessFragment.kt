@@ -11,7 +11,7 @@ class SpotAddedSuccessFragment: BaseFragment<FragmentSpotAddedSuccessBinding>(R.
 
     override fun initView() {
         binding.layoutConfirmButton.setOnClickListener {
-            navigate(R.id.navigate_around_me)
+            navigate(R.id.navigate_added_success_to_around_me)
         }
     }
 }

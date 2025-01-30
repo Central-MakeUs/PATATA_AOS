@@ -143,10 +143,14 @@ class PatataAppBar @JvmOverloads constructor(
         binding.ivBackArrow.setOnClickListener {
             onBackClickListener?.invoke()
         }
+
         binding.ivComplaint.setOnClickListener {
             onFootButtonClickListener?.invoke()
         }
         binding.ivMore.setOnClickListener {
+            onFootButtonClickListener?.invoke()
+        }
+        binding.ivCancel.setOnClickListener {
             onFootButtonClickListener?.invoke()
         }
     }

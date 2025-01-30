@@ -43,10 +43,20 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
     }
 
     override fun initView() {
+        setAppbar()
         setupRecyclerView()
         setupViewActionListeners()
     }
 
+    private fun setAppbar() {
+        binding.addSpotAppbar.apply {
+            setupAppBar(
+                title = getString(R.string.title_add_a_spot),
+                onBackClick = { finish() },
+                onFootButtonClick = { viewModel.onCancelButtonClicked()  }
+            )
+        }
+    }
     private fun setupRecyclerView() {
         imageAdapter = SelectedImageAdapter { uri -> viewModel.removeSelectedImage(uri) }
 
@@ -109,6 +119,7 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
     private fun handleSideEffect(effect: AddSpotViewModel.AddSpotSideEffect) {
         when (effect) {
             is ShowCategoryPicker -> showCategoryFilter()
+            is NavigateToAroundMe -> navigate(R.id.navigate_add_spot_to_around_me)
             is NavigateToSpotAddedSuccess -> navigate(R.id.navigate_spot_added_success)
             is ShowPhotoPicker -> pickImagesLauncher.launch("image/*")
             else -> {}
