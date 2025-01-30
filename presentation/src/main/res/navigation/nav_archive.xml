@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             android:id="@+id/nav_archive">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/ArchiveFragment"
+    android:id="@+id/nav_archive">
+
+    <fragment
+        android:id="@+id/ArchiveFragment"
+        android:name="com.cmc.presentation.archive.ArchiveFragment"
+        tools:layout="@layout/fragment_archive"/>
 
 </navigation>

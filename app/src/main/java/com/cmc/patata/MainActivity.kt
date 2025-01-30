@@ -52,7 +52,8 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
         when (destination.id) {
             com.cmc.presentation.R.id.HomeFragment,
-            com.cmc.presentation.R.id.AroundMeFragment
+            com.cmc.presentation.R.id.AroundMeFragment,
+            com.cmc.presentation.R.id.ArchiveFragment
              -> { setBottomNavVisibility(true) }
             else -> { setBottomNavVisibility(false) }
         }
