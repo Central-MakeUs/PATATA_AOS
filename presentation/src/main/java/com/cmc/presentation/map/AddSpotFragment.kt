@@ -2,8 +2,12 @@ package com.cmc.presentation.map
 
 import android.view.LayoutInflater
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.cmc.common.base.BaseFragment
 import com.cmc.design.component.BottomSheetDialog
 import com.cmc.domain.model.SpotCategory
@@ -13,7 +17,7 @@ import com.cmc.presentation.databinding.FragmentAddSpotBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import com.cmc.presentation.map.AddSpotViewModel.AddSpotSideEffect
+import com.cmc.presentation.map.AddSpotViewModel.AddSpotSideEffect.*
 import com.cmc.presentation.model.SpotCategoryItem
 
 @AndroidEntryPoint
@@ -21,39 +25,47 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
 
     private val viewModel: AddSpotViewModel by viewModels()
 
+    private lateinit var imageAdapter: SelectedImageAdapter
+
     override fun initObserving() {
         repeatWhenUiStarted {
             launch {
                 viewModel.state.collectLatest { state ->
-                    when {
-                        state.isLoading -> {}
-                        state.errorMessage != null -> {}
-                        else -> {
-                            updateUI(state)
-                        }
-                    }
+                    updateUI(state)
                 }
             }
-
             launch {
                 viewModel.sideEffect.collect { effect ->
-                    when (effect) {
-                        is AddSpotSideEffect.ShowCategoryPicker -> { showCategoryFilter() }
-                        is AddSpotSideEffect.NavigateToSpotAddedSuccess -> { navigate(R.id.navigate_spot_added_success) }
-                        else -> {}
-                    }
+                    handleSideEffect(effect)
                 }
             }
         }
     }
 
     override fun initView() {
+        setupRecyclerView()
+        setupViewActionListeners()
+    }
+
+    private fun setupRecyclerView() {
+        imageAdapter = SelectedImageAdapter { uri -> viewModel.removeSelectedImage(uri) }
+
+        binding.rvSelectedImages.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = imageAdapter
+        }
+
+        val itemTouchHelper = ItemTouchHelper(createItemTouchCallback())
+        itemTouchHelper.attachToRecyclerView(binding.rvSelectedImages)
+    }
+    private fun setupViewActionListeners() {
         binding.etInputHashtag.setOnSubmitListener { str ->
             binding.etInputHashtag.clearEditor()
             viewModel.addTag(str)
         }
 
         binding.layoutChooseCategoryTitle.setOnClickListener { viewModel.openCategoryPicker() }
+        binding.layoutChoosePictureButton.setOnClickListener { viewModel.openPhotoPicker() }
     }
 
     private fun updateUI(state: AddSpotViewModel.AddSpotState) {
@@ -62,8 +74,16 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
         }
 
         updateTags(state.tags)
-
+        imageAdapter.updateImages(state.selectedImages)
         binding.layoutRegisterButton.isEnabled = state.isRegisterEnabled
+    }
+    private fun handleSideEffect(effect: AddSpotViewModel.AddSpotSideEffect) {
+        when (effect) {
+            is ShowCategoryPicker -> showCategoryFilter()
+            is NavigateToSpotAddedSuccess -> navigate(R.id.navigate_spot_added_success)
+            is ShowPhotoPicker -> pickImagesLauncher.launch("image/*")
+            else -> {}
+        }
     }
 
     private fun updateTags(tags: List<String>) {
@@ -81,7 +101,6 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
             binding.layoutHashtagContainer.addView(tagView)
         }
     }
-
     private fun showCategoryFilter() {
         val dialogContentBinding = ContentSheetAddSpotCategoryFilterBinding.inflate(LayoutInflater.from(requireContext()))
         BottomSheetDialog(requireContext())
@@ -96,7 +115,6 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
                 dialog.show()
             }
     }
-
     private fun updateDialogUI(
         binding: ContentSheetAddSpotCategoryFilterBinding,
         selectedCategory: SpotCategory?,
@@ -118,5 +136,33 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
                 dismissListener.invoke()
             }
         }
+    }
+
+    private val pickImagesLauncher = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
+        if (uris.isNotEmpty()) { viewModel.updateSelectedImages(uris) }
+    }
+
+    private fun createItemTouchCallback() = object : ItemTouchHelper.Callback() {
+        override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+            return makeMovementFlags(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT, 0)
+        }
+
+        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+            val fromPosition = viewHolder.absoluteAdapterPosition
+            val toPosition = target.absoluteAdapterPosition
+            imageAdapter.moveItem(fromPosition, toPosition)
+            return true
+        }
+
+        override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+            super.onSelectedChanged(viewHolder, actionState)
+            if (actionState == ItemTouchHelper.ACTION_STATE_IDLE) {
+                viewModel.updateSelectedImages(imageAdapter.getImages())
+                imageAdapter.notifyDataSetChanged()
+            }
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
+        override fun isLongPressDragEnabled(): Boolean = true
     }
 }

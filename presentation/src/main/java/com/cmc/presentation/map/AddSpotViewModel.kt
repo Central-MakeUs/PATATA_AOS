@@ -45,17 +45,38 @@ class AddSpotViewModel @Inject constructor(): ViewModel() {
         }
     }
 
-    fun navigateToPhotoPicker() {
+    fun openPhotoPicker() {
         viewModelScope.launch {
-            _sideEffect.emit(AddSpotSideEffect.NavigateToPhotoPicker)
+            _sideEffect.emit(AddSpotSideEffect.ShowPhotoPicker)
         }
     }
 
+    fun updateSelectedImages(images: List<Uri>) {
+        val updatedList = (_state.value.selectedImages + images).distinct()
+
+        // 3장 초과 여부 확인
+        val finalList = if (updatedList.size > MAX_IMAGE_COUNT) {
+            viewModelScope.launch {
+                _sideEffect.emit(AddSpotSideEffect.ShowSnackbar("이미지는 최대 ${MAX_IMAGE_COUNT}장까지 업로드가 가능합니다."))
+            }
+            updatedList.subList(0, MAX_IMAGE_COUNT)
+        } else {
+            updatedList
+        }
+
+        _state.update {
+            it.copy(selectedImages = finalList, isRegisterEnabled = checkFormValid())
+        }
+    }
+
+    fun removeSelectedImage(image: Uri) {
+        _state.update { it.copy(selectedImages = it.selectedImages - image, isRegisterEnabled = checkFormValid()) }
+    }
 
     fun addTag(tag: String) {
-        if (_state.value.tags.size >= 2) {
+        if (_state.value.tags.size >= MAX_TAG_COUNT) {
             viewModelScope.launch {
-                _sideEffect.emit(AddSpotSideEffect.ShowSnackbar("최대 2개의 태그만 추가할 수 있습니다."))
+                _sideEffect.emit(AddSpotSideEffect.ShowSnackbar("최대 ${MAX_TAG_COUNT}개의 태그만 추가할 수 있습니다."))
             }
             return
         }
@@ -65,6 +86,7 @@ class AddSpotViewModel @Inject constructor(): ViewModel() {
     fun removeTag(tag: String) {
         _state.update { it.copy(tags = it.tags - tag) }
     }
+
 
     // 필수 입력 필드 검사
     private fun checkFormValid(): Boolean {
@@ -89,8 +111,13 @@ class AddSpotViewModel @Inject constructor(): ViewModel() {
 
     sealed class AddSpotSideEffect {
         object ShowCategoryPicker : AddSpotSideEffect()
-        object NavigateToPhotoPicker : AddSpotSideEffect()
+        object ShowPhotoPicker : AddSpotSideEffect()
         object NavigateToSpotAddedSuccess : AddSpotSideEffect()
         data class ShowSnackbar(val message: String) : AddSpotSideEffect()
+    }
+
+    companion object {
+        const val MAX_TAG_COUNT = 2
+        const val MAX_IMAGE_COUNT = 3
     }
 }

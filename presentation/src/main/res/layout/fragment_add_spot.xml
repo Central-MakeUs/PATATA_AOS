@@ -259,6 +259,17 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_selected_images"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toTopOf="@+id/layout_choose_picture_button"
+                    app:layout_constraintStart_toEndOf="@+id/layout_choose_picture_button"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_choose_picture_button"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
                 <!-- Picture -->
                 <TextView
                     android:id="@+id/tv_input_hashtag"
