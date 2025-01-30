@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,20 +24,24 @@ class AddSpotViewModel @Inject constructor(): ViewModel() {
     private val _sideEffect = MutableSharedFlow<AddSpotSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
+    init {
+        observeStateChanges()
+    }
+
     fun updateTitle(title: String) {
-        _state.update { it.copy(title = title, isRegisterEnabled = checkFormValid()) }
+        _state.update { it.copy(title = title) }
     }
 
     fun updateLocation(location: String) {
-        _state.update { it.copy(detailedLocation = location, isRegisterEnabled = checkFormValid()) }
+        _state.update { it.copy(detailedLocation = location) }
     }
 
     fun updateDescription(description: String) {
-        _state.update { it.copy(description = description, isRegisterEnabled = checkFormValid()) }
+        _state.update { it.copy(description = description) }
     }
 
     fun selectCategory(category: SpotCategory) {
-        _state.update { it.copy(selectedCategory = category, isRegisterEnabled = checkFormValid()) }
+        _state.update { it.copy(selectedCategory = category) }
     }
 
     fun openCategoryPicker() {
@@ -65,12 +70,12 @@ class AddSpotViewModel @Inject constructor(): ViewModel() {
         }
 
         _state.update {
-            it.copy(selectedImages = finalList, isRegisterEnabled = checkFormValid())
+            it.copy(selectedImages = finalList)
         }
     }
 
     fun removeSelectedImage(image: Uri) {
-        _state.update { it.copy(selectedImages = it.selectedImages - image, isRegisterEnabled = checkFormValid()) }
+        _state.update { it.copy(selectedImages = it.selectedImages - image) }
     }
 
     fun addTag(tag: String) {
@@ -87,14 +92,25 @@ class AddSpotViewModel @Inject constructor(): ViewModel() {
         _state.update { it.copy(tags = it.tags - tag) }
     }
 
+    private fun observeStateChanges() {
+        viewModelScope.launch {
+            _state.collectLatest { currentState ->
+                val isFormValid = checkFormValid(currentState)
+                if (currentState.isRegisterEnabled != isFormValid) {
+                    _state.update { it.copy(isRegisterEnabled = isFormValid) }
+                }
+            }
+        }
+    }
 
     // 필수 입력 필드 검사
-    private fun checkFormValid(): Boolean {
-        val state = _state.value
+    private fun checkFormValid(state: AddSpotState): Boolean {
         return state.title.isNotBlank() &&
                 state.detailedLocation.isNotBlank() &&
+                state.description.isNotBlank() &&
                 state.selectedCategory != null &&
-                state.selectedImages.isNotEmpty()
+                state.selectedImages.isNotEmpty() &&
+                state.tags.isNotEmpty()
     }
 
     data class AddSpotState(

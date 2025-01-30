@@ -29,6 +29,7 @@ class PatataEditText @JvmOverloads constructor(
 
     private var onSubmitListener: ((String) -> Unit)? = null
     private var onTextChangeListener: ((String) -> Unit)? = null
+    private var afterTextChangeListener: ((String) -> Unit)? = null
 
     private var helperView: PatataEditTextHelperView? = null
 
@@ -134,7 +135,9 @@ class PatataEditText @JvmOverloads constructor(
                 setErrorState(false)
                 onTextChangeListener?.invoke(s.toString())
             }
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) {
+                afterTextChangeListener?.invoke(s.toString())
+            }
         })
     }
 
@@ -163,6 +166,13 @@ class PatataEditText @JvmOverloads constructor(
      */
     fun setOnTextChangeListener(listener: ((String) -> Unit)? = null) {
         onTextChangeListener = listener
+    }
+
+    /**
+     * 입력값 변경 완료 리스너 설정
+     */
+    fun setAfterTextChangeListener(listener: ((String) -> Unit)? = null) {
+        afterTextChangeListener = listener
     }
 
     /**

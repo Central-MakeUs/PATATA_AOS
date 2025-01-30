@@ -59,6 +59,18 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
         itemTouchHelper.attachToRecyclerView(binding.rvSelectedImages)
     }
     private fun setupViewActionListeners() {
+        binding.etInputTitle.setAfterTextChangeListener { str ->
+            viewModel.updateTitle(str)
+        }
+
+        binding.etInputAddressDetail.setAfterTextChangeListener { str ->
+            viewModel.updateLocation(str)
+        }
+
+        binding.etContentDesc.setAfterTextChangeListener { str ->
+            viewModel.updateDescription(str)
+        }
+
         binding.etInputHashtag.setOnSubmitListener { str ->
             binding.etInputHashtag.clearEditor()
             viewModel.addTag(str)
