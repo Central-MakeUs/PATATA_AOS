@@ -95,7 +95,9 @@ class PatataEditText @JvmOverloads constructor(
     }
 
     private fun setTextMaxLength(length: Int) {
-        binding.etEditTextInput.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(length))
+        if (length > 0) {
+            binding.etEditTextInput.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(length))
+        }
     }
 
     private fun setTextAppearance(resourceId: Int) {
