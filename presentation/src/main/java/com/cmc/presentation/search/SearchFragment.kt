@@ -1,14 +1,9 @@
 package com.cmc.presentation.search
 
-import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Toast
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.cmc.common.base.BaseFragment
 import com.cmc.design.component.BottomSheetDialog
@@ -18,10 +13,8 @@ import com.cmc.presentation.databinding.ContentSheetSortSelectBinding
 import com.cmc.presentation.databinding.FragmentSearchBinding
 import dagger.hilt.android.AndroidEntryPoint
 import com.cmc.presentation.search.SearchViewModel.SearchStatus
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_search) {
@@ -103,7 +96,7 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
         binding.appbar.focusSearchInput()
         binding.appbar.setupAppBar(
             title = getString(R.string.title_search_content),
-            onBackClick = { finish() },
+            onHeadButtonClick = { finish() },
             onSearch = { text ->
                 viewModel.performSearch(text)
             }

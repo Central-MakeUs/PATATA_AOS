@@ -52,7 +52,7 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
         binding.addSpotAppbar.apply {
             setupAppBar(
                 title = getString(R.string.title_add_a_spot),
-                onBackClick = { finish() },
+                onHeadButtonClick = { finish() },
                 onFootButtonClick = { viewModel.onCancelButtonClicked()  }
             )
         }

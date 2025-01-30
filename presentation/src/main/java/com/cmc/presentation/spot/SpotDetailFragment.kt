@@ -1,11 +1,9 @@
 package com.cmc.presentation.spot
 
 import android.view.LayoutInflater
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmc.common.base.BaseFragment
-import com.cmc.common.constants.NavigationKeys
 import com.cmc.design.component.BottomSheetDialog
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.ContentSheetSpotDetailComplaintBinding
@@ -71,7 +69,7 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
         binding.appbar.setupAppBar(
             title = title,
             titleIconResId,
-            onBackClick = { finish() },
+            onHeadButtonClick = { finish() },
             onFootButtonClick = {
                 // TODO: 스팟 등록자 확인
                 viewModel.clickFooterButton(true)

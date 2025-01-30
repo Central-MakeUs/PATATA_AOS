@@ -1,9 +1,7 @@
 package com.cmc.design.component
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
@@ -21,32 +19,28 @@ class PatataAppBar @JvmOverloads constructor(
     private val binding: ViewPatataAppbarBinding =
         ViewPatataAppbarBinding.inflate(LayoutInflater.from(context), this, true)
 
-    private var onBackClickListener: (() -> Unit)? = null
-    private var onHeadButtonClickListener: (() -> Unit)? = null
-    private var onFootButtonClickListener: (() -> Unit)? = null
+    private var onHeadButtonClickListener: ((HeaderType) -> Unit)? = null
+    private var onFootButtonClickListener: ((FooterType) -> Unit)? = null
 
+    private var headerType: HeaderType = HeaderType.NONE
     private var bodyType: BodyType = BodyType.TITLE
+    private var footerType: FooterType = FooterType.NONE
 
     init {
         initAttributes(context, attrs)
-        initListeners()
     }
 
     private fun initAttributes(context: Context, attrs: AttributeSet?) {
         context.obtainStyledAttributes(attrs, R.styleable.PatataAppBar).apply {
             try {
-                val headType = getInt(R.styleable.PatataAppBar_headButtonType, -1)
-                bodyType = when (getInt(R.styleable.PatataAppBar_bodyType, -1)) {
-                    0 -> BodyType.MAIN
-                    1 -> BodyType.SEARCH
-                    else -> BodyType.TITLE
-                }
-                val footerType = getInt(R.styleable.PatataAppBar_footButtonType, -1)
+                val headType = HeaderType.fromId(getInt(R.styleable.PatataAppBar_headButtonType, -1))
+                val bodyType = BodyType.fromId(getInt(R.styleable.PatataAppBar_bodyType, 0))
+                val footerType = FooterType.fromId(getInt(R.styleable.PatataAppBar_footButtonType, -1))
 
                 val bgStyle = getInt(R.styleable.PatataAppBar_appBarBackgroundStyle, 0)
                 val searchBarStyle = getInt(R.styleable.PatataAppBar_appbarSearchBarStyle, 0)
 
-                setHead(headType)
+                setHeader(headType)
                 setBody(bodyType)
                 setFooter(footerType)
 
@@ -59,33 +53,18 @@ class PatataAppBar @JvmOverloads constructor(
         }
     }
 
-    private fun setHead(type: Int) {
-        fun setHeadViewVisible(
-            isBackVisible: Boolean = false,
-            isListVisible: Boolean = false,
-            isMapVisible: Boolean = false,
-        ) {
-            binding.ivBackArrow.isVisible = isBackVisible
-            binding.ivList.isVisible = isListVisible
-            binding.ivMap.isVisible = isMapVisible
-        }
-
-        when (type) {
-            0 -> { // back
-                setHeadViewVisible(isBackVisible = true)
-            }
-            1 -> { // list
-                setHeadViewVisible(isListVisible = true)
-            }
-            2 -> { // map
-                setHeadViewVisible(isMapVisible = true)
-            }
-            else -> { // none or custom
-                setHeadViewVisible()
+    private fun setHeader(type: HeaderType) {
+        mapOf(
+            HeaderType.BACK to binding.ivBackArrow,
+            HeaderType.LIST to binding.ivList,
+            HeaderType.MAP to binding.ivMap,
+        ).forEach { (t, v) ->
+            v.isVisible = t == type
+            v.setOnClickListener {
+                onHeadButtonClickListener?.invoke(type)
             }
         }
     }
-
     private fun setBody(bodyType: BodyType) {
         when (bodyType) {
             BodyType.MAIN -> {
@@ -105,23 +84,18 @@ class PatataAppBar @JvmOverloads constructor(
             }
         }
     }
-
-    private fun setFooter(type: Int) {
-        fun configureVisibility(
-            isComplaintVisible: Boolean = false,
-            isMoreVisible: Boolean = false,
-            isCancelVisible: Boolean = false,
-        ) {
-            binding.ivComplaint.isVisible = isComplaintVisible
-            binding.ivMore.isVisible = isMoreVisible
-            binding.ivCancel.isVisible = isCancelVisible
-        }
-
-        when (type) {
-            0 -> { configureVisibility(isComplaintVisible = true) }
-            1 -> { configureVisibility(isMoreVisible = true) }
-            2 -> { configureVisibility(isCancelVisible = true) }
-            else -> { configureVisibility() }
+    private fun setFooter(type: FooterType) {
+        mapOf(
+            FooterType.COMPLAINT to binding.ivFooterComplaint,
+            FooterType.MORE to binding.ivFooterMore,
+            FooterType.CANCEL to binding.ivFooterCancel,
+            FooterType.SELECT to binding.tvFooterSelect,
+            FooterType.DELETE to binding.tvFooterDelete,
+        ).forEach { (t, v) ->
+            v.isVisible = t == type
+            v.setOnClickListener {
+                onFootButtonClickListener?.invoke(type)
+            }
         }
     }
 
@@ -131,27 +105,10 @@ class PatataAppBar @JvmOverloads constructor(
             1 -> { binding.searchbar.setMode(true) }
         }
     }
-
     private fun applyBackgroundStyle(style: Int) {
         when (style) {
             0 -> { binding.layoutRoot.background = AppCompatResources.getDrawable(context, R.color.transparent) }
             1 -> { binding.layoutRoot.background = AppCompatResources.getDrawable(context, R.color.white) }
-        }
-    }
-
-    private fun initListeners() {
-        binding.ivBackArrow.setOnClickListener {
-            onBackClickListener?.invoke()
-        }
-
-        binding.ivComplaint.setOnClickListener {
-            onFootButtonClickListener?.invoke()
-        }
-        binding.ivMore.setOnClickListener {
-            onFootButtonClickListener?.invoke()
-        }
-        binding.ivCancel.setOnClickListener {
-            onFootButtonClickListener?.invoke()
         }
     }
 
@@ -161,7 +118,7 @@ class PatataAppBar @JvmOverloads constructor(
      * @param title 앱바 타이틀 텍스트 (TITLE 모드에서는 필수)
      * @param icon 타이틀 아이콘 리소스 (nullable)
      * @param iconPosition 아이콘 위치 (start, end, top, bottom), 기본값 START
-     * @param onBackClick 뒤로가기 버튼 클릭 리스너 (nullable)
+     * @param onHeadButtonClick 뒤로가기 버튼 클릭 리스너 (nullable)
      * @param onHeadButtonClick 헤드 버튼 클릭 리스너 (nullable)
      * @param onFootButtonClick 푸터 버튼 클릭 리스너 (nullable)
      * @param onSearch 검색 실행 리스너 (nullable)
@@ -171,14 +128,13 @@ class PatataAppBar @JvmOverloads constructor(
         title: String,
         icon: Int? = null,
         iconPosition: IconPosition = IconPosition.START,
-        onBackClick: (() -> Unit)? = null,
-        onHeadButtonClick: (() -> Unit)? = null,
-        onFootButtonClick: (() -> Unit)? = null,
+        onHeadButtonClick: ((HeaderType) -> Unit)? = null,
+        onFootButtonClick: ((FooterType) -> Unit)? = null,
         onSearch: ((String) -> Unit)? = null,
         onTextChange: ((String) -> Unit)? = null,
     ) {
         setTitle(title, icon, iconPosition)
-        onBackClickListener = onBackClick
+
         onHeadButtonClickListener = onHeadButtonClick
         onFootButtonClickListener = onFootButtonClick
 
@@ -195,12 +151,10 @@ class PatataAppBar @JvmOverloads constructor(
         title: String,
         icon: Int? = null,
         iconPosition: IconPosition = IconPosition.START,
-        onBackClick: (() -> Unit)? = null,
-        onHeadButtonClick: (() -> Unit)? = null,
-        onFootButtonClick: (() -> Unit)? = null,
+        onHeadButtonClick: ((HeaderType) -> Unit)? = null,
+        onFootButtonClick: ((FooterType) -> Unit)? = null,
     ) {
         setTitle(title, icon, iconPosition)
-        onBackClickListener = onBackClick
         onHeadButtonClickListener = onHeadButtonClick
         onFootButtonClickListener = onFootButtonClick
     }
@@ -211,9 +165,8 @@ class PatataAppBar @JvmOverloads constructor(
     fun setupAppBar(
         icon: Int? = null,
         iconPosition: IconPosition = IconPosition.START,
-        onBackClick: (() -> Unit)? = null,
-        onHeadButtonClick: (() -> Unit)? = null,
-        onFootButtonClick: (() -> Unit)? = null,
+        onHeadButtonClick: ((HeaderType) -> Unit)? = null,
+        onFootButtonClick: ((FooterType) -> Unit)? = null,
         onSearch: ((String) -> Unit)? = null,
         onTextChange: ((String) -> Unit)? = null,
     ) {
@@ -221,7 +174,6 @@ class PatataAppBar @JvmOverloads constructor(
             throw IllegalArgumentException("BodyType이 TITLE일 때는 setupAppBar(title: String)를 사용해야 합니다.")
         }
 
-        onBackClickListener = onBackClick
         onHeadButtonClickListener = onHeadButtonClick
         onFootButtonClickListener = onFootButtonClick
 
@@ -260,9 +212,15 @@ class PatataAppBar @JvmOverloads constructor(
         bodyType = type
         setBody(bodyType)
     }
-
     fun getBodyType(): BodyType = bodyType
 
+    /**
+     * Footer Type을 변경하는 함수
+     * @param type FooterType
+     */
+    fun setFooterType(type: FooterType) {
+        setFooter(type)
+    }
     /**
      * 검색어 초기화
      */
@@ -288,7 +246,22 @@ class PatataAppBar @JvmOverloads constructor(
         START, END, TOP, BOTTOM
     }
 
-    enum class BodyType {
-        MAIN, SEARCH, TITLE
+    enum class HeaderType(val id: Int) {
+        BACK(0), LIST(1), MAP(2), NONE(-1);
+        companion object {
+            fun fromId(id: Int) = entries.first { it.id == id } ?: NONE
+        }
+    }
+    enum class BodyType(val id: Int) {
+        MAIN(0), SEARCH(1), TITLE(2);
+        companion object {
+            fun fromId(id: Int) = entries.first { it.id == id } ?: MAIN
+        }
+    }
+    enum class FooterType(val id: Int) {
+        COMPLAINT(0), MORE(1), CANCEL(2), SELECT(3), DELETE(4), NONE(-1);
+        companion object {
+            fun fromId(id: Int) = entries.first { it.id == id } ?: NONE
+        }
     }
 }

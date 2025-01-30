@@ -20,5 +20,8 @@
     <string name="hint_searchbar">검색어를 입력하세요</string>
     <string name="hint_comment">댓글을 입력하세요</string>
 
+    <string name="select">선택</string>
+    <string name="delete">삭제</string>
+
     <string name="search_no_result_text">"'"%s"'"에 대한\n검색 결과가 없습니다.</string>
 </resources>

@@ -26,7 +26,7 @@ class TodaySpotRecommendationFragment: BaseFragment<FragmentTodaySpotRecommendat
     private fun setAppBar() {
         binding.appbarTodaySpotRecommendation.setupAppBar(
             title = getString(R.string.title_today_spot_recommend),
-            onBackClick = { finish() }
+            onHeadButtonClick = { finish() }
         )
     }
 

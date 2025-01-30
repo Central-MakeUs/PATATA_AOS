@@ -103,7 +103,7 @@
     <!-- Foot Icon Area -->
 
     <ImageView
-        android:id="@+id/iv_complaint"
+        android:id="@+id/iv_footer_complaint"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:visibility="gone"
@@ -114,7 +114,7 @@
         android:contentDescription="@string/img_desc_complaint"/>
 
     <ImageView
-        android:id="@+id/iv_more"
+        android:id="@+id/iv_footer_more"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:visibility="gone"
@@ -125,7 +125,7 @@
         android:contentDescription="@string/img_desc_more"/>
 
     <ImageView
-        android:id="@+id/iv_cancel"
+        android:id="@+id/iv_footer_cancel"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:visibility="gone"
@@ -135,4 +135,27 @@
         app:layout_constraintBottom_toBottomOf="@+id/appbar_bottom_barrier"
         android:contentDescription="@string/img_desc_cancel"/>
 
+    <TextView
+        android:id="@+id/tv_footer_select"
+        style="@style/subtitle_medium"
+        android:textColor="@color/text_default"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="@string/select"
+        app:layout_constraintTop_toTopOf="@+id/appbar_top_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/appbar_bottom_barrier"/>
+
+    <TextView
+        android:id="@+id/tv_footer_delete"
+        style="@style/subtitle_medium"
+        android:textColor="@color/blue_100"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="@string/delete"
+        app:layout_constraintTop_toTopOf="@+id/appbar_top_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/appbar_bottom_barrier"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
