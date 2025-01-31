@@ -11,6 +11,15 @@
         tools:layout="@layout/fragment_around_me">
 
         <action
+            android:id="@+id/navigate_select_location"
+            app:destination="@id/SelectLocationFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/SelectLocationFragment"
+        android:name="com.cmc.presentation.map.selectlocation.SelectLocationFragment"
+        tools:layout="@layout/fragment_select_location">
+        <action
             android:id="@+id/navigate_add_spot"
             app:destination="@id/AddSpotFragment"/>
     </fragment>
