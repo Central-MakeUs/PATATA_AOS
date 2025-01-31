@@ -11,6 +11,7 @@
     <include app:graph="@navigation/nav_home"/>
     <include app:graph="@navigation/nav_map"/>
     <include app:graph="@navigation/nav_archive"/>
+    <include app:graph="@navigation/nav_my"/>
 
     <include app:graph="@navigation/nav_splash"/>
     <include app:graph="@navigation/nav_onboarding"/>

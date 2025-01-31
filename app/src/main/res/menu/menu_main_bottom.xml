@@ -23,7 +23,7 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/nav_mypage"
+        android:id="@+id/nav_my"
         android:enabled="true"
         android:title="@string/title_nav_my"
         android:icon="@drawable/nav_icon_my_selector"

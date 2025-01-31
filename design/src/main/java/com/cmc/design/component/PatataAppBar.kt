@@ -91,6 +91,7 @@ class PatataAppBar @JvmOverloads constructor(
             FooterType.CANCEL to binding.ivFooterCancel,
             FooterType.SELECT to binding.tvFooterSelect,
             FooterType.DELETE to binding.tvFooterDelete,
+            FooterType.SETTING to binding.ivFooterSetting,
         ).forEach { (t, v) ->
             v.isVisible = t == type
             v.setOnClickListener {
@@ -259,7 +260,7 @@ class PatataAppBar @JvmOverloads constructor(
         }
     }
     enum class FooterType(val id: Int) {
-        COMPLAINT(0), MORE(1), CANCEL(2), SELECT(3), DELETE(4), NONE(-1);
+        COMPLAINT(0), MORE(1), CANCEL(2), SELECT(3), DELETE(4), SETTING(5),NONE(-1);
         companion object {
             fun fromId(id: Int) = entries.first { it.id == id } ?: NONE
         }
