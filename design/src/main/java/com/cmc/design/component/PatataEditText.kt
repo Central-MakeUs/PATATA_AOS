@@ -9,6 +9,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
@@ -33,19 +34,7 @@ class PatataEditText @JvmOverloads constructor(
 
     private var helperView: PatataEditTextHelperView? = null
 
-    enum class EditTextMode(val id: Int) {
-        SINGLE_LINE(0), MULTI_LINE(1);
-        companion object {
-            fun fromId(id:Int) = entries.first { it.id == id}
-        }
-    }
-
-    private var mode = EditTextMode.SINGLE_LINE
-
-    private var heightMap = mapOf(
-        EditTextMode.SINGLE_LINE to 48.dpToFloat,
-        EditTextMode.MULTI_LINE to 120.dpToFloat,
-    )
+    private var isEnabled: Boolean = true
 
     init {
         applyStyle(false)
@@ -61,8 +50,8 @@ class PatataEditText @JvmOverloads constructor(
             1 -> applyStyle(true)
         }
 
-        mode = EditTextMode.fromId(typedArray.getInt(R.styleable.PatataEditText_customEditTextMode, 0))
-        configureEditTextMode()
+        setLinesOption(typedArray.getBoolean(R.styleable.PatataEditText_isSingLine, true))
+        isEnabled = typedArray.getBoolean(R.styleable.PatataEditText_isEnabled, true)
 
         setTextMaxLength(typedArray.getInteger(R.styleable.PatataEditText_editTextMaxLength, -1))
         setTextAppearance(typedArray.getResourceId(R.styleable.PatataEditText_editTextTextAppearance, R.style.subtitle_small))
@@ -75,12 +64,12 @@ class PatataEditText @JvmOverloads constructor(
         typedArray.recycle()
     }
 
-    private fun configureEditTextMode() {
-        binding.etEditTextInput.isSingleLine = mode == EditTextMode.SINGLE_LINE
+    private fun setLinesOption(isSingleLine: Boolean) {
+        binding.etEditTextInput.isSingleLine = isSingleLine
         binding.layoutEditTextRoot.layoutParams = binding.layoutEditTextRoot.layoutParams.apply {
-            this.height = heightMap[mode]!!.toInt()
+            this.height = (if (isSingleLine) 48 else 120).dpToFloat.toInt()
         }
-        binding.etEditTextInput.gravity = if (mode == EditTextMode.SINGLE_LINE) Gravity.CENTER_VERTICAL else Gravity.TOP
+        binding.etEditTextInput.gravity = if (isSingleLine) Gravity.CENTER_VERTICAL else Gravity.TOP
     }
 
     private fun applyStyle(isDarkMode: Boolean) {
@@ -211,6 +200,12 @@ class PatataEditText @JvmOverloads constructor(
 
     fun connectHelperView(patataEditTextHelperView: PatataEditTextHelperView) {
         helperView = patataEditTextHelperView
+    }
+
+
+    // SearchBar 속성 isEnabled 가 false 경우 View Only 로 판단
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        return isEnabled.not()
     }
 
     private fun hideKeyboard() {

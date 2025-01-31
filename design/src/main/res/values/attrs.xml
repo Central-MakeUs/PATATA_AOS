@@ -1,5 +1,7 @@
 <!-- res/values/attrs.xml -->
 <resources>
+    <attr name="isEnabled" format="boolean"/>
+
     <!-- PatataAppBar 커스텀 속성 -->
     <declare-styleable name="PatataAppBar">
         <attr name="bodyType" format="enum">
@@ -44,7 +46,7 @@
             <enum name="dark" value="1"/>
         </attr>
 
-        <attr name="isEnabled" format="boolean"/>
+        <attr name="isEnabled" />
     </declare-styleable>
 
     <!-- PatataEditor 커스텀 속성 -->
@@ -62,11 +64,8 @@
             <enum name="dark" value="1"/>
         </attr>
 
-        <attr name="customEditTextMode" format="enum">
-            <enum name="singleLine" value="0"/>
-            <enum name="multiLine" value="1"/>
-        </attr>
-
+        <attr name="isEnabled" />
+        <attr name="isSingLine" format="boolean"/>
         <attr name="editTextMaxLength" format="integer"/>
         <attr name="editTextTextAppearance" format="reference"/>
         <attr name="showCancelButton" format="boolean"/>
