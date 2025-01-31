@@ -2,6 +2,7 @@ package com.cmc.presentation.archive
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.design.component.PatataAppBar
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,9 +22,19 @@ class ArchiveViewModel @Inject constructor() : ViewModel() {
     private val _sideEffect = MutableSharedFlow<ArchiveSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
-    fun setSelectionMode() {
+    fun getDumpData() {
+        val dumpData = List(41) { it to "https://source.unsplash.com/random/400x400?nature${(it % 6) + 1}" }
+        viewModelScope.launch {
+            _state.update {
+                it.copy(images = dumpData)
+            }
+        }
+
+    }
+
+    fun setFooterType(type : PatataAppBar.FooterType) {
         _state.update {
-            it.copy(selectionMode = SelectionMode.SELECT)
+            it.copy(footerType = type)
         }
     }
 
@@ -43,17 +54,13 @@ class ArchiveViewModel @Inject constructor() : ViewModel() {
     }
 
     data class ArchiveState(
-        val selectionMode: SelectionMode = SelectionMode.DEFAULT,
+        val footerType: PatataAppBar.FooterType = PatataAppBar.FooterType.SELECT,
         val selectedItems: Set<Int> = emptySet(),
         val images: List<Pair<Int, String>> = emptyList()
     )
 
     sealed class ArchiveSideEffect {
-        data class ShowDeleteImageDialog(val images: List<Int>) : ArchiveSideEffect()
+        data class ShowDeleteImageDialog(val selectedImages: List<Int>) : ArchiveSideEffect()
         data class ShowSnackbar(val message: String) : ArchiveSideEffect()
     }
-}
-
-enum class SelectionMode {
-    DEFAULT, SELECT
 }

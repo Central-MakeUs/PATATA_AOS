@@ -1,9 +1,6 @@
 package com.cmc.presentation.archive
 
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
-import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.cmc.common.adapter.GridSpaceItemDecoration
@@ -17,6 +14,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import com.cmc.presentation.archive.ArchiveViewModel.ArchiveState
 import com.cmc.presentation.archive.ArchiveViewModel.ArchiveSideEffect
+import com.cmc.design.component.PatataAppBar.FooterType
 
 @AndroidEntryPoint
 class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_archive) {
@@ -45,16 +43,22 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
     }
 
     private fun updateUI(state: ArchiveState) {
-        binding.archiveAppbar.setFooterType(
-            if (state.selectionMode == SelectionMode.DEFAULT) PatataAppBar.FooterType.SELECT
-            else PatataAppBar.FooterType.DELETE
+        binding.layoutArchiveNoResult.isVisible = state.images.isEmpty()
+        viewModel.setFooterType(
+            when {
+                state.images.isEmpty() -> FooterType.NONE
+                else -> FooterType.SELECT
+            }
         )
+
+        binding.archiveAppbar.setFooterType(state.footerType)
         // Adapter에 데이터 변경을 알림 (선택 모드가 바뀌었으므로 모든 아이템 갱신)
+        archiveAdapter.setItems(state.images)
         archiveAdapter.notifyDataSetChanged()
     }
     private fun handleSideEffect(effect: ArchiveSideEffect) {
         when (effect) {
-            is ArchiveSideEffect.ShowDeleteImageDialog -> { showDeleteImageDialog(effect.images) }
+            is ArchiveSideEffect.ShowDeleteImageDialog -> { showDeleteImageDialog(effect.selectedImages) }
             is ArchiveSideEffect.ShowSnackbar -> {}
         }
     }
@@ -65,7 +69,7 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
                 title = getString(R.string.title_archive),
                 onFootButtonClick = { type ->
                     when (type) {
-                        PatataAppBar.FooterType.SELECT -> { viewModel.setSelectionMode() }
+                        PatataAppBar.FooterType.SELECT -> { viewModel.setFooterType(FooterType.DELETE) }
                         else -> { viewModel.onClickDeleteButton() }
                     }
                 },
@@ -73,14 +77,13 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
         }
     }
     private fun setRecyclerView() {
-        val sampleData = getDumpData()
+        viewModel.getDumpData()
 
         archiveAdapter = ArchivePhotoAdapter(
-            items = sampleData,
-            isSelectionMode = { viewModel.state.value.selectionMode == SelectionMode.SELECT },
+            isSelectionMode = { viewModel.state.value.footerType == FooterType.DELETE },
             isSelected = { imageId -> viewModel.state.value.selectedItems.contains(imageId) },
             onPhotoClick = { imageId ->
-                if (viewModel.state.value.selectionMode == SelectionMode.SELECT) {
+                if (viewModel.state.value.footerType == FooterType.DELETE) {
                     viewModel.togglePhotoSelection(imageId)
                 } else {
                     // 상세 화면 이동

@@ -22,5 +22,50 @@
             app:layout_constraintTop_toBottomOf="@id/archive_appbar"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
+        <LinearLayout
+            android:id="@+id/layout_archive_no_result"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/gray_10"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/archive_appbar"
+            app:layout_constraintBottom_toBottomOf="parent">
+            <ImageView
+                android:id="@+id/iv_search_no_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_no_search_result"
+                android:contentDescription="@string/img_desc_search_no_result"/>
+
+            <TextView
+                android:id="@+id/tv_search_no_result"
+                style="@style/subtitle_large"
+                android:textColor="@color/text_disabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/archive_no_result_text"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/default_spacing"/>
+
+            <LinearLayout
+                android:id="@+id/layout_explore_spot_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_profile_complete"
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="60dp"
+                android:paddingVertical="15dp"
+                app:layout_constraintBottom_toBottomOf="parent">
+                <TextView
+                    style="@style/subtitle_medium"
+                    android:textColor="@color/white"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/go_explore_spots"/>
+            </LinearLayout>
+        </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
