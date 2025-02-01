@@ -1,6 +1,7 @@
 package com.cmc.presentation.map
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc.domain.model.SpotCategory
@@ -28,12 +29,26 @@ class AddSpotViewModel @Inject constructor(): ViewModel() {
         observeStateChanges()
     }
 
-    fun updateTitle(title: String) {
-        _state.update { it.copy(title = title) }
+    fun updateSpotName(spotName: String) {
+        _state.update { it.copy(spotName = spotName) }
     }
 
-    fun updateLocation(location: String) {
-        _state.update { it.copy(detailedLocation = location) }
+    fun updateLocationWithAddress(
+        latitude: Double,
+        longitude: Double,
+        address: String,
+    ) {
+        _state.update {
+            it.copy(
+                latitude = latitude,
+                longitude = longitude,
+                address = address
+            )
+        }
+    }
+
+    fun updateAddressDetail(addressDetail: String) {
+        _state.update { it.copy(addressDetail = addressDetail) }
     }
 
     fun updateDescription(description: String) {
@@ -111,8 +126,8 @@ class AddSpotViewModel @Inject constructor(): ViewModel() {
 
     // 필수 입력 필드 검사
     private fun checkFormValid(state: AddSpotState): Boolean {
-        return state.title.isNotBlank() &&
-                state.detailedLocation.isNotBlank() &&
+        return state.spotName.isNotBlank() &&
+                state.addressDetail.isNotBlank() &&
                 state.description.isNotBlank() &&
                 state.selectedCategory != null &&
                 state.selectedImages.isNotEmpty() &&
@@ -120,8 +135,11 @@ class AddSpotViewModel @Inject constructor(): ViewModel() {
     }
 
     data class AddSpotState(
-        val title: String = "",
-        val detailedLocation: String = "",
+        val spotName: String = "",
+        val latitude: Double = 0.0,
+        val longitude: Double = 0.0,
+        val address: String = "",
+        val addressDetail: String = "",
         val description: String = "",
         val selectedCategory: SpotCategory? = null,
         val selectedImages: List<Uri> = emptyList(),

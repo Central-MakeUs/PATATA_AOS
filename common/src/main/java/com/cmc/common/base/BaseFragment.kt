@@ -59,9 +59,9 @@ abstract class BaseFragment<T: ViewDataBinding>(@LayoutRes val layoutRes: Int)
      *
      * @param direction 다음 프래그먼트로 이동할 Direction
      * */
-    protected fun navigate(destinationId: Int) {
+    protected fun navigate(destinationId: Int, args: Bundle? = null) {
         val controller = findNavController()
-        controller.navigate(destinationId)
+        controller.navigate(destinationId, args)
     }
 
     protected fun finish() = requireActivity().onBackPressedDispatcher.onBackPressed()

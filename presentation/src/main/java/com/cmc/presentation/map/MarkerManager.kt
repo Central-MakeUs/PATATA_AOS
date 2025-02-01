@@ -1,5 +1,6 @@
 package com.cmc.presentation.map
 
+import android.util.Log
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.model.SpotCategoryItem
 import com.cmc.presentation.model.SpotUiModel
@@ -13,6 +14,7 @@ class MarkerManager(private val naverMap: NaverMap) {
 
     fun updateMarkersWithData(newDataList: List<SpotUiModel>?) {
         if (newDataList.isNullOrEmpty()) return
+        Log.d("testLog", "updateMarkersWithData")
 
         val dataSet = markerMap.keys
         val newDataSet = newDataList.toSet()

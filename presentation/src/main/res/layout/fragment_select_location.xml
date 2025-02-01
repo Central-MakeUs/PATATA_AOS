@@ -21,6 +21,16 @@
             app:layout_constraintTop_toBottomOf="@+id/select_location_appbar"
             app:layout_constraintBottom_toTopOf="@+id/layout_select_location"/>
 
+        <ImageView
+            android:id="@+id/iv_target_location_point"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_address_pin_active"
+            app:layout_constraintTop_toTopOf="@+id/view_select_location_map"
+            app:layout_constraintStart_toStartOf="@+id/view_select_location_map"
+            app:layout_constraintBottom_toBottomOf="@+id/view_select_location_map"
+            app:layout_constraintEnd_toEndOf="@+id/view_select_location_map"/>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_select_location"
             android:layout_width="match_parent"
@@ -48,6 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 app:customEditTextStyle="dark"
+                app:isEnabled="false"
                 app:layout_constraintTop_toBottomOf="@+id/tv_selection_to_share"
                 app:layout_constraintBottom_toTopOf="@+id/layout_selection_complete_button"/>
 

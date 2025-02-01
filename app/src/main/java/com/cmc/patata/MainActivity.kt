@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     override fun navigateHome() { navigate(R.id.nav_home) }
     override fun navigateSearch() { navigate(R.id.nav_search) }
     override fun navigateSpotDetail(spotId: Int) {
-        navigate(R.id.nav_spot_detail, Bundle().apply { putInt(NavigationKeys.SPOT_DETAIL_ARGUMENT_SPOT_ID, spotId) })
+        navigate(R.id.nav_spot_detail, Bundle().apply { putInt(NavigationKeys.SpotDetail.ARGUMENT_SPOT_ID, spotId) })
     }
 
     private fun navigate(navId: Int, bundle: Bundle? = null) {

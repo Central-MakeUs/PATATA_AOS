@@ -139,7 +139,7 @@ class PatataEditText @JvmOverloads constructor(
         binding.etEditTextInput.setText("")
     }
 
-    private fun setHint(hint: String?) {
+    fun setHint(hint: String?) {
         binding.etEditTextInput.hint = hint
     }
 

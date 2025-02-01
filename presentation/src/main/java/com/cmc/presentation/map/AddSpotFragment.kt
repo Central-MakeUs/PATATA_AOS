@@ -1,5 +1,6 @@
 package com.cmc.presentation.map
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cmc.common.base.BaseFragment
+import com.cmc.common.constants.NavigationKeys
 import com.cmc.design.component.BottomSheetDialog
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
@@ -43,9 +45,23 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
     }
 
     override fun initView() {
+        setArgument(arguments)
         setAppbar()
         setupRecyclerView()
         setupViewActionListeners()
+    }
+
+    private fun setArgument(bundle: Bundle?) {
+        val latitude = bundle?.getDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE)
+        val longitude = bundle?.getDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE)
+        val address = bundle?.getString(NavigationKeys.AddSpot.ARGUMENT_ADDRESS_NAME)
+
+        if (latitude == null || longitude == null || address.isNullOrEmpty()) {
+            // 필수 인자가 없을 때의 처리 (예: 에러 메시지 표시)
+            return
+        }
+
+        viewModel.updateLocationWithAddress(latitude, longitude, address)
     }
 
     private fun setAppbar() {
@@ -70,11 +86,11 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
     }
     private fun setupViewActionListeners() {
         binding.etInputTitle.setAfterTextChangeListener { str ->
-            viewModel.updateTitle(str)
+            viewModel.updateSpotName(str)
         }
 
         binding.etInputAddressDetail.setAfterTextChangeListener { str ->
-            viewModel.updateLocation(str)
+            viewModel.updateAddressDetail(str)
         }
 
         binding.etContentDesc.setAfterTextChangeListener { str ->
