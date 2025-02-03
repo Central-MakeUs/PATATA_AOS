@@ -2,8 +2,8 @@ package com.cmc.presentation.map
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cmc.domain.location.GetCurrentLocationUseCase
-import com.cmc.domain.location.Location
+import com.cmc.domain.feature.location.GetCurrentLocationUseCase
+import com.cmc.domain.feature.location.Location
 import com.cmc.presentation.model.SpotUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow

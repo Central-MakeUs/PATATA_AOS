@@ -1,7 +1,6 @@
 package com.cmc.data.base
 
-import com.cmc.data.di.TokenRefreshApi
-import com.cmc.domain.auth.model.AuthResponse
+import com.cmc.domain.feature.auth.model.AuthResponse
 import retrofit2.http.Headers
 import retrofit2.http.POST
 

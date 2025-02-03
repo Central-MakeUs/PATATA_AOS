@@ -1,4 +1,4 @@
-package com.cmc.data.auth
+package com.cmc.data.feature.auth
 
 interface TokenStorage {
     suspend fun saveTokens(accessToken: String, refreshToken: String)

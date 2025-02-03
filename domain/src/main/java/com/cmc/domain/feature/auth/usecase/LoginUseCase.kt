@@ -1,7 +1,7 @@
-package com.cmc.domain.auth.usecase
+package com.cmc.domain.feature.auth.usecase
 
-import com.cmc.domain.auth.model.AuthResponse
-import com.cmc.domain.auth.repository.AuthRepository
+import com.cmc.domain.feature.auth.model.AuthResponse
+import com.cmc.domain.feature.auth.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

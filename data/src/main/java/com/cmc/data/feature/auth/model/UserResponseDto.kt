@@ -1,6 +1,6 @@
-package com.cmc.data.auth.model
+package com.cmc.data.feature.auth.model
 
-import com.cmc.domain.auth.model.AuthResponse
+import com.cmc.domain.feature.auth.model.AuthResponse
 import com.google.gson.annotations.SerializedName
 
 data class UserResponseDto(

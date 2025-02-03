@@ -1,4 +1,4 @@
-package com.cmc.domain.location
+package com.cmc.domain.feature.location
 
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

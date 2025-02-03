@@ -1,4 +1,4 @@
-package com.cmc.data.auth
+package com.cmc.data.feature.auth
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit

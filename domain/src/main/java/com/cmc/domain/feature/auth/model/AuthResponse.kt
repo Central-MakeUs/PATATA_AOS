@@ -1,4 +1,4 @@
-package com.cmc.domain.auth.model
+package com.cmc.domain.feature.auth.model
 
 data class AuthResponse(
     var nickName: String? = null,

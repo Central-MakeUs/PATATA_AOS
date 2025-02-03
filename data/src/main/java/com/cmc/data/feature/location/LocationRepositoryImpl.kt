@@ -1,8 +1,8 @@
-package com.cmc.data.location
+package com.cmc.data.feature.location
 
 import android.content.Context
-import com.cmc.domain.location.Location
-import com.cmc.domain.location.LocationRepository
+import com.cmc.domain.feature.location.Location
+import com.cmc.domain.feature.location.LocationRepository
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.qualifiers.ApplicationContext

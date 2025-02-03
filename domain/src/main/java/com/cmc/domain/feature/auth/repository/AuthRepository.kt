@@ -1,6 +1,6 @@
-package com.cmc.domain.auth.repository
+package com.cmc.domain.feature.auth.repository
 
-import com.cmc.domain.auth.model.AuthResponse
+import com.cmc.domain.feature.auth.model.AuthResponse
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {

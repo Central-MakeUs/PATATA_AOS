@@ -1,4 +1,4 @@
-package com.cmc.domain.exception
+package com.cmc.domain.base.exception
 
 sealed class AppInternalException(message: String) : AppException(message) {
     object OperationCancelled : AppInternalException("The operation was cancelled by the user.")

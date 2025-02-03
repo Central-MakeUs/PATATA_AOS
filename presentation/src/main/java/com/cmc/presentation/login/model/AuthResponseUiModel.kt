@@ -1,6 +1,6 @@
 package com.cmc.presentation.login.model
 
-import com.cmc.domain.auth.model.AuthResponse
+import com.cmc.domain.feature.auth.model.AuthResponse
 
 data class AuthResponseUiModel(
     val nickName: String? = null,

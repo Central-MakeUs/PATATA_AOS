@@ -23,7 +23,7 @@ import androidx.navigation.fragment.findNavController
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
 import com.cmc.design.util.ExponentialAccelerateInterpolator
-import com.cmc.domain.exception.ApiException
+import com.cmc.domain.base.exception.ApiException
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentLoginBinding
 import com.cmc.presentation.login.LoginManager

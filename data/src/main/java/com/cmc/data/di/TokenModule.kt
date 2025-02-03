@@ -1,8 +1,8 @@
 package com.cmc.data.di
 
 import android.content.Context
-import com.cmc.data.auth.TokenManager
-import com.cmc.data.auth.TokenStorage
+import com.cmc.data.feature.auth.TokenManager
+import com.cmc.data.feature.auth.TokenStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

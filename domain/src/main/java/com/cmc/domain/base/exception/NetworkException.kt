@@ -1,4 +1,4 @@
-package com.cmc.domain.exception
+package com.cmc.domain.base.exception
 
 sealed class NetworkException(message: String) : AppException(message) {
     object NoInternetConnection : NetworkException("No internet connection")

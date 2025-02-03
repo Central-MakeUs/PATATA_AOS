@@ -3,8 +3,8 @@ package com.cmc.presentation.login.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cmc.domain.auth.usecase.LoginUseCase
-import com.cmc.domain.exception.ApiException
+import com.cmc.domain.feature.auth.usecase.LoginUseCase
+import com.cmc.domain.base.exception.ApiException
 import com.cmc.presentation.login.model.AuthResponseUiModel
 import com.cmc.presentation.login.model.toUiModel
 import com.cmc.presentation.spot.SpotDetailViewModel.SpotDetailSideEffect

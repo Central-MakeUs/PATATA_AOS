@@ -1,6 +1,6 @@
-package com.cmc.domain.auth.usecase
+package com.cmc.domain.feature.auth.usecase
 
-import com.cmc.domain.auth.repository.AuthRepository
+import com.cmc.domain.feature.auth.repository.AuthRepository
 import javax.inject.Inject
 
 class SaveTokensUseCase @Inject constructor(

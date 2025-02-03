@@ -1,4 +1,4 @@
-package com.cmc.domain.exception
+package com.cmc.domain.base.exception
 
 sealed class ApiException(message: String) : AppException(message) {
     class BadRequest(override val message: String) : ApiException(message)
