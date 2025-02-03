@@ -39,7 +39,7 @@ class OnBoardingPageFragment : BaseFragment<FragmentOnboardingPageBinding>(R.lay
         val distance = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30f , resources.displayMetrics)
 
         ObjectAnimator.ofFloat(view, "translationY", view.translationY, view.translationY - distance).apply {
-            duration = 2500
+            duration = 1500
             interpolator = LinearInterpolator()
             start()
         }

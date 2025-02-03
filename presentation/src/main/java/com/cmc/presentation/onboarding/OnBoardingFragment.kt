@@ -1,6 +1,9 @@
 package com.cmc.presentation.onboarding
 
+import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
@@ -23,7 +26,7 @@ class OnBoardingFragment : BaseFragment<FragmentOnboardingBinding>(R.layout.frag
         adapter = OnBoardingPagerAdapter(this)
         binding.viewpager.adapter = adapter
         binding.viewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-        binding.dotsIndicator.setViewPager2(binding.viewpager)
+        binding.dotsIndicator.attachTo(binding.viewpager)
     }
 
     private fun setNextButton(count: Int) {

@@ -81,4 +81,10 @@
         <attr name="customTabSelectedTextAppearance" format="reference"/>
         <attr name="customTabUnselectedTextAppearance" format="reference"/>
     </declare-styleable>
+
+    <declare-styleable name="CustomIndicator">
+        <attr name="dotSize" format="dimension" />
+        <attr name="dotColor" format="reference" />
+        <attr name="dotSelectedColor" format="reference" />
+    </declare-styleable>
 </resources>
