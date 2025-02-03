@@ -4,18 +4,24 @@ import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentSplashBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class SplashFragment : BaseFragment<FragmentSplashBinding>(R.layout.fragment_splash) {
 
+    override fun initObserving() { }
+
     override fun initView() {
-        binding.btnSplash.setOnClickListener {
-            (activity as GlobalNavigation).navigateOnBoarding()
+        repeatWhenUiStarted {
+            launch {
+                delay(2000)
+                navigateOnBoarding()
+            }
         }
     }
 
-    override fun initObserving() {
-
+    private fun navigateOnBoarding() {
+        (activity as GlobalNavigation).navigateOnBoarding()
     }
-    
 }
