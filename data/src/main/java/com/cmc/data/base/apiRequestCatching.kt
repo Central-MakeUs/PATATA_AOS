@@ -1,5 +1,6 @@
 package com.cmc.data.base
 
+import android.util.Log
 import com.cmc.domain.exception.ApiException
 import com.cmc.domain.exception.AppInternalException
 import com.cmc.domain.exception.NetworkException

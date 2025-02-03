@@ -12,6 +12,7 @@ internal object ApiConfig {
 }
 internal object ApiCode {
     object Auth {
+        const val ACCESS_TOKEN_EXPIRED = "OAUTH4001"
         const val INVALID_GOOGLE_ID_TOKEN = "OAUTH4003"
         const val GOOGLE_ID_TOKEN_VERIFICATION_FAILED = "OAUTH4004"
     }

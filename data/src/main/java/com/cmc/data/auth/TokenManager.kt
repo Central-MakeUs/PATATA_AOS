@@ -24,6 +24,12 @@ class TokenManager(private val context: Context) : TokenStorage {
         }
     }
 
+    override suspend fun saveAccessToken(accessToken: String) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_ACCESS_TOKEN] = accessToken
+        }
+    }
+
     override suspend fun getAccessToken(): String? {
         return context.dataStore.data
             .map { preferences -> preferences[KEY_ACCESS_TOKEN] }

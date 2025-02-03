@@ -2,6 +2,7 @@ package com.cmc.data.auth.repository
 
 import android.content.Context
 import android.util.Base64
+import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -11,6 +12,7 @@ import com.cmc.data.auth.model.toDomain
 import com.cmc.data.auth.remote.AuthApiService
 import com.cmc.data.base.apiRequestCatching
 import com.cmc.data.base.asFlow
+import com.cmc.data.di.GeneralApi
 import com.cmc.domain.auth.model.AuthResponse
 import com.cmc.domain.auth.repository.AuthRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -26,14 +28,12 @@ val Context.userDataStore by preferencesDataStore(name = "user_data")
 
 internal class AuthRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val authApiService: AuthApiService,
+    @GeneralApi private val authApiService: AuthApiService,
     private val tokenStorage: TokenStorage,
 ): AuthRepository {
 
     companion object {
         private val KEY_USER_ID = stringPreferencesKey("key_user_id")
-        private val KEY_ACCESS_TOKEN = stringPreferencesKey("key_access_token")
-        private val KEY_REFRESH_TOKEN = stringPreferencesKey("key_refresh_token")
     }
 
     private val secretKey: SecretKey = generateSecretKey()

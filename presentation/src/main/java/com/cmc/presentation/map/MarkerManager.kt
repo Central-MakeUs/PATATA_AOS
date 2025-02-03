@@ -14,7 +14,6 @@ class MarkerManager(private val naverMap: NaverMap) {
 
     fun updateMarkersWithData(newDataList: List<SpotUiModel>?) {
         if (newDataList.isNullOrEmpty()) return
-        Log.d("testLog", "updateMarkersWithData")
 
         val dataSet = markerMap.keys
         val newDataSet = newDataList.toSet()

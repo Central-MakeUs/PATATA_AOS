@@ -1,6 +1,8 @@
 package com.cmc.data.di
 
 import com.cmc.data.auth.repository.AuthRepositoryImpl
+import com.cmc.data.base.TokenDataSource
+import com.cmc.data.base.TokenDataSourceImpl
 import com.cmc.data.location.LocationRepositoryImpl
 import com.cmc.domain.auth.repository.AuthRepository
 import com.cmc.domain.location.LocationRepository
@@ -18,5 +20,8 @@ internal interface RepositoryModule {
 
     @Binds
     fun provideLocationRepositoryImpl(locationRepository: LocationRepositoryImpl): LocationRepository
+
+    @Binds
+    fun provideTokenDataSourceImpl(tokenDataSource: TokenDataSourceImpl): TokenDataSource
 
 }
