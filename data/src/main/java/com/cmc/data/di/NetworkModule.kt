@@ -27,8 +27,10 @@ object NetworkModule {
     @TokenRefreshApi
     @Provides
     @Singleton
-    fun provideTokenRefreshOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder().build()  // 인증 관련 인터셉터 제거
+    fun provideTokenRefreshOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)   // 리프레쉬 토큰 추가
+            .build()  // 인증 관련 인터셉터 제거
     }
 
     @TokenRefreshApi

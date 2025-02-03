@@ -1,5 +1,6 @@
 package com.cmc.data.di
 
+import android.util.Log
 import com.cmc.data.base.TokenDataSource
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
@@ -27,7 +28,6 @@ class TokenAuthenticator @Inject constructor(
                     .addHeader("Authorization", "Bearer $newAccessToken")
                     .build()
             } else {
-                // 리프레시 실패 시 null 반환 → 자동 로그아웃 처리
                 null
             }
         }
