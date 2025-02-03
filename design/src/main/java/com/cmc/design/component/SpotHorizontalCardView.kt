@@ -57,7 +57,7 @@ class SpotHorizontalCardView @JvmOverloads constructor(
         binding.tvSpotLocation.text = location
         binding.tvSpotTitle.text = title
         binding.tvArchiveCount.text = archiveCount.toString()
-        binding.tvCommentCount.text = commentCount.toString()
+        binding.tvReviewCount.text = commentCount.toString()
         binding.ivSpotArchive.isSelected = isArchived
 
         binding.tvRecommendLabel.visibility = if (isRecommended) View.VISIBLE else View.GONE

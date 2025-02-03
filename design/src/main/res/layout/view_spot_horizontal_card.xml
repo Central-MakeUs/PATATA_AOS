@@ -67,7 +67,7 @@
         tools:text="112"/>
     <!-- 코멘트 -->
     <TextView
-        android:id="@+id/tv_comment_count"
+        android:id="@+id/tv_review_count"
         style="@style/caption_small"
         android:textColor="@color/text_disabled"
         android:layout_width="wrap_content"

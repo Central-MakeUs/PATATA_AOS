@@ -40,7 +40,7 @@ class SpotThumbnailAdapter(
             binding.tvSpotTitle.text = item.title
             "%.1f km".format(item.distance).also { binding.tvSpotDistance.text = it }
             item.likes.toString().also { binding.tvArchiveCount.text = it }
-            item.scraps.toString().also { binding.tvCommentCount.text = it }
+            item.scraps.toString().also { binding.tvReviewCount.text = it }
             binding.ivSpotArchive.isSelected = item.isBookmarked
 
             binding.ivSpotArchive.setOnClickListener {

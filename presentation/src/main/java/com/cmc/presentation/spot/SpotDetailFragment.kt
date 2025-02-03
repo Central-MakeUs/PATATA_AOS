@@ -1,18 +1,24 @@
 package com.cmc.presentation.spot
 
+import android.os.Bundle
 import android.view.LayoutInflater
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmc.common.base.BaseFragment
+import com.cmc.common.constants.NavigationKeys
 import com.cmc.design.component.BottomSheetDialog
+import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.ContentSheetSpotDetailComplaintBinding
 import com.cmc.presentation.databinding.ContentSheetSpotDetailMoreBinding
 import com.cmc.presentation.databinding.FragmentSpotDetailBinding
+import com.cmc.presentation.model.SpotCategoryItem
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import com.cmc.presentation.spot.SpotDetailViewModel.SpotDetailSideEffect
+import com.cmc.presentation.spot.SpotDetailViewModel.SpotDetailState
 
 @AndroidEntryPoint
 class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragment_spot_detail) {
@@ -21,38 +27,60 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
 
     override fun initObserving() {
         repeatWhenUiStarted {
-            launch {
-                viewModel.state.collectLatest {
-
-                }
-            }
-
-            launch {
-                viewModel.sideEffect.collectLatest { s ->
-                    when (s) {
-                        is SpotDetailSideEffect.ShowBottomSheet -> {
-                            setFooterBottomSheetDialog(s.spotIsMine)
-                        }
-                        else -> {}
-                    }
-                }
-            }
+            launch { viewModel.state.collect { state -> updateUI(state) } }
+            launch { viewModel.sideEffect.collectLatest { effect -> handleSideEffect(effect) } }
         }
     }
 
-    override fun initView() {
+    private fun updateUI(state: SpotDetailState) {
+        state.spotDetail?.let {
+            val categoryItem = SpotCategoryItem(
+                SpotCategory.fromId(it.categoryId) ?: SpotCategory.ALL
+            )
+            setAppBar(
+                getString(categoryItem.getName()),
+                categoryItem.getIcon(),
+                it.isAuthor
+            )
 
-        // TODO: 앱바에 데이터 반영
-        setAppBar("", null)
+            with(binding) {
+                tvSpotTitle.text = it.spotName
+                tvSpotPoster.text = it.authorName
+                tvSpotLocation.text = it.address
+                tvSpotDescription.text = it.description
+                updateTags(it.tags)
+                setCommentCount(it.reviewCount)
+            }
+        }
+
+    }
+
+    private fun updateTags(tags: List<String>?) {
+        binding.layoutTag.removeAllViews()
+
+        tags?.forEach { tag ->
+            val tagView = LayoutInflater.from(context).inflate(com.cmc.design.R.layout.view_tag_blue, binding.layoutTag, false)
+            val tagTextView = tagView.findViewById<TextView>(com.cmc.design.R.id.tv_tag)
+            tagTextView.text = tag
+
+            binding.layoutTag.addView(tagView)
+        }
+    }
+
+    private fun handleSideEffect(effect: SpotDetailSideEffect) {
+
+    }
+
+    override fun initView() {
+        initData(arguments)
         setViewPager()
         setSpotContent()
-        setComment()
+        setReviewRecyclerView()
+    }
 
-//        arguments?.getInt(NavigationKeys.SPOT_DETAIL_ARGUMENT_SPOT_ID)?.let {
-//
-//        }
-
-
+    private fun initData(bundle: Bundle?) {
+        val spotId = bundle?.getInt(NavigationKeys.SpotDetail.ARGUMENT_SPOT_ID) ?: -1
+        viewModel.getSpotDetail(spotId)
     }
 
     private fun setViewPager() {
@@ -65,14 +93,14 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
     private fun setAppBar(
         title: String,
         titleIconResId: Int? = null,
+        isAuthor: Boolean,
     ) {
         binding.appbar.setupAppBar(
             title = title,
             titleIconResId,
             onHeadButtonClick = { finish() },
             onFootButtonClick = {
-                // TODO: 스팟 등록자 확인
-                viewModel.clickFooterButton(true)
+                viewModel.clickFooterButton(isAuthor)
             },
         )
     }
@@ -90,9 +118,8 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
         }
     }
 
-    private fun setComment() {
-        setRecyclerView()
-//        binding.tvCommentCount.text =
+    private fun setCommentCount(reviewCount: Int) {
+        binding.tvReviewCount.text = reviewCount.toString() ?: getString(R.string.zero)
     }
 
     private fun setFooterBottomSheetDialog(postIsMine: Boolean) {
@@ -119,22 +146,14 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
         }
     }
 
-    private fun setRecyclerView() {
-        val adapter = SpotCommentAdapter(getAdapterDumpData())
-        binding.rvComment.apply {
+    private fun setReviewRecyclerView() {
+        val adapter = SpotCommentAdapter()
+        binding.rvReview.apply {
             layoutManager = LinearLayoutManager(context)
             setAdapter(adapter)
         }
     }
 
-    private fun getAdapterDumpData(): List<CommentUiModel> = listOf(
-        CommentUiModel("김뿡", "계단을 조금 올라가야돼서 힘들지만, 힘든만큼 보람찬 결과물이 나오네요!", "25.01.23  00:13"),
-        CommentUiModel("제리", "일출시간 맞춰서 방문했는데 아주 좋았어요! 미세먼지 많은 날 촬영나갔더니 국회의사당이 흐리게 보여서 조금 아쉬웠지만, 맑은 날 가면 정말 예쁠 스팟이에요", "25.01.23  00:13"),
-        CommentUiModel("행", "계단을 조금 올라가야돼서 힘들지만, 힘든만큼 보람찬 결과물이 나오네요!", "25.01.23  00:13"),
-        CommentUiModel("짐", "일출시간 맞춰서 방문했는데 아주 좋았어요! 미세먼지 많은 날 촬영나갔더니 국회의사당이 흐리게 보여서 조금 아쉬웠지만, 맑은 날 가면 정말 예쁠 스팟이에요", "25.01.23  00:13"),
-        CommentUiModel("멜론", "계단을 조금 올라가야돼서 힘들지만, 힘든만큼 보람찬 결과물이 나오네요!", "25.01.23  00:13"),
-        CommentUiModel("도얌", "일출시간 맞춰서 방문했는데 아주 좋았어요! 미세먼지 많은 날 촬영나갔더니 국회의사당이 흐리게 보여서 조금 아쉬웠지만, 맑은 날 가면 정말 예쁠 스팟이에요", "25.01.23  00:13"),
-    )
     private fun getViewPagerDumpData(): List<ImageViewPagerModel> = listOf(
         ImageViewPagerModel(
             url = "https://example.com/image1.jpg",
