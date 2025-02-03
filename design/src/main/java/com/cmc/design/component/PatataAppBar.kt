@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.cmc.design.R
 import com.cmc.design.databinding.ViewPatataAppbarBinding
+import com.cmc.design.util.Util.dp
 
 class PatataAppBar @JvmOverloads constructor(
     context: Context,
@@ -196,12 +197,16 @@ class PatataAppBar @JvmOverloads constructor(
         iconPosition: IconPosition = IconPosition.START,
     ) {
         binding.tvAppbarTitle.text = title
-        icon?.let {
+        icon?.let { i ->
+            val drawable = ContextCompat.getDrawable(context, i) ?: return
+
+            drawable.setBounds(0, 0, 18.dp, 18.dp)
+            binding.tvAppbarTitle.compoundDrawablePadding = 5.dp
             when (iconPosition) {
-                IconPosition.START -> binding.tvAppbarTitle.setCompoundDrawablesWithIntrinsicBounds(it, 0, 0, 0)
-                IconPosition.END -> binding.tvAppbarTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, it, 0)
-                IconPosition.TOP -> binding.tvAppbarTitle.setCompoundDrawablesWithIntrinsicBounds(0, it, 0, 0)
-                IconPosition.BOTTOM -> binding.tvAppbarTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, it)
+                IconPosition.START -> binding.tvAppbarTitle.setCompoundDrawables(drawable, null, null, null)
+                IconPosition.END -> binding.tvAppbarTitle.setCompoundDrawables(null, null, drawable, null)
+                IconPosition.TOP -> binding.tvAppbarTitle.setCompoundDrawables(null, drawable, null, null)
+                IconPosition.BOTTOM -> binding.tvAppbarTitle.setCompoundDrawables(null, null, null, drawable)
             }
         }
     }
