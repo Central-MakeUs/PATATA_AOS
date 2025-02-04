@@ -5,8 +5,9 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.cmc.common.constants.PreferenceKeys
 
 object DataStoreKeys {
-    const val AUTH_PREFERENCES_DATASTORE = "auth_prefs"
-    const val USER_DATASTORE = "user_data"
+    const val TOKEN_PREFERENCES = "token_prefs"
+    const val USER_PREFERENCES = "user_prefs"
+    const val APP_PREFERENCES = "app_prefs"
 
     val KEY_ACCESS_TOKEN = stringPreferencesKey(PreferenceKeys.KEY_ACCESS_TOKEN)
     val KEY_REFRESH_TOKEN = stringPreferencesKey(PreferenceKeys.KEY_REFRESH_TOKEN)

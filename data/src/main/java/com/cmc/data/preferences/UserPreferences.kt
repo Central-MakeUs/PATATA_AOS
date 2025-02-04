@@ -5,7 +5,7 @@ import android.util.Base64
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import com.cmc.data.base.constants.DataStoreKeys.KEY_USER_ID
-import com.cmc.data.base.constants.DataStoreKeys.USER_DATASTORE
+import com.cmc.data.base.constants.DataStoreKeys.USER_PREFERENCES
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -14,7 +14,7 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.inject.Inject
 
-val Context.userDataStore by preferencesDataStore(USER_DATASTORE)
+val Context.userPreferences by preferencesDataStore(USER_PREFERENCES)
 
 class UserPreferences @Inject constructor(
     @ApplicationContext private val context: Context
@@ -24,13 +24,13 @@ class UserPreferences @Inject constructor(
 
     suspend fun saveUserId(userId: String) {
         val encryptedUserId = encrypt(userId, secretKey)
-        context.userDataStore.edit { preferences ->
+        context.userPreferences.edit { preferences ->
             preferences[KEY_USER_ID] = encryptedUserId
         }
     }
 
     suspend fun getUserId(): String? {
-        return context.userDataStore.data.map { preferences ->
+        return context.userPreferences.data.map { preferences ->
             preferences[KEY_USER_ID]?.let { encryptUserId ->
                 decrypt(encryptUserId, secretKey)
             }
