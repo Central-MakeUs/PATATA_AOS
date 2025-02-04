@@ -1,10 +1,10 @@
 package com.cmc.data.di
 
-import com.cmc.data.base.TokenDataSource
-import com.cmc.data.base.TokenDataSourceImpl
+import com.cmc.data.feature.token.repository.TokenRepository
 import com.cmc.data.feature.auth.repository.AuthRepositoryImpl
 import com.cmc.data.feature.location.LocationRepositoryImpl
 import com.cmc.data.feature.spot.repository.SpotRepositoryImpl
+import com.cmc.data.feature.token.repository.TokenRepositoryImpl
 import com.cmc.domain.feature.auth.repository.AuthRepository
 import com.cmc.domain.feature.location.LocationRepository
 import com.cmc.domain.feature.spot.repository.SpotRepository
@@ -24,7 +24,7 @@ internal interface RepositoryModule {
     fun provideLocationRepositoryImpl(locationRepository: LocationRepositoryImpl): LocationRepository
 
     @Binds
-    fun provideTokenDataSourceImpl(tokenDataSource: TokenDataSourceImpl): TokenDataSource
+    fun provideTokenRepositoryImpl(tokenRepository: TokenRepositoryImpl): TokenRepository
 
     @Binds
     fun provideSpotRepositoryImpl(spotRepository: SpotRepositoryImpl): SpotRepository

@@ -1,14 +1,13 @@
 package com.cmc.data.di
 
-import android.util.Log
-import com.cmc.data.feature.auth.TokenStorage
+import com.cmc.data.preferences.TokenPreferences
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor (
-    private val tokenStorage: TokenStorage,
+    private val tokenPreferences: TokenPreferences,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
@@ -23,7 +22,7 @@ class AuthInterceptor @Inject constructor (
 
         // "Refresh" 헤더가 포함된 요청은 RefreshToken 을 삽입
         if (request.header("Refresh") != null) {
-            val refreshToken = runBlocking { tokenStorage.getRefreshToken() }
+            val refreshToken = runBlocking { tokenPreferences.getRefreshToken() }
             val newRequest = request.newBuilder()
                 .removeHeader("Refresh")
                 .addHeader("RefreshToken", "Bearer $refreshToken")
@@ -32,7 +31,7 @@ class AuthInterceptor @Inject constructor (
         }
 
         // Access Token 삽입
-        val accessToken = runBlocking { tokenStorage.getAccessToken() }
+        val accessToken = runBlocking { tokenPreferences.getAccessToken() }
         val authenticatedRequest = request.newBuilder()
             .addHeader("Authorization", "Bearer $accessToken")
             .build()

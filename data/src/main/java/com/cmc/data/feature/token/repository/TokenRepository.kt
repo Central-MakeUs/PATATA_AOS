@@ -1,7 +1,7 @@
-package com.cmc.data.base
+package com.cmc.data.feature.token.repository
 
 
-interface TokenDataSource {
+interface TokenRepository {
 
     suspend fun refreshAccessToken(): Result<Unit>
 

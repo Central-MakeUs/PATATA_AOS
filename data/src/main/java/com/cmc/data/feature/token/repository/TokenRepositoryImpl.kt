@@ -1,22 +1,19 @@
-package com.cmc.data.base
+package com.cmc.data.feature.token.repository
 
 
 import android.content.Context
-import androidx.datastore.preferences.preferencesDataStore
-import com.cmc.data.base.constants.DataStoreKeys.USER_DATASTORE
+import com.cmc.data.base.TokenApiService
 import com.cmc.data.di.TokenRefreshApi
-import com.cmc.data.feature.auth.TokenStorage
+import com.cmc.data.preferences.TokenPreferences
 import com.cmc.domain.base.exception.ApiException
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-val Context.userDataStore by preferencesDataStore(name = USER_DATASTORE)
-
-class TokenDataSourceImpl @Inject constructor(
+class TokenRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     @TokenRefreshApi private val tokenApiService: TokenApiService,
-    private val tokenStorage: TokenStorage,
-): TokenDataSource {
+    private val tokenPreferences: TokenPreferences,
+): TokenRepository {
 
     override suspend fun refreshAccessToken(): Result<Unit> {
         return try {
@@ -25,7 +22,7 @@ class TokenDataSourceImpl @Inject constructor(
             if (response.isSuccess && response.result != null) {
                 val newAccessToken = response.result.accessToken
                 val newRefreshToken = response.result.refreshToken
-                tokenStorage.saveTokens(newAccessToken, newRefreshToken)
+                tokenPreferences.saveTokens(newAccessToken, newRefreshToken)
                 Result.success(Unit)
             } else {
                 Result.failure(ApiException.TokenExpired("토큰이 만료되었습니다."))
@@ -37,15 +34,15 @@ class TokenDataSourceImpl @Inject constructor(
 
 
     override suspend fun saveTokens(accessToken: String, refreshToken: String) {
-        tokenStorage.saveTokens(accessToken, refreshToken)
+        tokenPreferences.saveTokens(accessToken, refreshToken)
     }
 
     override suspend fun getAccessToken(): String? {
-        return tokenStorage.getAccessToken()
+        return tokenPreferences.getAccessToken()
     }
 
     override suspend fun clearTokens() {
-        tokenStorage.clearTokens()
+        tokenPreferences.clearTokens()
     }
 
 }
