@@ -3,13 +3,14 @@ package com.cmc.data.base
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
+import com.cmc.data.base.constants.DataStoreKeys.USER_DATASTORE
 import com.cmc.data.di.TokenRefreshApi
 import com.cmc.data.feature.auth.TokenStorage
 import com.cmc.domain.base.exception.ApiException
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-val Context.userDataStore by preferencesDataStore(name = "user_data")
+val Context.userDataStore by preferencesDataStore(name = USER_DATASTORE)
 
 class TokenDataSourceImpl @Inject constructor(
     @ApplicationContext private val context: Context,

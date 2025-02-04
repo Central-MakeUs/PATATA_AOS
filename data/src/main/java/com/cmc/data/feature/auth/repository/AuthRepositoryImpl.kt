@@ -3,7 +3,6 @@ package com.cmc.data.feature.auth.repository
 import android.content.Context
 import android.util.Base64
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.cmc.data.feature.auth.TokenStorage
 import com.cmc.data.feature.auth.model.LoginRequest
@@ -11,6 +10,8 @@ import com.cmc.data.feature.auth.model.toDomain
 import com.cmc.data.feature.auth.remote.AuthApiService
 import com.cmc.data.base.apiRequestCatching
 import com.cmc.data.base.asFlow
+import com.cmc.data.base.constants.DataStoreKeys.KEY_USER_ID
+import com.cmc.data.base.constants.DataStoreKeys.USER_DATASTORE
 import com.cmc.domain.feature.auth.model.AuthResponse
 import com.cmc.domain.feature.auth.repository.AuthRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -22,17 +23,13 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.inject.Inject
 
-val Context.userDataStore by preferencesDataStore(name = "user_data")
+val Context.userDataStore by preferencesDataStore(name = USER_DATASTORE)
 
 internal class AuthRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val authApiService: AuthApiService,
     private val tokenStorage: TokenStorage,
 ): AuthRepository {
-
-    companion object {
-        private val KEY_USER_ID = stringPreferencesKey("key_user_id")
-    }
 
     private val secretKey: SecretKey = generateSecretKey()
 

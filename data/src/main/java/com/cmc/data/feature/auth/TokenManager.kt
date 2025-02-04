@@ -2,20 +2,17 @@ package com.cmc.data.feature.auth
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.cmc.data.base.constants.DataStoreKeys.AUTH_PREFERENCES_DATASTORE
+import com.cmc.data.base.constants.DataStoreKeys.KEY_ACCESS_TOKEN
+import com.cmc.data.base.constants.DataStoreKeys.KEY_REFRESH_TOKEN
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 // DataStore 생성
-val Context.dataStore by preferencesDataStore(name = "auth_prefs")
+val Context.dataStore by preferencesDataStore(name = AUTH_PREFERENCES_DATASTORE)
 
 class TokenManager(private val context: Context) : TokenStorage {
-
-    companion object {
-        private val KEY_ACCESS_TOKEN = stringPreferencesKey("key_access_token")
-        private val KEY_REFRESH_TOKEN = stringPreferencesKey("key_refresh_token")
-    }
 
     override suspend fun saveTokens(accessToken: String, refreshToken: String) {
         context.dataStore.edit { preferences ->
