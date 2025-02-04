@@ -1,37 +1,24 @@
 package com.cmc.data.feature.auth.repository
 
 import android.content.Context
-import android.util.Base64
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.preferencesDataStore
 import com.cmc.data.feature.auth.model.LoginRequest
 import com.cmc.data.feature.auth.model.toDomain
 import com.cmc.data.feature.auth.remote.AuthApiService
 import com.cmc.data.base.apiRequestCatching
 import com.cmc.data.base.asFlow
-import com.cmc.data.base.constants.DataStoreKeys.KEY_USER_ID
-import com.cmc.data.base.constants.DataStoreKeys.USER_DATASTORE
 import com.cmc.data.preferences.TokenPreferences
+import com.cmc.data.preferences.UserPreferences
 import com.cmc.domain.feature.auth.model.AuthResponse
 import com.cmc.domain.feature.auth.repository.AuthRepository
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
 import javax.inject.Inject
 
-val Context.userDataStore by preferencesDataStore(name = USER_DATASTORE)
 
 internal class AuthRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val authApiService: AuthApiService,
     private val tokenPreferences: TokenPreferences,
+    private val userPreferences: UserPreferences,
 ): AuthRepository {
-
-    private val secretKey: SecretKey = generateSecretKey()
 
     override suspend fun login(idToken: String): Flow<Result<AuthResponse>> {
         return apiRequestCatching(
@@ -56,40 +43,10 @@ internal class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveUserId(userId: String) {
-        val encryptedUserId = encrypt(userId, secretKey)
-        context.userDataStore.edit { preferences ->
-            preferences[KEY_USER_ID] = encryptedUserId
-        }
+        userPreferences.saveUserId(userId)
     }
 
     override suspend fun getUserId(): String? {
-        return context.userDataStore.data.map { preferences ->
-            preferences[KEY_USER_ID]?.let { encryptUserId ->
-                decrypt(encryptUserId, secretKey)
-            }
-        }.first()
-    }
-
-    private fun generateSecretKey(): SecretKey {
-        val keyGen = KeyGenerator.getInstance("AES")
-        keyGen.init(256) // AES-256
-        return keyGen.generateKey()
-    }
-
-    // 암호화
-    private fun encrypt(data: String, secretKey: SecretKey): String {
-        val cipher = Cipher.getInstance("AES")
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
-        val encryptedBytes = cipher.doFinal(data.toByteArray())
-        return Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
-    }
-
-    // 복호화
-    private fun decrypt(data: String, secretKey: SecretKey): String {
-        val cipher = Cipher.getInstance("AES")
-        cipher.init(Cipher.DECRYPT_MODE, secretKey)
-        val decodedBytes = Base64.decode(data, Base64.DEFAULT)
-        val decryptedBytes = cipher.doFinal(decodedBytes)
-        return String(decryptedBytes)
+        return userPreferences.getUserId()
     }
 }
