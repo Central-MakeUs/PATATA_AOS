@@ -44,12 +44,6 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
 
     private fun updateUI(state: ArchiveState) {
         binding.layoutArchiveNoResult.isVisible = state.images.isEmpty()
-        viewModel.setFooterType(
-            when {
-                state.images.isEmpty() -> FooterType.NONE
-                else -> FooterType.SELECT
-            }
-        )
 
         binding.archiveAppbar.setFooterType(state.footerType)
         // Adapter에 데이터 변경을 알림 (선택 모드가 바뀌었으므로 모든 아이템 갱신)
@@ -69,7 +63,7 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
                 title = getString(R.string.title_archive),
                 onFootButtonClick = { type ->
                     when (type) {
-                        PatataAppBar.FooterType.SELECT -> { viewModel.setFooterType(FooterType.DELETE) }
+                        PatataAppBar.FooterType.SELECT -> { viewModel.onClickSelectButton() }
                         else -> { viewModel.onClickDeleteButton() }
                     }
                 },
@@ -81,7 +75,7 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
 
         archiveAdapter = ArchivePhotoAdapter(
             isSelectionMode = { viewModel.state.value.footerType == FooterType.DELETE },
-            isSelected = { imageId -> viewModel.state.value.selectedItems.contains(imageId) },
+            isSelected = { imageId -> viewModel.state.value.selectedImages.contains(imageId) },
             onPhotoClick = { imageId ->
                 if (viewModel.state.value.footerType == FooterType.DELETE) {
                     viewModel.togglePhotoSelection(imageId)
@@ -105,6 +99,7 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
                 leftButton(getString(R.string.cancel)) { }
                 rightButton(getString(R.string.delete)) {
                     // TODO: 이미지 삭제 API
+                    viewModel.tempDeleteImages(images)
                 }
             }.show()
     }

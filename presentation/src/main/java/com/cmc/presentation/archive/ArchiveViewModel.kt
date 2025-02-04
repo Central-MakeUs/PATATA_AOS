@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.cmc.design.component.PatataAppBar.FooterType
 
 @HiltViewModel
 class ArchiveViewModel @Inject constructor() : ViewModel() {
@@ -26,36 +27,59 @@ class ArchiveViewModel @Inject constructor() : ViewModel() {
         val dumpData = List(41) { it to "https://source.unsplash.com/random/400x400?nature${(it % 6) + 1}" }
         viewModelScope.launch {
             _state.update {
-                it.copy(images = dumpData)
+                it.copy(
+                    images = dumpData,
+                    footerType = if (dumpData.isEmpty()) FooterType.NONE else it.footerType
+                )
             }
-        }
-
-    }
-
-    fun setFooterType(type : PatataAppBar.FooterType) {
-        _state.update {
-            it.copy(footerType = type)
         }
     }
 
     fun togglePhotoSelection(imageId: Int) {
         _state.update {
-            val updatedSelection = it.selectedItems.toMutableSet().apply {
+            val updatedSelection = it.selectedImages.toMutableSet().apply {
                 if (contains(imageId)) remove(imageId) else add(imageId)
             }
-            it.copy(selectedItems = updatedSelection)
+            it.copy(selectedImages = updatedSelection)
+        }
+    }
+
+    fun onClickSelectButton() {
+        _state.update {
+            it.copy(footerType = FooterType.DELETE)
         }
     }
 
     fun onClickDeleteButton() {
         viewModelScope.launch {
-            _sideEffect.emit(ArchiveSideEffect.ShowDeleteImageDialog(state.value.selectedItems.toList()))
+            _sideEffect.emit(ArchiveSideEffect.ShowDeleteImageDialog(state.value.selectedImages.toList()))
         }
     }
 
+    fun tempDeleteImages(selectedImages: List<Int>) {
+        _state.update {
+            val newImages = it.images.filter { v -> selectedImages.contains(v.first).not() }
+            it.copy(
+                footerType = if (newImages.isEmpty()) FooterType.NONE else FooterType.SELECT,
+                selectedImages = emptySet(),
+                images = newImages
+            )
+        }
+    }
+
+    fun onDeleteCancelled() {
+        _state.update {
+            it.copy(
+                footerType = FooterType.SELECT,
+                selectedImages = emptySet(),
+            )
+        }
+    }
+
+
     data class ArchiveState(
         val footerType: PatataAppBar.FooterType = PatataAppBar.FooterType.SELECT,
-        val selectedItems: Set<Int> = emptySet(),
+        val selectedImages: Set<Int> = emptySet(),
         val images: List<Pair<Int, String>> = emptyList()
     )
 
