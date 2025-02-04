@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
 
+    suspend fun getOnboardingStatus(): Boolean
+
     suspend fun login(idToken: String): Flow<Result<AuthResponse>>
 
     suspend fun saveTokens(accessToken: String, refreshToken: String)

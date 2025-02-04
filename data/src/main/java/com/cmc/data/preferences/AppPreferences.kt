@@ -15,13 +15,13 @@ val Context.appPreferences by preferencesDataStore(APP_PREFERENCES)
 class AppPreferences @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    suspend fun setOnboardingCompleted(completed: Boolean) {
+    suspend fun setOnboardingStatus(completed: Boolean) {
         context.appPreferences.edit { preferences ->
             preferences[KEY_ONBOARDING_COMPLETED] = completed
         }
     }
 
-    suspend fun isOnboardingCompleted(): Boolean {
+    suspend fun getOnboardingStatus(): Boolean {
         return context.appPreferences.data.first()[KEY_ONBOARDING_COMPLETED] ?: false
     }
 }

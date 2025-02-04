@@ -6,6 +6,7 @@ import com.cmc.data.feature.auth.model.toDomain
 import com.cmc.data.feature.auth.remote.AuthApiService
 import com.cmc.data.base.apiRequestCatching
 import com.cmc.data.base.asFlow
+import com.cmc.data.preferences.AppPreferences
 import com.cmc.data.preferences.TokenPreferences
 import com.cmc.data.preferences.UserPreferences
 import com.cmc.domain.feature.auth.model.AuthResponse
@@ -18,7 +19,16 @@ internal class AuthRepositoryImpl @Inject constructor(
     private val authApiService: AuthApiService,
     private val tokenPreferences: TokenPreferences,
     private val userPreferences: UserPreferences,
+    private val appPreferences: AppPreferences,
 ): AuthRepository {
+
+    override suspend fun getOnboardingStatus(): Boolean {
+        return  kotlin.runCatching {
+            appPreferences.getOnboardingStatus()
+        }.getOrElse {
+            false
+        }
+    }
 
     override suspend fun login(idToken: String): Flow<Result<AuthResponse>> {
         return apiRequestCatching(

@@ -1,6 +1,7 @@
 package com.cmc.common.base
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,5 +65,12 @@ abstract class BaseFragment<T: ViewDataBinding>(@LayoutRes val layoutRes: Int)
         controller.navigate(destinationId, args)
     }
 
-    protected fun finish() = requireActivity().onBackPressedDispatcher.onBackPressed()
+    protected fun finish() {
+        val fragmentManager = childFragmentManager
+        if (fragmentManager.backStackEntryCount > 0) {
+            activity?.onBackPressedDispatcher?.onBackPressed()
+        } else {
+            activity?.finish()
+        }
+    }
 }
