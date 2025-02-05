@@ -25,7 +25,10 @@ class OnBoardingPageFragment : BaseFragment<FragmentOnboardingPageBinding>(R.lay
             binding.layoutSpotRegist.isVisible = it.getBoolean(ARG_VISIBLE)
             setImageMargin(it.getInt(ARG_SPACE))
         }
+    }
 
+    override fun onStart() {
+        super.onStart()
         animateViewUp(binding.layoutSpotRegist)
     }
 

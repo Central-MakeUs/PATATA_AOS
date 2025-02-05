@@ -7,6 +7,8 @@ interface AuthRepository {
 
     suspend fun getOnboardingStatus(): Boolean
 
+    suspend fun setOnboardingStatus(isComplete: Boolean): Result<Boolean>
+
     suspend fun login(idToken: String): Flow<Result<AuthResponse>>
 
     suspend fun saveTokens(accessToken: String, refreshToken: String)

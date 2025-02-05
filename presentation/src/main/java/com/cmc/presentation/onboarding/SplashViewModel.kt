@@ -2,8 +2,7 @@ package com.cmc.presentation.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cmc.domain.feature.auth.usecase.GetOnboardingStatus
-import com.cmc.presentation.login.viewmodel.LoginSideEffect
+import com.cmc.domain.feature.auth.usecase.GetOnboardingStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -18,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val getOnboardingStatus: GetOnboardingStatus,
+    private val getOnboardingStatusUseCase: GetOnboardingStatusUseCase,
 ): ViewModel() {
 
     private val _state = MutableStateFlow<SplashState>(SplashState.Initialize)
@@ -29,8 +28,8 @@ class SplashViewModel @Inject constructor(
 
     fun getOnboardingStatus() {
         viewModelScope.launch {
-// 1. API 호출과 2초 대기를 동시에 시작
-            val apiDeferred = async { getOnboardingStatus.invoke() }
+
+            val apiDeferred = async { getOnboardingStatusUseCase.invoke() }
             val delayDeferred = async { delay(2000L) }
 
             var apiResult: Boolean? = null

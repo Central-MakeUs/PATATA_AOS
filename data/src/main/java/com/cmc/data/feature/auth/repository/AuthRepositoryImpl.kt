@@ -30,6 +30,13 @@ internal class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun setOnboardingStatus(isComplete: Boolean): Result<Boolean> {
+        return kotlin.runCatching {
+            appPreferences.setOnboardingStatus(isComplete)
+            true
+        }
+    }
+
     override suspend fun login(idToken: String): Flow<Result<AuthResponse>> {
         return apiRequestCatching(
             apiCall = { authApiService.googleLogin(LoginRequest(idToken))},
