@@ -1,6 +1,7 @@
 package com.cmc.data.feature.auth.repository
 
 import android.content.Context
+import com.cmc.data.base.TokenApiService
 import com.cmc.data.feature.auth.model.LoginRequest
 import com.cmc.data.feature.auth.model.toDomain
 import com.cmc.data.feature.auth.remote.AuthApiService
@@ -9,6 +10,7 @@ import com.cmc.data.base.asFlow
 import com.cmc.data.preferences.AppPreferences
 import com.cmc.data.preferences.TokenPreferences
 import com.cmc.data.preferences.UserPreferences
+import com.cmc.domain.base.exception.ApiException
 import com.cmc.domain.feature.auth.model.AuthResponse
 import com.cmc.domain.feature.auth.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
@@ -53,6 +55,27 @@ internal class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun getAccessToken(): String? {
         return tokenPreferences.getAccessToken()
+    }
+
+    override suspend fun getRefreshToken(): String? {
+        return tokenPreferences.getRefreshToken()
+    }
+
+    override suspend fun refreshAccessToken(): Result<Unit> {
+        return try {
+            val response = authApiService.refreshAccessToken()
+
+            if (response.isSuccess && response.result != null) {
+                val newAccessToken = response.result.accessToken
+                val newRefreshToken = response.result.refreshToken
+                tokenPreferences.saveTokens(newAccessToken, newRefreshToken)
+                Result.success(Unit)
+            } else {
+                Result.failure(ApiException.TokenExpired("토큰이 만료되었습니다."))
+            }
+        } catch (e: Exception) {
+            Result.failure(ApiException.ServerError("서버 오류 발생: ${e.message}"))
+        }
     }
 
     override suspend fun clearTokens() {

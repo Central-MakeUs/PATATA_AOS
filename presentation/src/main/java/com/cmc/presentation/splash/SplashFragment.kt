@@ -34,6 +34,7 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(R.layout.fragment_spl
         when (effect) {
             is SplashSideEffect.NavigateOnBoarding -> navigateOnBoarding()
             is SplashSideEffect.NavigateLogin -> navigateLogin()
+            is SplashSideEffect.NavigateHome -> navigateHome()
         }
     }
 
@@ -42,5 +43,8 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(R.layout.fragment_spl
     }
     private fun navigateLogin() {
         (activity as GlobalNavigation).navigateLogin()
+    }
+    private fun navigateHome() {
+        (activity as GlobalNavigation).navigateHome()
     }
 }

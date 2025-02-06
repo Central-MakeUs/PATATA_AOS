@@ -15,6 +15,10 @@ interface AuthRepository {
 
     suspend fun getAccessToken(): String?
 
+    suspend fun getRefreshToken(): String?
+
+    suspend fun refreshAccessToken(): Result<Unit>
+
     suspend fun clearTokens()
 
     suspend fun saveUserId(userId: String)
