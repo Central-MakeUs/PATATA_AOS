@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/MyFragment"
-        android:name="com.cmc.presentation.my.MyFragment"
+        android:name="com.cmc.presentation.my.view.MyFragment"
         tools:layout="@layout/fragment_my">
     </fragment>
 

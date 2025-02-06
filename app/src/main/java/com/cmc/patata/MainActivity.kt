@@ -10,7 +10,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.cmc.common.base.GlobalNavigation
 import com.cmc.common.constants.NavigationKeys
 import com.cmc.patata.databinding.ActivityMainBinding
-import com.cmc.presentation.map.AroundMeFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

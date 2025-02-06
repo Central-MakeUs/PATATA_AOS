@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/SpotDetailFragment"
-        android:name="com.cmc.presentation.spot.SpotDetailFragment"
+        android:name="com.cmc.presentation.spot.view.SpotDetailFragment"
         tools:layout="@layout/fragment_spot_detail"/>
 
 </navigation>

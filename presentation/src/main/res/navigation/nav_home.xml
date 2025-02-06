@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/HomeFragment"
-        android:name="com.cmc.presentation.home.HomeFragment"
+        android:name="com.cmc.presentation.home.view.HomeFragment"
         tools:layout="@layout/fragment_home">
 
         <action
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/TodaySpotRecommendationFragment"
-        android:name="com.cmc.presentation.home.TodaySpotRecommendationFragment"
+        android:name="com.cmc.presentation.home.view.TodaySpotRecommendationFragment"
         tools:layout="@layout/fragment_today_spot_recommendation">
 
     </fragment>

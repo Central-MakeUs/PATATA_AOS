@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/SearchFragment"
-        android:name="com.cmc.presentation.search.SearchFragment"
+        android:name="com.cmc.presentation.search.view.SearchFragment"
         tools:layout="@layout/fragment_search">
     </fragment>
 

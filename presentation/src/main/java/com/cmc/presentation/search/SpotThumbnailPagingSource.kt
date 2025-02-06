@@ -1,6 +1,7 @@
 package com.cmc.presentation.search
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.cmc.presentation.search.viewmodel.SearchViewModel
 import kotlinx.coroutines.delay
 
 class SpotPagingSource(

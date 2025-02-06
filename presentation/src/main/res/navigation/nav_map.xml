@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/AroundMeFragment"
-        android:name="com.cmc.presentation.map.AroundMeFragment"
+        android:name="com.cmc.presentation.map.view.AroundMeFragment"
         tools:layout="@layout/fragment_around_me">
 
         <action
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/SelectLocationFragment"
-        android:name="com.cmc.presentation.map.selectlocation.SelectLocationFragment"
+        android:name="com.cmc.presentation.map.view.SelectLocationFragment"
         tools:layout="@layout/fragment_select_location">
         <action
             android:id="@+id/navigate_add_spot"
@@ -26,7 +26,7 @@
 
     <fragment
         android:id="@+id/AddSpotFragment"
-        android:name="com.cmc.presentation.map.AddSpotFragment"
+        android:name="com.cmc.presentation.map.view.AddSpotFragment"
         tools:layout="@layout/fragment_add_spot">
 
         <action
@@ -44,7 +44,7 @@
 
     <fragment
         android:id="@+id/SpotAddedSuccessFragment"
-        android:name="com.cmc.presentation.map.SpotAddedSuccessFragment"
+        android:name="com.cmc.presentation.map.view.SpotAddedSuccessFragment"
         tools:layout="@layout/fragment_spot_added_success">
         <action
             android:id="@+id/navigate_added_success_to_around_me"

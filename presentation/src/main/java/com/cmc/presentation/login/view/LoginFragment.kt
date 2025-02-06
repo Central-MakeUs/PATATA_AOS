@@ -9,8 +9,6 @@ import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnticipateInterpolator
-import android.view.animation.Interpolator
-import android.view.animation.LinearInterpolator
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -18,24 +16,20 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
 import com.cmc.design.util.ExponentialAccelerateInterpolator
 import com.cmc.domain.base.exception.ApiException
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentLoginBinding
-import com.cmc.presentation.login.LoginManager
+import com.cmc.presentation.login.manager.LoginManager
 import com.cmc.presentation.login.viewmodel.LoginSideEffect
 import com.cmc.presentation.login.viewmodel.LoginState
 import com.cmc.presentation.login.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login) {
