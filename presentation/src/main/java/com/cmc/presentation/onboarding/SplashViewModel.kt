@@ -54,15 +54,14 @@ class SplashViewModel @Inject constructor(
             }
 
             delayDeferred.await()
-
             val effect = if (accessToken != null && isAccessTokenValid(accessToken!!)) {
                 NavigateHome
             } else if (refreshToken != null) {
-                NavigateOnBoarding
-            } else if (onBoardingState != null && onBoardingState!!) {
                 val result = refreshAccessTokenUseCase.invoke()
                 if (result.isSuccess) NavigateHome
                 else NavigateLogin
+            } else if (onBoardingState != null && onBoardingState!!) {
+                NavigateLogin
             } else {
                 NavigateOnBoarding
             }

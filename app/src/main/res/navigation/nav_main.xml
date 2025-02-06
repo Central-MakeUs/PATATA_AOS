@@ -31,7 +31,7 @@
     <action
         android:id="@+id/nav_home"
         app:destination="@+id/nav_home"
-        app:popUpTo="@layout/fragment_home"
+        app:popUpTo="@id/nav_splash"
         app:popUpToInclusive="true"/>
 
     <action
