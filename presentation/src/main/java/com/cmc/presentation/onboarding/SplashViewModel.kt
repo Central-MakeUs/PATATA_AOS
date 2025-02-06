@@ -65,7 +65,6 @@ class SplashViewModel @Inject constructor(
                 else NavigateLogin
             } else {
                 NavigateOnBoarding
-                NavigateOnBoarding
             }
             _sideEffect.emit(effect)
         }

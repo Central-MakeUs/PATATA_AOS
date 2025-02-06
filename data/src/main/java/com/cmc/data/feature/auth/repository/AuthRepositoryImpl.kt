@@ -7,6 +7,7 @@ import com.cmc.data.feature.auth.model.toDomain
 import com.cmc.data.feature.auth.remote.AuthApiService
 import com.cmc.data.base.apiRequestCatching
 import com.cmc.data.base.asFlow
+import com.cmc.data.feature.auth.model.NickNameRequest
 import com.cmc.data.preferences.AppPreferences
 import com.cmc.data.preferences.TokenPreferences
 import com.cmc.data.preferences.UserPreferences
@@ -88,5 +89,13 @@ internal class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun getUserId(): String? {
         return userPreferences.getUserId()
+    }
+
+    override suspend fun updateNickName(nickName: String): Result<Unit> {
+        return apiRequestCatching(
+            apiCall = { authApiService.updateNickName(
+                NickNameRequest(nickName)
+            )}
+        )
     }
 }

@@ -1,13 +1,28 @@
 package com.cmc.presentation.login.view
 
+import androidx.fragment.app.viewModels
 import com.cmc.common.base.BaseFragment
+import com.cmc.common.base.GlobalNavigation
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentProfileSettingBinding
+import com.cmc.presentation.login.viewmodel.ProfileSettingViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.launch
+import com.cmc.presentation.login.viewmodel.ProfileSettingViewModel.ProfileSettingState
+import com.cmc.presentation.login.viewmodel.ProfileSettingViewModel.ProfileSettingSideEffect
+import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class ProfileSettingFragment: BaseFragment<FragmentProfileSettingBinding>(R.layout.fragment_profile_setting) {
+
+    private val viewModel: ProfileSettingViewModel by viewModels()
+
     override fun initObserving() {
+        repeatWhenUiStarted {
+            launch { viewModel.state.collect { state -> updateUI(state) } }
+            launch { viewModel.sideEffect.collectLatest { effect -> handleSideEffect(effect) } }
+        }
     }
 
     override fun initView() {
@@ -15,6 +30,16 @@ class ProfileSettingFragment: BaseFragment<FragmentProfileSettingBinding>(R.layo
         setEditText()
         setProfileImage()
         setButtonListener()
+    }
+
+    private fun updateUI(state: ProfileSettingState) {
+        binding.etEditTextInput.setErrorState(state.isError)
+    }
+    private fun handleSideEffect(effect: ProfileSettingSideEffect) {
+        when (effect) {
+            is ProfileSettingSideEffect.NavigateSignUpSuccess -> { navigateSignUpSuccess() }
+            is ProfileSettingSideEffect.NavigateHome -> { navigateHome() }
+        }
     }
 
     private fun setAppbar() {
@@ -28,12 +53,8 @@ class ProfileSettingFragment: BaseFragment<FragmentProfileSettingBinding>(R.layo
         binding.tvHelper.setText("이미 사용 중인 닉네임입니다.")
         binding.etEditTextInput.apply {
             connectHelperView(binding.tvHelper)
-            setOnSubmitListener {
-                // TODO: 닉네임 중복 검증
-                // TODO: 닉네임 미중복 시 setButtonEnable(true)
-                // TODO: 닉네임 중복 시 setErrorState(true)
-                // Button Enable 상태에서 텍스트 변경 시 Button Enable 변경 여부 확인
-                setErrorState(true)
+            setOnTextChangeListener { str ->
+                viewModel.setNickName(str)
             }
         }
     }
@@ -44,12 +65,10 @@ class ProfileSettingFragment: BaseFragment<FragmentProfileSettingBinding>(R.layo
 
     private fun setButtonListener() {
         binding.layoutCompleteButton.setOnClickListener {
-            // TODO: 닉네임 업데이트 API
+            viewModel.onClickCompleteButton()
         }
     }
 
-    private fun setButtonEnable(isEnabled: Boolean) {
-        binding.layoutCompleteButton.isEnabled = isEnabled
-    }
-
+    private fun navigateHome() { (activity as GlobalNavigation).navigateHome() }
+    private fun navigateSignUpSuccess() { navigate(R.id.navigate_signup_success) }
 }

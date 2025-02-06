@@ -11,7 +11,7 @@ import java.io.IOException
 
 suspend fun <T, R> apiRequestCatching(
     apiCall: suspend () -> ApiResponse<T>,
-    transform: (T) -> R,
+    transform: (T) -> R = { it as R },
     successCallBack: suspend (T) ->  Unit = {},
 ): Result<R> {
     return runCatching {

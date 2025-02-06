@@ -25,4 +25,6 @@ interface AuthRepository {
 
     suspend fun getUserId(): String?
 
+    suspend fun updateNickName(nickName: String): Result<Unit>
+
 }
