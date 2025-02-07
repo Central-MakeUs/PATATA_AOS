@@ -21,7 +21,7 @@ class ScalePageTransformer(
     }
 
     companion object {
-        const val SCALE_FACTOR = 0.05f
-        const val MIN_SCALE = 0.95f
+        const val SCALE_FACTOR = 0.1f
+        const val MIN_SCALE = 0.9f
     }
 }

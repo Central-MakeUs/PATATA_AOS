@@ -46,21 +46,23 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_alignBottom="@+id/iv_spot_image"
-                android:padding="8dp">
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="16dp">
 
                 <TextView
                     android:id="@+id/tv_spot_location"
-                    style="@style/caption_small"
+                    style="@style/subtitle_extra_small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawablePadding="2dp"
                     android:text="서울특별시 마포구"
                     android:textColor="@color/white"
+                    android:layout_marginBottom="3dp"
                     app:drawableStartCompat="@drawable/ic_spot_location" />
 
                 <TextView
                     android:id="@+id/tv_spot_title"
-                    style="@style/subtitle_large"
+                    style="@style/subtitle_extra_large"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="마포대교 북단 중앙로"
@@ -109,7 +111,6 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:paddingHorizontal="2dp"
-                android:paddingVertical="2dp"
                 android:layout_marginHorizontal="2dp"
                 android:src="@drawable/selector_archive"
                 android:layout_alignParentBottom="true"
