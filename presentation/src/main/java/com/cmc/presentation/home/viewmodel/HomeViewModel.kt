@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.map
+import com.cmc.domain.feature.location.GetCurrentLocationUseCase
 import com.cmc.domain.feature.spot.usecase.GetCategorySpotsUseCase
+import com.cmc.domain.model.CategorySortType
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.spot.model.SpotWithStatusUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getCategorySpotsUseCase: GetCategorySpotsUseCase,
+    private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<HomeState>(HomeState())
@@ -34,6 +37,16 @@ class HomeViewModel @Inject constructor(
         observeStateChanges()
     }
 
+    fun getCategorySpots(latitude: Double, longitude: Double) {
+        viewModelScope.launch {
+            getCategorySpotsUseCase(
+                categoryId = state.value.selectedCategoryTab.id,
+                latitude = latitude,
+                longitude = longitude,
+                sortBy = CategorySortType.getDefault().name
+            )
+        }
+    }
 
     fun onClickSpotCategoryButton(category: SpotCategory) {
         _state.update {
@@ -78,9 +91,17 @@ class HomeViewModel @Inject constructor(
     private fun observeStateChanges() {
         viewModelScope.launch {
             _state.collectLatest { currentState ->
-                currentState.selectedCategoryTab
-                // TODO: 선택된 Tab의 Category에 맞춰 API 호출
-                // TODO: 내려오는 데이터를 카테고리별 추천에 보여지는 데이터로 사용
+                viewModelScope.launch {
+                    getCurrentLocationUseCase.invoke()
+                        .onSuccess { location ->
+                            getCategorySpotsUseCase(
+                                categoryId = currentState.selectedCategoryTab.id,
+                                latitude = location.latitude,
+                                longitude = location.longitude,
+                                sortBy = CategorySortType.getDefault().name
+                            )
+                        }
+                }
             }
         }
     }

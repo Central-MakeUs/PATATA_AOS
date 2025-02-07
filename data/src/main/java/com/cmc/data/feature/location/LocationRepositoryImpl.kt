@@ -23,14 +23,28 @@ internal class LocationRepositoryImpl @Inject constructor(
         return runCatching {
             val location = suspendCancellableCoroutine<android.location.Location> { continuation ->
                 fusedLocationClient.lastLocation
-                    .addOnSuccessListener { location ->
-                        continuation.resume(location)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful && task.result != null) {
+                            continuation.resume(task.result)
+                        } else {
+                            continuation.resume(createMockLocation())
+                        }
                     }
                     .addOnFailureListener { exception ->
                         continuation.resumeWithException(exception)
                     }
             }
             Location(location.latitude, location.longitude)
+        }
+    }
+
+    fun createMockLocation(latitude: Double = 37.489479, longitude: Double = 126.724519, provider: String = "gps"): android.location.Location {
+        return android.location.Location(provider).apply {
+            this.latitude = latitude
+            this.longitude = longitude
+            this.accuracy = 10f  // 임의의 정확도 (단위: 미터)
+            this.altitude = 50.0  // 임의의 고도 (단위: 미터)
+            this.time = System.currentTimeMillis() // 현재 시간 설정
         }
     }
 }
