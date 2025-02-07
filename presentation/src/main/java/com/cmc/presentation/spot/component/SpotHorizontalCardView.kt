@@ -1,4 +1,4 @@
-package com.cmc.design.component
+package com.cmc.presentation.spot.component
 
 import android.content.Context
 import android.util.AttributeSet
@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.cmc.design.R
 import com.cmc.design.databinding.ViewSpotHorizontalCardBinding
 
@@ -28,7 +29,6 @@ class SpotHorizontalCardView @JvmOverloads constructor(
     private fun initListeners() {
         // 아카이브 버튼 클릭 리스너
         binding.ivSpotArchive.setOnClickListener {
-            binding.ivSpotArchive.isSelected = binding.ivSpotArchive.isSelected.not()
             onArchiveClickListener?.invoke()
         }
 
@@ -42,7 +42,7 @@ class SpotHorizontalCardView @JvmOverloads constructor(
      * 카드뷰 세팅
      */
     fun setHorizontalCardView(
-        imageResId: Int,
+        imageUrl: String,
         title: String,
         location: String,
         archiveCount: Int,
@@ -53,7 +53,10 @@ class SpotHorizontalCardView @JvmOverloads constructor(
         archiveClickListener: () -> Unit,
         cardClickListener: () -> Unit,
     ) {
-        binding.ivSpotImage.setImageResource(imageResId)
+        Glide.with(binding.root)
+            .load(imageUrl)
+            .placeholder(R.drawable.img_sample)
+            .into(binding.ivSpotImage)
         binding.tvSpotLocation.text = location
         binding.tvSpotTitle.text = title
         binding.tvArchiveCount.text = archiveCount.toString()
@@ -79,16 +82,4 @@ class SpotHorizontalCardView @JvmOverloads constructor(
             binding.layoutTagContainer.addView(tagView)
         }
     }
-
-    data class SpotHorizontalCardItem(
-        val title: String,
-        val location: String,
-        val imageResId: Int,
-        val category: String,
-        val isArchived: Boolean,
-        val archiveCount: Int,
-        val commentCount: Int,
-        val tags: List<String>,
-        val isRecommended: Boolean = false
-    )
 }

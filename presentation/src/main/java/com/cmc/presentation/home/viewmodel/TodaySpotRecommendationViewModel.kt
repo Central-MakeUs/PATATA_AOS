@@ -2,7 +2,7 @@ package com.cmc.presentation.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.cmc.presentation.search.viewmodel.SearchViewModel.SearchSideEffect
-import com.cmc.design.component.SpotHorizontalCardView.SpotHorizontalCardItem
+import com.cmc.presentation.spot.model.SpotWithStatusUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +22,7 @@ class TodaySpotRecommendationViewModel @Inject constructor(): ViewModel() {
     val sideEffect: SharedFlow<SearchSideEffect> = _sideEffect.asSharedFlow()
 
     data class TodaySpotRecommendationState(
-        val results: List<SpotHorizontalCardItem> = emptyList(),
+        val results: List<SpotWithStatusUiModel> = emptyList(),
         val errorMessage: String? = null,
         val searchStatus: TodaySpotRecommendationStatus = TodaySpotRecommendationStatus.LOADING
     )

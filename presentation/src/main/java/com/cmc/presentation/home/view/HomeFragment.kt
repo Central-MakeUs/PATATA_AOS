@@ -6,21 +6,24 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.forEachIndexed
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
-import com.cmc.design.component.PatataAppBar
-import com.cmc.design.component.SpotHorizontalCardView
 import com.cmc.design.component.SpotPolaroidView
+import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentHomeBinding
-import com.cmc.presentation.home.viewmodel.HomeViewModel
-import com.cmc.presentation.home.viewmodel.SpotCategory
 import com.cmc.presentation.home.adapter.SpotHorizontalCardAdapter
 import com.cmc.presentation.home.adapter.SpotPolaroidAdapter
+import com.cmc.presentation.home.viewmodel.HomeViewModel
+import com.cmc.presentation.home.viewmodel.HomeViewModel.HomeSideEffect
+import com.cmc.presentation.home.viewmodel.HomeViewModel.HomeState
+import com.cmc.presentation.model.SpotCategoryItem
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
@@ -28,10 +31,41 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val viewModel: HomeViewModel by viewModels()
 
     private lateinit var categoryViews: List<Pair<View, SpotCategory>>
+    private lateinit var categoryRecommendAdapter: SpotHorizontalCardAdapter
 
+
+    override fun initObserving() {
+        repeatWhenUiStarted {
+            launch { viewModel.state.collect { state -> updateUI(state) } }
+            launch { viewModel.sideEffect.collectLatest { effect -> handleSideEffect(effect) } }
+        }
+    }
     override fun initView() {
+        initSearchBar()
+        initSpotCategory()
+        initTodayRecommendedSpotView()
+        initHorizontalCardView()
+        initCategoryTab()
+    }
 
-        // 오늘의 추천 스팟, 폴라로이드 뷰
+    private fun updateUI(state: HomeState) {
+        state.selectedCategory?.let { configureSelectedSpotCategory(it) }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            categoryRecommendAdapter.submitData(state.categorySpots)
+        }
+    }
+    private fun handleSideEffect(effect: HomeSideEffect) {
+        when (effect) {
+            is HomeSideEffect.NavigateTodayRecommendedSpot -> { navigateTodaySpotRecommended() }
+            is HomeSideEffect.NavigateSpotDetail -> { navigateSpotDetail(effect.spotId) }
+            is HomeSideEffect.NavigateSearch -> { navigateSearch() }
+            is HomeSideEffect.NavigateCategorySpot -> {  navigateCategorySpot(effect.category) }
+        }
+    }
+
+
+    private fun initTodayRecommendedSpotView() {
         val spotList = listOf(
             SpotPolaroidView.SpotPolaroidItem(
                 title = "마포대교 북단 중앙로",
@@ -77,7 +111,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         val adapter = SpotPolaroidAdapter(
             spotList,
             onArchiveClick = { spot ->
-                // 아카이브 버튼 클릭 시 동작
+                // TODO: Scrap Toggle API
                 Toast.makeText(context, "${spot.title} 아카이브 클릭됨", Toast.LENGTH_SHORT).show()
             },
             onImageClick = { spot ->
@@ -87,75 +121,33 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         )
 
         binding.vpSpotRecommend.setAdapter(adapter)
+        binding.tvSpotPolaroidMore.setOnClickListener { viewModel.onClickTodayRecommendedSpotMoreButton() }
+    }
+    private fun initSearchBar() {
+        binding.searchbarHome.
+            setOnSearchBarClickListener { viewModel.onClickSearchBar() }
 
-        // 앱 바
-        binding.appbar.setupAppBar(
-            title = "테스트 화면2",
-            icon = com.cmc.design.R.drawable.ic_spot_location,
-            iconPosition = PatataAppBar.IconPosition.START,
-            onHeadButtonClick = { finish() },
-            onFootButtonClick = { Toast.makeText(context, "푸터 버튼 클릭!", Toast.LENGTH_SHORT).show()}
-        )
-        // 서치 바
-        binding.searchbarHome.apply {
-            setOnSearchBarClickListener {
-                (activity as GlobalNavigation).navigateSearch()
-            }
-            setOnSearchListener { str ->
-                Toast.makeText(context, "검색 성공 $str", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        binding.tvSpotPolaroidMore.setOnClickListener {
-            navigate(R.id.navigate_today_spot_recommendation)
-        }
-        
-        // 스팟 카테고리
+    }
+    private fun initSpotCategory() {
         categoryViews = listOf(
             binding.viewSpotCategory.layoutCategoryRecommend to SpotCategory.RECOMMEND,
             binding.viewSpotCategory.layoutCategorySnap to SpotCategory.SNAP,
-            binding.viewSpotCategory.layoutCategoryNightView to SpotCategory.NIGHT_VIEW,
-            binding.viewSpotCategory.layoutCategoryEverydayLife to SpotCategory.EVERYDAY_LIFE,
+            binding.viewSpotCategory.layoutCategoryNightView to SpotCategory.NIGHT,
+            binding.viewSpotCategory.layoutCategoryEverydayLife to SpotCategory.EVERYDAY,
             binding.viewSpotCategory.layoutCategoryNature to SpotCategory.NATURE
         )
 
         categoryViews.forEach { (layout, category) ->
             layout.setOnClickListener {
-                viewModel.selectCategory(category)
-                Toast.makeText(context, "'${category.name}' 카테고리 화면으로 이동!", Toast.LENGTH_SHORT).show()
+                viewModel.onClickSpotCategoryButton(category)
             }
         }
-
-        // 카테고리별 추천
-        val spotCardList = listOf(
-            SpotHorizontalCardView.SpotHorizontalCardItem(
-                imageResId = com.cmc.design.R.drawable.img_sample,
-                category = "",
-                title = "마포대교 북단 중앙로",
-                location = "서울시 마포구",
-                archiveCount = 117,
-                commentCount = 43,
-                tags = listOf("#야경맛집", "#사진찍기좋아요"),
-                isArchived = true,
-                isRecommended = true
-            ),
-            SpotHorizontalCardView.SpotHorizontalCardItem(
-                imageResId = com.cmc.design.R.drawable.img_sample,
-                category = "",
-                title = "서울숲 은행나무길",
-                location = "서울시 성동구",
-                archiveCount = 89,
-                commentCount = 21,
-                tags = listOf("#가을", "#데이트코스"),
-                isArchived = false,
-                isRecommended = false
-            )
-        )
-
-        val categoryRecommendAdapter = SpotHorizontalCardAdapter(
-            spotCardList,
+    }
+    private fun initHorizontalCardView() {
+        categoryRecommendAdapter = SpotHorizontalCardAdapter(
             onArchiveClick = {
-                Toast.makeText(context, "서울숲 은행나무길 아카이브 클릭됨", Toast.LENGTH_SHORT).show()
+                // TODO: SPOT ID 반영
+                viewModel.onClickSpotScrapButton(spotId = 0)
             },
             onImageClick = {
                 Toast.makeText(context, "서울숲 은행나무길 카드 클릭됨", Toast.LENGTH_SHORT).show()
@@ -167,15 +159,20 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             layoutManager = LinearLayoutManager(context)
             this.adapter = categoryRecommendAdapter
         }
-
-        // TabLayout
-        val categoryTabs = listOf("전체", "작가 추천", "스냅 스팟", "시크한 야경", "일상 속 공간")
-        categoryTabs.forEach { category ->
+    }
+    private fun initCategoryTab() {
+        // 탭 생성
+        val categories = SpotCategory.entries.map { SpotCategoryItem(it) }
+        categories.forEach { category ->
             binding.tabCategoryFilter.addTab(
-                binding.tabCategoryFilter.newTab().setText(category)
+                binding.tabCategoryFilter
+                    .newTab()
+                    .setText(category.getName())
+                    .setTag(category.categoryItem)
             )
         }
 
+        // 탭 간격 조절
         val tabs = binding.tabCategoryFilter.getChildAt(0) as ViewGroup
         tabs.forEachIndexed { index, view ->
             val layoutParams = view.layoutParams as LinearLayout.LayoutParams
@@ -187,23 +184,22 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         binding.tabCategoryFilter.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 tab?.let {
-                    // TODO: Filter 동작
-                    Toast.makeText(context, "${it.text} Chip Click!", Toast.LENGTH_SHORT).show()
+                    viewModel.onClickCategoryTab(it.tag as? SpotCategory ?: SpotCategory.ALL)
                 }
             }
-
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
     }
 
-    override fun initObserving() {
-        repeatWhenUiStarted {
-            viewModel.selectedCategory.collectLatest { selectedCategory ->
-                categoryViews.forEach { (layout, category) ->
-                    layout.isSelected = (category == selectedCategory)
-                }
-            }
+    private fun configureSelectedSpotCategory(category: SpotCategory) {
+        categoryViews.forEach {
+            it.first.isSelected = it.second == category
         }
     }
+
+    private fun navigateTodaySpotRecommended() { navigate(R.id.navigate_today_spot_recommendation) }
+    private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
+    private fun navigateSearch() { (activity as GlobalNavigation).navigateSearch() }
+    private fun navigateCategorySpot(category: SpotCategory) {  }
 }

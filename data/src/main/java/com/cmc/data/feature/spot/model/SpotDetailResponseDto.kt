@@ -27,7 +27,9 @@ data class SpotDetailResponseDto(
     @SerializedName("reviewCount")
     val reviewCount: Int,
     @SerializedName("reviews")
-    val reviews: List<ReviewResponseDto>
+    val reviews: List<ReviewResponseDto>,
+    @SerializedName("isScraped")
+    val isScraped: Boolean,
 )
 
 // Dto to Domain 변환 함수
@@ -44,6 +46,7 @@ fun SpotDetailResponseDto.toDomain(): SpotDetail {
         images = images,
         tags = tags,
         reviewCount = reviewCount,
-        reviews = reviews.map { it.toDomain() }
+        reviews = reviews.map { it.toDomain() },
+        isScraped = isScraped
     )
 }

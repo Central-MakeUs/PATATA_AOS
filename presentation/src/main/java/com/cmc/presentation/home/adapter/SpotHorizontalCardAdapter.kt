@@ -1,15 +1,15 @@
 package com.cmc.presentation.home.adapter
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import com.cmc.design.component.SpotHorizontalCardView
-import com.cmc.design.component.SpotHorizontalCardView.SpotHorizontalCardItem
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
+import com.cmc.presentation.spot.component.SpotHorizontalCardView
+import com.cmc.presentation.spot.model.SpotWithStatusUiModel
 
 class SpotHorizontalCardAdapter(
-    private val spotList: List<SpotHorizontalCardItem>,
-    private val onArchiveClick: (SpotHorizontalCardItem) -> Unit,
-    private val onImageClick: (SpotHorizontalCardItem) -> Unit
-) : RecyclerView.Adapter<SpotHorizontalCardAdapter.SpotHorizontalCardViewHolder>() {
+    private val onArchiveClick: (SpotWithStatusUiModel) -> Unit,
+    private val onImageClick: (SpotWithStatusUiModel) -> Unit
+) : PagingDataAdapter<SpotWithStatusUiModel, SpotHorizontalCardAdapter.SpotHorizontalCardViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SpotHorizontalCardViewHolder {
         val spotView = SpotHorizontalCardView(parent.context).apply {
@@ -22,27 +22,37 @@ class SpotHorizontalCardAdapter(
     }
 
     override fun onBindViewHolder(holder: SpotHorizontalCardViewHolder, position: Int) {
-        val spot = spotList[position]
+        val spot = getItem(position) ?: return
         holder.bind(spot)
     }
 
-    override fun getItemCount(): Int = spotList.size
-
     inner class SpotHorizontalCardViewHolder(private val cardView: SpotHorizontalCardView) :
-        RecyclerView.ViewHolder(cardView) {
+        androidx.recyclerview.widget.RecyclerView.ViewHolder(cardView) {
 
-        fun bind(item: SpotHorizontalCardItem) {
+        fun bind(spot: SpotWithStatusUiModel) {
             cardView.setHorizontalCardView(
-                imageResId = item.imageResId,
-                title = item.title,
-                location = item.location,
-                archiveCount = item.archiveCount,
-                commentCount = item.commentCount,
-                tags = item.tags,
-                isRecommended = item.isRecommended,
-                archiveClickListener = { onArchiveClick.invoke(item) },
-                cardClickListener = { onImageClick.invoke(item) },
+                imageUrl = spot.image, // Glide 등을 활용해 image를 로드할 수 있음
+                title = spot.spot.spotName, // SpotUiModel에서 SpotName 가져오기
+                location = spot.spot.address,
+                archiveCount = spot.scrapCount,
+                commentCount = spot.reviewCount,
+                tags = spot.spot.tags,
+                isRecommended = false, // 추천 여부 (추가 로직 필요)
+                archiveClickListener = { onArchiveClick.invoke(spot) },
+                cardClickListener = { onImageClick.invoke(spot) }
             )
+        }
+    }
+
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<SpotWithStatusUiModel>() {
+            override fun areItemsTheSame(oldItem: SpotWithStatusUiModel, newItem: SpotWithStatusUiModel): Boolean {
+                return oldItem.spot.spotId == newItem.spot.spotId
+            }
+
+            override fun areContentsTheSame(oldItem: SpotWithStatusUiModel, newItem: SpotWithStatusUiModel): Boolean {
+                return oldItem == newItem
+            }
         }
     }
 }

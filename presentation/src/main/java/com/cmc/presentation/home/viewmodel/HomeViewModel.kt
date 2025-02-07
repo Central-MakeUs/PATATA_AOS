@@ -1,26 +1,106 @@
 package com.cmc.presentation.home.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.map
+import com.cmc.domain.feature.spot.usecase.GetCategorySpotsUseCase
+import com.cmc.domain.model.SpotCategory
+import com.cmc.presentation.spot.model.SpotWithStatusUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-
+    private val getCategorySpotsUseCase: GetCategorySpotsUseCase,
 ) : ViewModel() {
 
-    // StateFlow로 상태 관리
-    private val _selectedCategory = MutableStateFlow(SpotCategory.RECOMMEND)
-    val selectedCategory: StateFlow<SpotCategory> = _selectedCategory
+    private val _state = MutableStateFlow<HomeState>(HomeState())
+    val state: StateFlow<HomeState> = _state.asStateFlow()
 
-    // 카테고리 선택 업데이트
-    fun selectCategory(category: SpotCategory) {
-        _selectedCategory.value = category
+    private val _sideEffect = MutableSharedFlow<HomeSideEffect>()
+    val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
+
+    init {
+        observeStateChanges()
     }
-}
 
-enum class SpotCategory {
-    RECOMMEND, SNAP, NIGHT_VIEW, EVERYDAY_LIFE, NATURE
+
+    fun onClickSpotCategoryButton(category: SpotCategory) {
+        _state.update {
+            it.copy(selectedCategory = category)
+        }
+    }
+
+    fun onClickCategoryTab(category: SpotCategory) {
+        _state.update {
+            it.copy(selectedCategoryTab = category)
+        }
+    }
+
+    fun onClickTodayRecommendedSpotMoreButton() {
+        sendSideEffect(HomeSideEffect.NavigateTodayRecommendedSpot)
+    }
+
+    fun onClickSearchBar() {
+        sendSideEffect(HomeSideEffect.NavigateSearch)
+    }
+
+    fun onClickSpotScrapButton(spotId: Int) {
+        viewModelScope.launch {
+            // TODO: Scrap Toggle API 호출
+            val isSuccess: Boolean = true
+            if (isSuccess) {
+                _state.update {
+                    it.copy(
+                        categorySpots = it.categorySpots.map { spot ->
+                            if (spot.spot.spotId == spotId) {
+                                spot.copy(isScraped = !spot.isScraped)
+                            } else {
+                                spot
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    private fun observeStateChanges() {
+        viewModelScope.launch {
+            _state.collectLatest { currentState ->
+                currentState.selectedCategoryTab
+                // TODO: 선택된 Tab의 Category에 맞춰 API 호출
+                // TODO: 내려오는 데이터를 카테고리별 추천에 보여지는 데이터로 사용
+            }
+        }
+    }
+
+    private fun sendSideEffect(effect: HomeSideEffect) {
+        viewModelScope.launch {
+            _sideEffect.emit(effect)
+        }
+    }
+
+    data class HomeState(
+        var categorySpots: PagingData<SpotWithStatusUiModel> = PagingData.empty(),
+        var selectedCategory: SpotCategory? = null,
+        var selectedCategoryTab: SpotCategory = SpotCategory.ALL,
+    )
+
+    sealed class HomeSideEffect {
+        data class NavigateSpotDetail(val spotId: Int): HomeSideEffect()
+        data class NavigateCategorySpot(val category: SpotCategory): HomeSideEffect()
+        data object NavigateSearch: HomeSideEffect()
+        data object NavigateTodayRecommendedSpot: HomeSideEffect()
+    }
 }

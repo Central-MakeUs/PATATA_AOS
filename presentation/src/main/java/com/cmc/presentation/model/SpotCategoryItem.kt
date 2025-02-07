@@ -6,7 +6,7 @@ import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
 
 data class SpotCategoryItem(
-    private val categoryItem: SpotCategory
+    val categoryItem: SpotCategory
 ) {
 
     @StringRes fun getName(): Int {

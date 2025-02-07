@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class SpotWithStatusResponseDto(
     @SerializedName("spot") val spot: SpotResponseDto,
-    @SerializedName("imageUrl") val imageUrl: String?,
+    @SerializedName("imageUrl") val imageUrl: String,
     @SerializedName("reviews") val reviewCount: Int,
     @SerializedName("spotScraps") val scrapCount: Int,
     @SerializedName("isScraped") val isScraped: Boolean,
