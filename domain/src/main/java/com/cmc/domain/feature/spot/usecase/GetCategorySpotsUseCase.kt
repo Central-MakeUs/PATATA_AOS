@@ -9,7 +9,7 @@ class GetCategorySpotsUseCase @Inject constructor(
     private val spotRepository: SpotRepository
 ) {
     suspend operator fun invoke(
-        categoryId: Long,
+        categoryId: Int,
         latitude: Double,
         longitude: Double,
         sortBy: String,

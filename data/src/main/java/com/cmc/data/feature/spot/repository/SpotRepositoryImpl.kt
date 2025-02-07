@@ -19,7 +19,7 @@ class SpotRepositoryImpl @Inject constructor(
 ): SpotRepository {
 
     override suspend fun getCategorySpots(
-        categoryId: Long,
+        categoryId: Int,
         latitude: Double,
         longitude: Double,
         sortBy: String

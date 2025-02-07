@@ -8,7 +8,7 @@ import com.cmc.domain.feature.spot.model.SpotWithStatus
 interface SpotRepository {
 
     suspend fun getCategorySpots(
-        categoryId: Long,
+        categoryId: Int,
         latitude: Double,
         longitude: Double,
         sortBy: String
