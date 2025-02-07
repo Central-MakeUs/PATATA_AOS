@@ -67,6 +67,7 @@ class OnBoardingFragment : BaseFragment<FragmentOnboardingBinding>(R.layout.frag
             viewLifecycleOwner,
             object: OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
+                    isEnabled = false
                     viewModel.backPressed()
                 }
             }
