@@ -15,7 +15,8 @@ data class SpotDetailUiModel(
     val tags: List<String>,
     val reviewCount: Int,
     val reviews: List<ReviewUiModel>,
-    )
+    val isScraped: Boolean,
+)
 
 fun SpotDetail.toUiModel(): SpotDetailUiModel {
     return SpotDetailUiModel(
@@ -30,6 +31,7 @@ fun SpotDetail.toUiModel(): SpotDetailUiModel {
         images = this.images,
         tags = this.tags,
         reviewCount = this.reviewCount,
-        reviews = this.reviews.map { it.toUiModel() }
+        reviews = this.reviews.map { it.toUiModel() },
+        isScraped = this.isScraped
     )
 }

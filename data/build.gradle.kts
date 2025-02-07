@@ -72,4 +72,7 @@ dependencies {
 
     // Location
     implementation(libs.play.services.location)
+
+    // Paging
+    implementation(libs.androidx.paging.runtime)
 }

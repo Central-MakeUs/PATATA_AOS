@@ -1,9 +1,18 @@
 package com.cmc.domain.feature.spot.repository
 
+import com.cmc.domain.feature.spot.base.PaginatedResponse
 import com.cmc.domain.feature.spot.model.Review
 import com.cmc.domain.feature.spot.model.SpotDetail
+import com.cmc.domain.feature.spot.model.SpotWithStatus
 
 interface SpotRepository {
+
+    suspend fun getCategorySpots(
+        categoryId: Long,
+        latitude: Double,
+        longitude: Double,
+        sortBy: String
+    ): PaginatedResponse<SpotWithStatus>
 
     suspend fun getSpotDetail(spotId: Int): Result<SpotDetail>
 

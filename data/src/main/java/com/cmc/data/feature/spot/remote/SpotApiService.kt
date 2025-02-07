@@ -1,6 +1,7 @@
 package com.cmc.data.feature.spot.remote
 
 import com.cmc.data.base.ApiResponse
+import com.cmc.data.feature.spot.model.CategorySpotsResponseDto
 import com.cmc.data.feature.spot.model.CreateReviewRequest
 import com.cmc.data.feature.spot.model.ReviewResponseDto
 import com.cmc.data.feature.spot.model.SpotDetailResponseDto
@@ -10,8 +11,18 @@ import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface SpotApiService {
+
+    @GET("spots/category/{categoryId}")
+    suspend fun getCategorySpots(
+        @Path("categoryId") categoryId: Long,
+        @Query("page") page: Int,
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("sortBy") sortBy: String
+    ): ApiResponse<CategorySpotsResponseDto>
 
     @GET("spot/{spotId}")
     suspend fun getSpotDetail(

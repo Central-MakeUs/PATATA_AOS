@@ -13,4 +13,5 @@ data class SpotDetail(
     val tags: List<String>,
     val reviewCount: Int,
     val reviews: List<Review>,
+    val isScraped: Boolean,
 )
