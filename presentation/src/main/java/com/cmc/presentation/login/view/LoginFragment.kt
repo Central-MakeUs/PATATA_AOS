@@ -7,18 +7,18 @@ import android.content.Intent
 import android.provider.Settings
 import android.util.Log
 import android.view.View
-import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnticipateInterpolator
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.animation.doOnEnd
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
-import com.cmc.design.util.ExponentialAccelerateInterpolator
+import com.cmc.design.util.EaseOutBounceInterpolator
 import com.cmc.domain.base.exception.ApiException
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentLoginBinding
@@ -110,9 +110,9 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
                     delay(2000)
                     animateViewBounce(binding.ivAnimationPrinter)
                     clearAnimationEffect(binding.ivAnimationPolaroid)
-                    delay(300)
+                    delay(700)
                     animateViewDownWithVisible(binding.ivAnimationPolaroid)
-                    delay(880)
+                    delay(550)
                     animateViewDownWithGone(binding.ivAnimationPolaroid)
                 }
             }
@@ -134,35 +134,27 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
     }
     private fun clearAnimationEffect(view: View) {
         view.translationY = 0f
-        view.alpha = 0.6f
+        view.isVisible = true
+        view.alpha = 0.8f
     }
     private fun animateViewDownWithVisible(view: View) {
         val distance = view.height.toFloat()
 
-        val moveView = ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, 0f, distance).apply {
-            duration = 800
-            interpolator = ExponentialAccelerateInterpolator()
+        ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, 0f, distance).apply {
+            duration = 500
+            interpolator = EaseOutBounceInterpolator()
+            start()
         }
-
-        val changeAlpha = ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 1f).apply {
-            duration = 600
-            interpolator = AccelerateInterpolator()
-        }
-
-        playTogetherAnimation(moveView, changeAlpha)
     }
     private fun animateViewDownWithGone(view: View) {
         val distance = view.height.toFloat()
 
-        val moveView = ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, view.translationY, view.translationY + distance).apply {
+        ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, view.translationY, view.translationY + (distance * 0.8).toInt()).apply {
             duration = 300
             interpolator = AnticipateInterpolator()
+            doOnEnd { view.isVisible = false }
+            start()
         }
-        val changeAlpha = ObjectAnimator.ofFloat(view, View.ALPHA, 1f, 0f).apply {
-            duration = 300
-            interpolator = AccelerateInterpolator ()
-        }
-        playTogetherAnimation(moveView, changeAlpha)
     }
     private fun playTogetherAnimation(a1: ObjectAnimator, a2: ObjectAnimator) {
         AnimatorSet().apply {
