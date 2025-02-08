@@ -8,7 +8,7 @@ import com.cmc.domain.feature.spot.model.SpotWithStatus
 
 class CategorySpotPagingSource(
     private val apiService: SpotApiService,
-    private val categoryId: Long,
+    private val categoryId: Int,
     private val latitude: Double,
     private val longitude: Double,
     private val sortBy: String
