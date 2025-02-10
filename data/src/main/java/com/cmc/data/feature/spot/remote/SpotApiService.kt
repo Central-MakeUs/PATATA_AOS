@@ -15,9 +15,9 @@ import retrofit2.http.Query
 
 interface SpotApiService {
 
-    @GET("spots/category/{categoryId}")
+    @GET("spot/category")
     suspend fun getCategorySpots(
-        @Path("categoryId") categoryId: Int,
+        @Query("categoryId") categoryId: Int?,
         @Query("page") page: Int,
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,

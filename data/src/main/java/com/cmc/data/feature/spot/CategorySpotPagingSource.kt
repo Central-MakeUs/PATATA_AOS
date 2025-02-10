@@ -5,6 +5,7 @@ import androidx.paging.PagingState
 import com.cmc.data.feature.spot.model.toDomain
 import com.cmc.data.feature.spot.remote.SpotApiService
 import com.cmc.domain.feature.spot.model.SpotWithStatus
+import com.cmc.domain.model.SpotCategory
 
 class CategorySpotPagingSource(
     private val apiService: SpotApiService,
@@ -16,17 +17,18 @@ class CategorySpotPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SpotWithStatus> {
         return try {
-            val currentPage = params.key ?: 1 // 첫 페이지는 1부터 시작
+            val currentPage = params.key ?: 0
 
             // API 호출
-            val response = apiService.getCategorySpots(categoryId, currentPage, latitude, longitude, sortBy)
+            val categoryIdRequest = if (categoryId == SpotCategory.ALL.id) null else categoryId
+            val response = apiService.getCategorySpots(categoryIdRequest, currentPage, latitude, longitude, sortBy)
+
             val result = response.result?.toDomain() ?: return LoadResult.Page(
                 data = emptyList(),
                 prevKey = null,
                 nextKey = null
             )
 
-            // 다음 페이지 결정: 현재 페이지가 전체 페이지보다 작으면 nextPage 존재
             val nextPage = if (result.currentPage < result.totalPages) result.currentPage + 1 else null
 
             LoadResult.Page(

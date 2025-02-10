@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import androidx.paging.map
 import com.cmc.domain.feature.location.GetCurrentLocationUseCase
 import com.cmc.domain.feature.spot.usecase.GetCategorySpotsUseCase
@@ -104,7 +105,8 @@ class HomeViewModel @Inject constructor(
                                     latitude = location.latitude,
                                     longitude = location.longitude,
                                     sortBy = CategorySortType.getDefault().name
-                                ).collect { data ->
+                                ).cachedIn(viewModelScope)
+                                    .collectLatest { data ->
                                     _state.update {
                                         it.copy(
                                             categorySpots = data.map { v -> v.toUiModel() }
