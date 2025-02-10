@@ -1,5 +1,6 @@
 package com.cmc.presentation.home.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -9,6 +10,7 @@ import com.cmc.domain.feature.spot.usecase.GetCategorySpotsUseCase
 import com.cmc.domain.model.CategorySortType
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.spot.model.SpotWithStatusUiModel
+import com.cmc.presentation.spot.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +19,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -90,19 +94,26 @@ class HomeViewModel @Inject constructor(
 
     private fun observeStateChanges() {
         viewModelScope.launch {
-            _state.collectLatest { currentState ->
-                viewModelScope.launch {
-                    getCurrentLocationUseCase.invoke()
-                        .onSuccess { location ->
-                            getCategorySpotsUseCase(
-                                categoryId = currentState.selectedCategoryTab.id,
-                                latitude = location.latitude,
-                                longitude = location.longitude,
-                                sortBy = CategorySortType.getDefault().name
-                            )
-                        }
+            _state.map { it.selectedCategoryTab }.distinctUntilChanged()
+                .collectLatest { category ->
+                    viewModelScope.launch {
+                        getCurrentLocationUseCase.invoke()
+                            .onSuccess { location ->
+                                getCategorySpotsUseCase.invoke(
+                                    categoryId = category.id,
+                                    latitude = location.latitude,
+                                    longitude = location.longitude,
+                                    sortBy = CategorySortType.getDefault().name
+                                ).collect { data ->
+                                    _state.update {
+                                        it.copy(
+                                            categorySpots = data.map { v -> v.toUiModel() }
+                                        )
+                                    }
+                                }
+                            }
+                    }
                 }
-            }
         }
     }
 
