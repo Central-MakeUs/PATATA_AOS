@@ -1,15 +1,18 @@
 package com.cmc.presentation.home.view
 
+import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.forEachIndexed
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
+import com.cmc.common.constants.NavigationKeys
 import com.cmc.design.component.SpotPolaroidView
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
@@ -159,6 +162,10 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             layoutManager = LinearLayoutManager(context)
             this.adapter = categoryRecommendAdapter
         }
+
+        binding.layoutCategoryRecommendMore.setOnClickListener {
+            viewModel.onClickCategoryRecommendMoreButton()
+        }
     }
     private fun initCategoryTab() {
         // 탭 생성
@@ -201,5 +208,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private fun navigateTodaySpotRecommended() { navigate(R.id.navigate_today_spot_recommendation) }
     private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
     private fun navigateSearch() { (activity as GlobalNavigation).navigateSearch() }
-    private fun navigateCategorySpot(category: SpotCategory) {  }
+    private fun navigateCategorySpot(category: SpotCategory) {
+        navigate(R.id.navigate_category_spots, Bundle().apply { putInt(NavigationKeys.Category.ARGUMENT_CATEGORY_ID, category.id) })
+    }
 }

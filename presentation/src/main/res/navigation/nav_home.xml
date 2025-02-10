@@ -13,6 +13,11 @@
         <action
             android:id="@+id/navigate_today_spot_recommendation"
             app:destination="@id/TodaySpotRecommendationFragment"/>
+
+        <action
+            android:id="@+id/navigate_category_spots"
+            app:destination="@+id/CategorySpotsFragment"/>
+
     </fragment>
 
     <fragment
@@ -21,4 +26,9 @@
         tools:layout="@layout/fragment_today_spot_recommendation">
 
     </fragment>
+
+    <fragment
+        android:id="@+id/CategorySpotsFragment"
+        android:name="com.cmc.presentation.home.view.CategorySpotsFragment"
+        tools:layout="@layout/fragment_category_spots"/>
 </navigation>

@@ -68,9 +68,9 @@ abstract class BaseFragment<T: ViewDataBinding>(@LayoutRes val layoutRes: Int)
     protected fun finish() {
         val fragmentManager = childFragmentManager
         if (fragmentManager.backStackEntryCount > 0) {
-            activity?.onBackPressedDispatcher?.onBackPressed()
+            fragmentManager.popBackStack()
         } else {
-            activity?.finish()
+            activity?.onBackPressedDispatcher?.onBackPressed()
         }
     }
 }

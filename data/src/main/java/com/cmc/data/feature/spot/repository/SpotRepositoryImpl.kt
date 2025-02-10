@@ -1,5 +1,6 @@
 package com.cmc.data.feature.spot.repository
 
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.cmc.data.base.apiRequestCatching

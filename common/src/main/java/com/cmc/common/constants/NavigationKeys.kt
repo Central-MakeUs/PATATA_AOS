@@ -13,4 +13,8 @@ object NavigationKeys {
         const val ARGUMENT_LONGITUDE = "longitude"
     }
 
+    object Category {
+        const val ARGUMENT_CATEGORY_ID = "categoryId"
+    }
+
 }

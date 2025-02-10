@@ -1,5 +1,6 @@
 package com.cmc.data.feature.spot
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.cmc.data.feature.spot.model.toDomain
@@ -29,12 +30,13 @@ class CategorySpotPagingSource(
                 nextKey = null
             )
 
-            val nextPage = if (result.currentPage < result.totalPages) result.currentPage + 1 else null
+            val nextPage = if (result.currentPage < result.totalPages - 1) result.currentPage + 1 else null
+            val prevPage = if (result.currentPage == 0) null else result.currentPage - 1
 
             LoadResult.Page(
-                data = result.items,  // 변환된 Spot 리스트
-                prevKey = if (result.currentPage == 1) null else result.currentPage - 1,  // 이전 페이지 설정
-                nextKey = nextPage // 다음 페이지 설정
+                data = result.items,
+                prevKey = prevPage,
+                nextKey = nextPage
             )
         } catch (e: Exception) {
             LoadResult.Error(e)

@@ -1,8 +1,8 @@
 package com.cmc.presentation.home.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
@@ -10,6 +10,7 @@ import com.cmc.domain.feature.location.GetCurrentLocationUseCase
 import com.cmc.domain.feature.spot.usecase.GetCategorySpotsUseCase
 import com.cmc.domain.model.CategorySortType
 import com.cmc.domain.model.SpotCategory
+import com.cmc.presentation.home.adapter.SpotHorizontalCardAdapter
 import com.cmc.presentation.spot.model.SpotWithStatusUiModel
 import com.cmc.presentation.spot.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -27,25 +29,19 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class CategorySpotsViewModel @Inject constructor(
     private val getCategorySpotsUseCase: GetCategorySpotsUseCase,
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
-) : ViewModel() {
+): ViewModel() {
 
-    private val _state = MutableStateFlow<HomeState>(HomeState())
-    val state: StateFlow<HomeState> = _state.asStateFlow()
+    private val _state = MutableStateFlow(CategorySpotsState())
+    val state: StateFlow<CategorySpotsState> = _state.asStateFlow()
 
-    private val _sideEffect = MutableSharedFlow<HomeSideEffect>()
-    val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
+    private val _sideEffect = MutableSharedFlow<CategorySpotsSideEffect>()
+    val sideEffect: SharedFlow<CategorySpotsSideEffect> = _sideEffect.asSharedFlow()
 
     init {
         observeStateChanges()
-    }
-
-    fun onClickSpotCategoryButton(category: SpotCategory) {
-        _state.update {
-            it.copy(selectedCategory = category)
-        }
     }
 
     fun onClickCategoryTab(category: SpotCategory) {
@@ -54,51 +50,53 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onClickTodayRecommendedSpotMoreButton() {
-        sendSideEffect(HomeSideEffect.NavigateTodayRecommendedSpot)
+    fun onClickCategorySortButton() {
+        sendSideEffect(CategorySpotsSideEffect.ShowSortDialog)
     }
-
-    fun onClickSearchBar() {
-        sendSideEffect(HomeSideEffect.NavigateSearch)
+    fun onClickSortByDistance() {
+        _state.update {
+            it.copy(sortType = CategorySortType.DISTANCE)
+        }
     }
-
-    fun onClickSpotScrapButton(spotId: Int) {
-        viewModelScope.launch {
-            // TODO: Scrap Toggle API 호출
-            val isSuccess: Boolean = true
-            if (isSuccess) {
-                _state.update {
-                    it.copy(
-                        categorySpots = it.categorySpots.map { spot ->
-                            if (spot.spot.spotId == spotId) {
-                                spot.copy(isScraped = !spot.isScraped)
-                            } else {
-                                spot
-                            }
-                        }
-                    )
-                }
-            }
+    fun onClickSortByRecommend() {
+        _state.update {
+            it.copy(sortType = CategorySortType.RECOMMEND)
         }
     }
 
-    fun onClickCategoryRecommendMoreButton() {
-        viewModelScope.launch {
-            _sideEffect.emit(HomeSideEffect.NavigateCategorySpot(_state.value.selectedCategoryTab))
+    fun setPageAdapterLoadStateListener(adapter: SpotHorizontalCardAdapter) {
+        adapter.addLoadStateListener { loadState ->
+            val isError = loadState.refresh is LoadState.Error || loadState.append is LoadState.Error
+            val isLoading = loadState.refresh is LoadState.Loading || loadState.append is LoadState.Loading
+            val isNothing =
+                (loadState.refresh is LoadState.NotLoading || loadState.append is LoadState.NotLoading) && adapter.itemCount == 0
+
+            _state.update {
+                it.copy(
+                    isLoading = isLoading,
+                    isEmpty = isNothing,
+                    isError = isError,
+                    spotCount = adapter.itemCount
+                )
+            }
         }
     }
 
     private fun observeStateChanges() {
         viewModelScope.launch {
-            _state.map { it.selectedCategoryTab }.distinctUntilChanged()
-                .collectLatest { category ->
+            combine(
+                _state.map { it.sortType }.distinctUntilChanged(),
+                _state.map { it.selectedCategoryTab }.distinctUntilChanged()
+            ) { sortType, category ->
+                sortType to category
+            }.collectLatest { (sortType, category) ->
                     getCurrentLocationUseCase.invoke()
                         .onSuccess { location ->
                             getCategorySpotsUseCase.invoke(
                                 categoryId = category.id,
                                 latitude = location.latitude,
                                 longitude = location.longitude,
-                                sortBy = CategorySortType.getDefault().name
+                                sortBy = sortType.name
                             ).cachedIn(viewModelScope)
                                 .map { pagingData -> pagingData.map { data -> data.toUiModel() }}
                                 .collectLatest { data ->
@@ -113,22 +111,24 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun sendSideEffect(effect: HomeSideEffect) {
+    private fun sendSideEffect(effect: CategorySpotsSideEffect) {
         viewModelScope.launch {
             _sideEffect.emit(effect)
         }
     }
 
-    data class HomeState(
+    data class CategorySpotsState(
+        var isLoading: Boolean = true,
+        var isEmpty: Boolean = true,
+        var isError: Boolean = false,
         var categorySpots: PagingData<SpotWithStatusUiModel> = PagingData.empty(),
-        var selectedCategory: SpotCategory? = null,
+        var spotCount: Int= 0,
         var selectedCategoryTab: SpotCategory = SpotCategory.ALL,
+        var sortType: CategorySortType = CategorySortType.getDefault(),
     )
 
-    sealed class HomeSideEffect {
-        data class NavigateSpotDetail(val spotId: Int): HomeSideEffect()
-        data class NavigateCategorySpot(val category: SpotCategory): HomeSideEffect()
-        data object NavigateSearch: HomeSideEffect()
-        data object NavigateTodayRecommendedSpot: HomeSideEffect()
+    sealed class CategorySpotsSideEffect {
+        data class NavigateSpotDetail(val spotId: Int): CategorySpotsSideEffect()
+        data object ShowSortDialog: CategorySpotsSideEffect()
     }
 }
