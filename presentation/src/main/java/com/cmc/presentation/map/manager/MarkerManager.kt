@@ -26,7 +26,8 @@ class MarkerManager(private val naverMap: NaverMap) {
         // 추가할 데이터 처리
         newDataSet.subtract(dataSet).forEach { data ->
             markerMap[data] = Marker().apply {
-                position = LatLng(data.latitude, data.longitude)
+                position = LatLng(0.0, 0.0)
+//                position = LatLng(data.latitude, data.longitude)
                 icon = OverlayImage.fromResource(
                     SpotCategoryItem(SpotCategory.fromId(data.categoryId))
                         .getMarkerIcon()

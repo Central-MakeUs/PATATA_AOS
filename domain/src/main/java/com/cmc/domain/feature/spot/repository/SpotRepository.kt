@@ -11,7 +11,7 @@ interface SpotRepository {
         categoryId: Int,
         latitude: Double,
         longitude: Double,
-        sortBy: String
+        sortBy: String,
     ): PaginatedResponse<SpotWithStatus>
 
     suspend fun getSpotDetail(spotId: Int): Result<SpotDetail>

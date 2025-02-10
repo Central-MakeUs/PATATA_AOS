@@ -2,6 +2,8 @@ package com.cmc.data.di
 
 
 import com.cmc.data.base.ApiConfig.BASE_URL
+import com.cmc.data.base.GsonProvider
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,6 +24,9 @@ annotation class TokenRefreshApi
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
+    @Provides
+    @Singleton
+    fun provideGson(): Gson = GsonProvider.gson
 
     // 토큰 갱신 처리용 Client 및 Retrofit
     @TokenRefreshApi
@@ -64,11 +69,11 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
 }

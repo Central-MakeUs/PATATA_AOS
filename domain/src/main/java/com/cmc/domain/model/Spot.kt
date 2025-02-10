@@ -6,6 +6,4 @@ data class Spot(
     val address: String,
     val categoryId: Int,
     val tags: List<String>,
-    val latitude: Double,
-    val longitude: Double,
 )

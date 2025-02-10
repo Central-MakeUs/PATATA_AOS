@@ -9,8 +9,6 @@ data class SpotResponseDto(
     @SerializedName("spotAddress") val address: String,
     @SerializedName("categoryId") val categoryId: Int,
     @SerializedName("tags") val tags: List<String>,
-    @SerializedName("latitude") val latitude: Double,
-    @SerializedName("longitude") val longitude: Double,
 )
 
 fun SpotResponseDto.toDomain(): Spot {
@@ -20,7 +18,5 @@ fun SpotResponseDto.toDomain(): Spot {
         address = this.address,
         categoryId = this.categoryId,
         tags = this.tags,
-        latitude = latitude,
-        longitude = longitude,
     )
 }

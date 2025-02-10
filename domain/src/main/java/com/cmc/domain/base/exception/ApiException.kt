@@ -8,3 +8,5 @@ sealed class ApiException(message: String) : AppException(message) {
     class TokenExpired(override val message: String) : ApiException(message)
     class ServerError(override val message: String) : ApiException(message)
 }
+
+class InvalidJsonFormatException(message: String): AppException(message)

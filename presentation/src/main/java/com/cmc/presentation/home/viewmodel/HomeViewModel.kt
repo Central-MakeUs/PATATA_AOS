@@ -42,17 +42,6 @@ class HomeViewModel @Inject constructor(
         observeStateChanges()
     }
 
-    fun getCategorySpots(latitude: Double, longitude: Double) {
-        viewModelScope.launch {
-            getCategorySpotsUseCase(
-                categoryId = state.value.selectedCategoryTab.id,
-                latitude = latitude,
-                longitude = longitude,
-                sortBy = CategorySortType.getDefault().name
-            )
-        }
-    }
-
     fun onClickSpotCategoryButton(category: SpotCategory) {
         _state.update {
             it.copy(selectedCategory = category)
@@ -97,24 +86,23 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _state.map { it.selectedCategoryTab }.distinctUntilChanged()
                 .collectLatest { category ->
-                    viewModelScope.launch {
-                        getCurrentLocationUseCase.invoke()
-                            .onSuccess { location ->
-                                getCategorySpotsUseCase.invoke(
-                                    categoryId = category.id,
-                                    latitude = location.latitude,
-                                    longitude = location.longitude,
-                                    sortBy = CategorySortType.getDefault().name
-                                ).cachedIn(viewModelScope)
-                                    .collectLatest { data ->
+                    getCurrentLocationUseCase.invoke()
+                        .onSuccess { location ->
+                            getCategorySpotsUseCase.invoke(
+                                categoryId = category.id,
+                                latitude = location.latitude,
+                                longitude = location.longitude,
+                                sortBy = CategorySortType.getDefault().name
+                            ).cachedIn(viewModelScope)
+                                .map { pagingData -> pagingData.map { data -> data.toUiModel() }}
+                                .collectLatest { data ->
                                     _state.update {
                                         it.copy(
-                                            categorySpots = data.map { v -> v.toUiModel() }
+                                            categorySpots = data
                                         )
                                     }
                                 }
-                            }
-                    }
+                        }
                 }
         }
     }

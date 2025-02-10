@@ -9,8 +9,6 @@ data class SpotUiModel(
     val address: String,
     val categoryId: Int,
     val tags: List<String>,
-    val latitude: Double,
-    val longitude: Double,
 )
 
 fun Spot.toUiModel(): SpotUiModel {
@@ -21,8 +19,6 @@ fun Spot.toUiModel(): SpotUiModel {
             address = address,
             categoryId = categoryId,
             tags = tags,
-            latitude = latitude,
-            longitude = longitude
         )
     }
 }

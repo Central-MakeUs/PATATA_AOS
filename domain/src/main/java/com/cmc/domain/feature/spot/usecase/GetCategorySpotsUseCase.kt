@@ -18,7 +18,7 @@ class GetCategorySpotsUseCase @Inject constructor(
             categoryId = categoryId,
             latitude = latitude,
             longitude = longitude,
-            sortBy = sortBy
+            sortBy = sortBy,
         )
     }
 }
