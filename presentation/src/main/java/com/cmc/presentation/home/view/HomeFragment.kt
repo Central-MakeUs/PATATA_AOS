@@ -202,6 +202,11 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshHomeScreen()
+    }
+
     private fun navigateTodaySpotRecommended() { navigate(R.id.navigate_today_spot_recommendation) }
     private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
     private fun navigateSearch() { (activity as GlobalNavigation).navigateSearch() }

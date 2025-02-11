@@ -40,7 +40,8 @@ class HomeViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<HomeSideEffect>()
     val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
 
-    init {
+    fun refreshHomeScreen() {
+        // TODO: 오늘의 추천 스팟 API 호출 추가
         observeStateChanges()
     }
 
