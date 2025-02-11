@@ -17,7 +17,7 @@ interface SpotApiService {
 
     @GET("spot/category")
     suspend fun getCategorySpots(
-        @Query("categoryId") categoryId: Int?,
+        @Query("category_id") categoryId: Int?,
         @Query("page") page: Int,
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
