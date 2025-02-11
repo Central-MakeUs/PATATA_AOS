@@ -5,8 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.core.view.forEachIndexed
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -54,8 +54,11 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private fun updateUI(state: HomeState) {
         state.selectedCategory?.let { configureSelectedSpotCategory(it) }
 
+        binding.layoutCategoryRecommendMore.isVisible = state.categorySpots.size >= 3
+        binding.layoutCategoryTabNoResult.isVisible = state.categorySpots.isEmpty()
+
         viewLifecycleOwner.lifecycleScope.launch {
-            categoryRecommendAdapter.submitData(state.categorySpots)
+            categoryRecommendAdapter.setItems(state.categorySpots)
         }
     }
     private fun handleSideEffect(effect: HomeSideEffect) {

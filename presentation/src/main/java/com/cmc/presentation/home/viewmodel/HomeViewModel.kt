@@ -1,11 +1,7 @@
 package com.cmc.presentation.home.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.map
 import com.cmc.domain.feature.location.GetCurrentLocationUseCase
 import com.cmc.domain.feature.spot.usecase.GetCategorySpotsUseCase
 import com.cmc.domain.model.CategorySortType
@@ -99,15 +95,13 @@ class HomeViewModel @Inject constructor(
                                 latitude = location.latitude,
                                 longitude = location.longitude,
                                 sortBy = CategorySortType.getDefault().name
-                            ).cachedIn(viewModelScope)
-                                .map { pagingData -> pagingData.map { data -> data.toUiModel() }}
-                                .collectLatest { data ->
-                                    _state.update {
-                                        it.copy(
-                                            categorySpots = data
-                                        )
-                                    }
+                            ).onSuccess { dataList ->
+                                _state.update {
+                                    it.copy(
+                                        categorySpots = dataList.map { data -> data.toUiModel() }
+                                    )
                                 }
+                            }
                         }
                 }
         }
@@ -120,7 +114,7 @@ class HomeViewModel @Inject constructor(
     }
 
     data class HomeState(
-        var categorySpots: PagingData<SpotWithStatusUiModel> = PagingData.empty(),
+        var categorySpots: List<SpotWithStatusUiModel> = emptyList(),
         var selectedCategory: SpotCategory? = null,
         var selectedCategoryTab: SpotCategory = SpotCategory.ALL,
     )

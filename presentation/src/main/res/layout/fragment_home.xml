@@ -111,6 +111,36 @@
                 android:nestedScrollingEnabled="false"
                 app:layout_constraintTop_toBottomOf="@+id/tab_category_filter"/>
 
+            <LinearLayout
+                android:id="@+id/layout_category_tab_no_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="50dp"
+                app:layout_constraintTop_toBottomOf="@+id/tab_category_filter"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:visibility="gone"
+                android:gravity="center"
+                android:orientation="vertical">
+                <ImageView
+                    android:id="@+id/iv_search_no_result"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_no_search_result"
+                    android:contentDescription="@string/img_desc_search_no_result"/>
+
+                <TextView
+                    android:id="@+id/tv_search_no_result"
+                    style="@style/subtitle_large"
+                    android:textColor="@color/text_disabled"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/search_no_result_text"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/default_spacing"/>
+            </LinearLayout>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_category_recommend_more"
                 android:layout_width="match_parent"

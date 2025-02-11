@@ -7,12 +7,19 @@ import com.cmc.domain.feature.spot.model.SpotWithStatus
 
 interface SpotRepository {
 
-    suspend fun getCategorySpots(
+    suspend fun getPaginatedCategorySpots(
         categoryId: Int,
         latitude: Double,
         longitude: Double,
         sortBy: String,
     ): PaginatedResponse<SpotWithStatus>
+
+    suspend fun getCategorySpots(
+        categoryId: Int,
+        latitude: Double,
+        longitude: Double,
+        sortBy: String,
+    ): Result<List<SpotWithStatus>>
 
     suspend fun getSpotDetail(spotId: Int): Result<SpotDetail>
 

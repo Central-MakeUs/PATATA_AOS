@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmc.common.base.BaseFragment
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentTodaySpotRecommendationBinding
-import com.cmc.presentation.home.adapter.SpotHorizontalCardAdapter
+import com.cmc.presentation.home.adapter.SpotHorizontalPaginatedCardAdapter
 import com.cmc.presentation.home.viewmodel.TodaySpotRecommendationViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -14,7 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class TodaySpotRecommendationFragment: BaseFragment<FragmentTodaySpotRecommendationBinding>(R.layout.fragment_today_spot_recommendation) {
 
     private val viewModel: TodaySpotRecommendationViewModel by viewModels()
-    private lateinit var categoryRecommendAdapter: SpotHorizontalCardAdapter
+    private lateinit var categoryRecommendAdapter: SpotHorizontalPaginatedCardAdapter
 
     override fun initObserving() {
         // TODO: Data Observing
@@ -36,7 +36,7 @@ class TodaySpotRecommendationFragment: BaseFragment<FragmentTodaySpotRecommendat
     }
 
     private fun setRecyclerView() {
-        categoryRecommendAdapter = SpotHorizontalCardAdapter(
+        categoryRecommendAdapter = SpotHorizontalPaginatedCardAdapter(
             onArchiveClick = {
                 Toast.makeText(context, "아카이브 클릭됨", Toast.LENGTH_SHORT).show()
                 true

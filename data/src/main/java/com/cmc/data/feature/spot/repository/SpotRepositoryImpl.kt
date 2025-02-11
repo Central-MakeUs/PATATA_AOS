@@ -1,25 +1,26 @@
 package com.cmc.data.feature.spot.repository
 
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.cmc.data.base.apiRequestCatching
 import com.cmc.data.feature.spot.CategorySpotPagingSource
 import com.cmc.data.feature.spot.model.CreateReviewRequest
 import com.cmc.data.feature.spot.model.toDomain
+import com.cmc.data.feature.spot.model.toListDomain
 import com.cmc.data.feature.spot.remote.SpotApiService
 import com.cmc.domain.feature.spot.base.PaginatedResponse
 import com.cmc.domain.feature.spot.model.Review
 import com.cmc.domain.feature.spot.model.SpotDetail
 import com.cmc.domain.feature.spot.model.SpotWithStatus
 import com.cmc.domain.feature.spot.repository.SpotRepository
+import com.cmc.domain.model.SpotCategory
 import javax.inject.Inject
 
 class SpotRepositoryImpl @Inject constructor(
     private val spotApiService: SpotApiService,
 ): SpotRepository {
 
-    override suspend fun getCategorySpots(
+    override suspend fun getPaginatedCategorySpots(
         categoryId: Int,
         latitude: Double,
         longitude: Double,
@@ -34,6 +35,24 @@ class SpotRepositoryImpl @Inject constructor(
                 CategorySpotPagingSource(spotApiService, categoryId, latitude, longitude, sortBy)
             }
         ).flow
+    }
+
+    override suspend fun getCategorySpots(
+        categoryId: Int,
+        latitude: Double,
+        longitude: Double,
+        sortBy: String
+    ): Result<List<SpotWithStatus>> {
+        return apiRequestCatching(
+            apiCall = { spotApiService.getCategorySpots(
+                categoryId = if (categoryId == SpotCategory.ALL.id) null else categoryId,
+                page = 0,
+                latitude = latitude,
+                longitude = longitude,
+                sortBy = sortBy
+            )},
+            transform = { it.toListDomain() }
+        )
     }
 
     override suspend fun getSpotDetail(spotId: Int): Result<SpotDetail> {

@@ -12,7 +12,7 @@ import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.ContentSheetSortSelectBinding
 import com.cmc.presentation.databinding.FragmentCategorySpotsBinding
-import com.cmc.presentation.home.adapter.SpotHorizontalCardAdapter
+import com.cmc.presentation.home.adapter.SpotHorizontalPaginatedCardAdapter
 import com.cmc.presentation.home.viewmodel.CategorySpotsViewModel
 import com.cmc.presentation.home.viewmodel.CategorySpotsViewModel.CategorySpotsSideEffect
 import com.cmc.presentation.home.viewmodel.CategorySpotsViewModel.CategorySpotsState
@@ -27,7 +27,7 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
 
     private val viewModel: CategorySpotsViewModel by viewModels()
 
-    private lateinit var categoryRecommendAdapter: SpotHorizontalCardAdapter
+    private lateinit var categoryRecommendAdapter: SpotHorizontalPaginatedCardAdapter
 
 
     override fun initObserving() {
@@ -69,7 +69,7 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
         }
     }
     private fun initHorizontalCardView() {
-        categoryRecommendAdapter = SpotHorizontalCardAdapter(
+        categoryRecommendAdapter = SpotHorizontalPaginatedCardAdapter(
             onArchiveClick = {
                 // TODO: SPOT ID 반영
 //                viewModel.onClickSpotScrapButton(spotId = 0)

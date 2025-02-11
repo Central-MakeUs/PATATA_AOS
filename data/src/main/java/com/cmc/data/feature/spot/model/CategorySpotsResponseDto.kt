@@ -19,3 +19,11 @@ fun CategorySpotsResponseDto.toDomain(): PaginatedData<SpotWithStatus> {
         items = spots.map { it.toDomain() }
     )
 }
+
+fun CategorySpotsResponseDto.toListDomain(): List<SpotWithStatus> {
+    return spots
+        .take(MAX_RECOMMENDED_CATEGORY_ITEM_COUNT)
+        .map { it.toDomain() }
+}
+
+const val MAX_RECOMMENDED_CATEGORY_ITEM_COUNT = 3

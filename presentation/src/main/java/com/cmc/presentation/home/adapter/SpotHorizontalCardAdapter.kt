@@ -1,15 +1,17 @@
 package com.cmc.presentation.home.adapter
 
 import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import com.cmc.presentation.spot.component.SpotHorizontalCardView
 import com.cmc.presentation.spot.model.SpotWithStatusUiModel
 
 class SpotHorizontalCardAdapter(
     private val onArchiveClick: (SpotWithStatusUiModel) -> Unit,
     private val onImageClick: (SpotWithStatusUiModel) -> Unit
-) : PagingDataAdapter<SpotWithStatusUiModel, SpotHorizontalCardAdapter.SpotHorizontalCardViewHolder>(DIFF_CALLBACK) {
+) : RecyclerView.Adapter<SpotHorizontalCardAdapter.SpotHorizontalCardViewHolder>() {
+
+    private var items: List<SpotWithStatusUiModel> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SpotHorizontalCardViewHolder {
         val spotView = SpotHorizontalCardView(parent.context).apply {
@@ -18,16 +20,28 @@ class SpotHorizontalCardAdapter(
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
         }
-        return SpotHorizontalCardViewHolder(spotView)
+        return SpotHorizontalCardViewHolder(spotView, onArchiveClick, onImageClick)
     }
 
     override fun onBindViewHolder(holder: SpotHorizontalCardViewHolder, position: Int) {
-        val spot = getItem(position) ?: return
+        val spot = items[position]
         holder.bind(spot)
     }
+    override fun getItemCount(): Int = items.size
 
-    inner class SpotHorizontalCardViewHolder(private val cardView: SpotHorizontalCardView) :
-        androidx.recyclerview.widget.RecyclerView.ViewHolder(cardView) {
+    fun setItems(newItems: List<SpotWithStatusUiModel>) {
+        val diffCallback = DiffCallback(items, newItems)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        items = newItems
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    class SpotHorizontalCardViewHolder(
+        private val cardView: SpotHorizontalCardView,
+        private val onArchiveClick: (SpotWithStatusUiModel) -> Unit,
+        private val onImageClick: (SpotWithStatusUiModel) -> Unit,
+    ) :
+        RecyclerView.ViewHolder(cardView) {
 
         fun bind(spot: SpotWithStatusUiModel) {
             cardView.setHorizontalCardView(
@@ -44,15 +58,18 @@ class SpotHorizontalCardAdapter(
         }
     }
 
-    companion object {
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<SpotWithStatusUiModel>() {
-            override fun areItemsTheSame(oldItem: SpotWithStatusUiModel, newItem: SpotWithStatusUiModel): Boolean {
-                return oldItem.spot.spotId == newItem.spot.spotId
-            }
+    class DiffCallback(
+        private val oldList: List<SpotWithStatusUiModel>,
+        private val newList: List<SpotWithStatusUiModel>
+    ): DiffUtil.Callback() {
+        override fun getOldListSize() = oldList.size
+        override fun getNewListSize() = newList.size
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].spot.spotId == newList[newItemPosition].spot.spotId
+        }
 
-            override fun areContentsTheSame(oldItem: SpotWithStatusUiModel, newItem: SpotWithStatusUiModel): Boolean {
-                return oldItem == newItem
-            }
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition] == newList[newItemPosition]
         }
     }
 }

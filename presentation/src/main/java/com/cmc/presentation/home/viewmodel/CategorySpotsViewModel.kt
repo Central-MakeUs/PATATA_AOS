@@ -7,10 +7,10 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.cmc.domain.feature.location.GetCurrentLocationUseCase
-import com.cmc.domain.feature.spot.usecase.GetCategorySpotsUseCase
+import com.cmc.domain.feature.spot.usecase.GetPaginatedCategorySpotsUseCase
 import com.cmc.domain.model.CategorySortType
 import com.cmc.domain.model.SpotCategory
-import com.cmc.presentation.home.adapter.SpotHorizontalCardAdapter
+import com.cmc.presentation.home.adapter.SpotHorizontalPaginatedCardAdapter
 import com.cmc.presentation.spot.model.SpotWithStatusUiModel
 import com.cmc.presentation.spot.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,7 +30,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategorySpotsViewModel @Inject constructor(
-    private val getCategorySpotsUseCase: GetCategorySpotsUseCase,
+    private val getPaginatedCategorySpotsUseCase: GetPaginatedCategorySpotsUseCase,
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
 ): ViewModel() {
 
@@ -64,7 +64,7 @@ class CategorySpotsViewModel @Inject constructor(
         }
     }
 
-    fun setPageAdapterLoadStateListener(adapter: SpotHorizontalCardAdapter) {
+    fun setPageAdapterLoadStateListener(adapter: SpotHorizontalPaginatedCardAdapter) {
         adapter.addLoadStateListener { loadState ->
             val isError = loadState.refresh is LoadState.Error || loadState.append is LoadState.Error
             val isLoading = loadState.refresh is LoadState.Loading || loadState.append is LoadState.Loading
@@ -92,7 +92,7 @@ class CategorySpotsViewModel @Inject constructor(
             }.collectLatest { (sortType, category) ->
                     getCurrentLocationUseCase.invoke()
                         .onSuccess { location ->
-                            getCategorySpotsUseCase.invoke(
+                            getPaginatedCategorySpotsUseCase.invoke(
                                 categoryId = category.id,
                                 latitude = location.latitude,
                                 longitude = location.longitude,
