@@ -73,6 +73,9 @@ class CategorySpotsViewModel @Inject constructor(
                 }
         }
     }
+    fun onClickSpotImage(spotId: Int) {
+        sendSideEffect(CategorySpotsSideEffect.NavigateSpotDetail(spotId))
+    }
     fun onClickCategoryTab(category: SpotCategory) {
         _state.update {
             it.copy(selectedCategoryTab = category)

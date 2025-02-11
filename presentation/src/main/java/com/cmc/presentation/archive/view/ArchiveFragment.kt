@@ -5,6 +5,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.cmc.common.adapter.GridSpaceItemDecoration
 import com.cmc.common.base.BaseFragment
+import com.cmc.common.base.GlobalNavigation
 import com.cmc.design.component.PatataAlert
 import com.cmc.design.component.PatataAppBar
 import com.cmc.presentation.R
@@ -56,6 +57,7 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
         when (effect) {
             is ArchiveSideEffect.ShowDeleteImageDialog -> { showDeleteImageDialog(effect.selectedImages) }
             is ArchiveSideEffect.ShowSnackbar -> {}
+            is ArchiveSideEffect.NavigateSpotDetail -> { navigateSpotDetail(effect.spotId) }
         }
     }
 
@@ -78,11 +80,13 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
         archiveAdapter = ArchivePhotoAdapter(
             isSelectionMode = { viewModel.state.value.footerType == FooterType.DELETE },
             isSelected = { imageId -> viewModel.state.value.selectedImages.contains(imageId) },
-            onPhotoClick = { imageId ->
+            onImageClick = { spotId ->
                 if (viewModel.state.value.footerType == FooterType.DELETE) {
-                    viewModel.togglePhotoSelection(imageId)
+                    viewModel.togglePhotoSelection(spotId)
                 } else {
-                    // 상세 화면 이동
+                    // TODO: API 데이터 반영 시, 넘겨 받은 spotId로 이동
+                    viewModel.onClickSpotImage(6)
+//                    viewModel.onClickSpotImage(spotId)
                 }
             }
         )
@@ -105,6 +109,7 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
                 }
             }.show()
     }
+    private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
 
     private fun getDumpData(): List<Pair<Int, String>> {
         return List(41) { it to "https://source.unsplash.com/random/400x400?nature${(it % 6) + 1}" }

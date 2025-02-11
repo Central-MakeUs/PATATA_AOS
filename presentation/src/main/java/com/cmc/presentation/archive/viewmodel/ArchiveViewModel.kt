@@ -55,6 +55,9 @@ class ArchiveViewModel @Inject constructor() : ViewModel() {
             _sideEffect.emit(ArchiveSideEffect.ShowDeleteImageDialog(state.value.selectedImages.toList()))
         }
     }
+    fun onClickSpotImage(spotId: Int) {
+        sendSideEffect(ArchiveSideEffect.NavigateSpotDetail(spotId))
+    }
 
     fun tempDeleteImages(selectedImages: List<Int>) {
         _state.update {
@@ -76,6 +79,12 @@ class ArchiveViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    private fun sendSideEffect(effect: ArchiveSideEffect) {
+        viewModelScope.launch {
+            _sideEffect.emit(effect)
+        }
+    }
+
 
     data class ArchiveState(
         val footerType: PatataAppBar.FooterType = PatataAppBar.FooterType.SELECT,
@@ -86,5 +95,6 @@ class ArchiveViewModel @Inject constructor() : ViewModel() {
     sealed class ArchiveSideEffect {
         data class ShowDeleteImageDialog(val selectedImages: List<Int>) : ArchiveSideEffect()
         data class ShowSnackbar(val message: String) : ArchiveSideEffect()
+        data class NavigateSpotDetail(val spotId: Int) : ArchiveSideEffect()
     }
 }

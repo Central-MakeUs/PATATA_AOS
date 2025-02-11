@@ -6,6 +6,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmc.common.base.BaseFragment
+import com.cmc.common.base.GlobalNavigation
 import com.cmc.common.constants.NavigationKeys
 import com.cmc.design.component.BottomSheetDialog
 import com.cmc.domain.model.CategorySortType
@@ -58,7 +59,7 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
     }
     private fun handleSideEffect(effect: CategorySpotsSideEffect) {
         when (effect) {
-            is CategorySpotsSideEffect.NavigateSpotDetail -> {}
+            is CategorySpotsSideEffect.NavigateSpotDetail -> { navigateSpotDetail(effect.spotId) }
             is CategorySpotsSideEffect.ShowSortDialog -> { showSortDialog() }
         }
     }
@@ -76,12 +77,8 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
     }
     private fun initHorizontalCardView() {
         categoryRecommendAdapter = SpotHorizontalPaginatedCardAdapter(
-            onArchiveClick = { spotId ->
-                viewModel.onClickSpotScrapButton(spotId = spotId)
-            },
-            onImageClick = {
-                Toast.makeText(context, "서울숲 은행나무길 카드 클릭됨", Toast.LENGTH_SHORT).show()
-            }
+            onArchiveClick = { spotId -> viewModel.onClickSpotScrapButton(spotId = spotId) },
+            onImageClick = { spotId -> viewModel.onClickSpotImage(spotId) }
         )
 
         viewModel.setPageAdapterLoadStateListener(categoryRecommendAdapter)
@@ -159,4 +156,5 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
                 }
             }
     }
+    private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
 }

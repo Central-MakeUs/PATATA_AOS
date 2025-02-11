@@ -150,12 +150,8 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
     private fun initHorizontalCardView() {
         categoryRecommendAdapter = SpotHorizontalCardAdapter(
-            onArchiveClick = { spotId ->
-                viewModel.onClickSpotScrapButton(spotId = spotId)
-            },
-            onImageClick = {
-                Toast.makeText(context, "서울숲 은행나무길 카드 클릭됨", Toast.LENGTH_SHORT).show()
-            }
+            onArchiveClick = { spotId -> viewModel.onClickSpotScrapButton(spotId = spotId) },
+            onImageClick = { spotId -> viewModel.onClickSpotImage(spotId) }
         )
 
         binding.rvSpotCategory.apply {

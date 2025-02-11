@@ -50,21 +50,17 @@ class HomeViewModel @Inject constructor(
         }
         sendSideEffect(HomeSideEffect.NavigateCategorySpot(category))
     }
-
     fun onClickCategoryTab(category: SpotCategory) {
         _state.update {
             it.copy(selectedCategoryTab = category)
         }
     }
-
     fun onClickTodayRecommendedSpotMoreButton() {
         sendSideEffect(HomeSideEffect.NavigateTodayRecommendedSpot)
     }
-
     fun onClickSearchBar() {
         sendSideEffect(HomeSideEffect.NavigateSearch)
     }
-
     fun onClickSpotScrapButton(spotId: Int) {
         viewModelScope.launch {
             toggleSpotScrapUseCase.invoke(spotId)
@@ -89,7 +85,9 @@ class HomeViewModel @Inject constructor(
                 }
         }
     }
-
+    fun onClickSpotImage(spotId: Int) {
+        sendSideEffect(HomeSideEffect.NavigateSpotDetail(spotId))
+    }
     fun onClickCategoryRecommendMoreButton() {
         viewModelScope.launch {
             _sideEffect.emit(HomeSideEffect.NavigateCategorySpot(_state.value.selectedCategoryTab))

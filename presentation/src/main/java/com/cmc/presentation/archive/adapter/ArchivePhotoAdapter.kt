@@ -10,9 +10,9 @@ import com.cmc.presentation.R
 import com.cmc.presentation.databinding.ViewArchivePhotoBinding
 
 class ArchivePhotoAdapter(
-    private val isSelectionMode: () -> Boolean, // 선택 모드 상태를 가져오는 람다
-    private val isSelected: (Int) -> Boolean, // 아이템이 선택되었는지 확인하는 람다
-    private val onPhotoClick: (Int) -> Unit, // 클릭 이벤트 콜백
+    private val isSelectionMode: () -> Boolean,
+    private val isSelected: (Int) -> Boolean,
+    private val onImageClick: (Int) -> Unit,
 ) : RecyclerView.Adapter<ArchivePhotoAdapter.ArchivePhotoViewHolder>() {
 
     private var items: List<Pair<Int, String>> = emptyList()
@@ -21,7 +21,7 @@ class ArchivePhotoAdapter(
         val binding = ViewArchivePhotoBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
-        return ArchivePhotoViewHolder(binding, isSelectionMode, isSelected, onPhotoClick)
+        return ArchivePhotoViewHolder(binding, isSelectionMode, isSelected, onImageClick)
     }
 
     override fun onBindViewHolder(holder: ArchivePhotoViewHolder, position: Int) {
@@ -41,7 +41,7 @@ class ArchivePhotoAdapter(
         private val binding: ViewArchivePhotoBinding,
         private val isSelectionMode: () -> Boolean,
         private val isSelected: (Int) -> Boolean,
-        private val onPhotoClick: (Int) -> Unit
+        private val onImageClick: (Int) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Pair<Int, String>) {
@@ -59,9 +59,8 @@ class ArchivePhotoAdapter(
                 if (selected) R.drawable.ic_circle_checked else R.drawable.ic_circle_unchecked
             )
 
-            // 클릭 이벤트
             binding.root.setOnClickListener {
-                onPhotoClick(item.first)
+                onImageClick.invoke(item.first)
             }
         }
     }
