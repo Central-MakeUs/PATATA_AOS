@@ -6,6 +6,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmc.common.base.BaseFragment
+import com.cmc.common.constants.NavigationKeys
 import com.cmc.design.component.BottomSheetDialog
 import com.cmc.domain.model.CategorySortType
 import com.cmc.domain.model.SpotCategory
@@ -37,8 +38,13 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
         }
     }
     override fun initView() {
+        val categoryType = arguments?.getInt(
+            NavigationKeys.Category.ARGUMENT_CATEGORY_ID,
+            SpotCategory.ALL.id
+        )
+
         initAppBar()
-        initCategoryTab()
+        initCategoryTab(categoryType)
         initHorizontalCardView()
         initSortViewListener()
     }
@@ -87,7 +93,7 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
             this.adapter = categoryRecommendAdapter
         }
     }
-    private fun initCategoryTab() {
+    private fun initCategoryTab(categoryType: Int?) {
         // 탭 생성
         val categories = SpotCategory.entries.map { SpotCategoryItem(it) }
         categories.forEach { category ->
@@ -98,6 +104,10 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
                     .setTag(category.categoryItem)
             )
         }
+
+        // 초기 탭 설정
+        binding.tabCategoryFilter.getTabAt(categoryType ?: SpotCategory.ALL.id)
+            ?.select()
 
         // 탭 선택 이벤트
         binding.tabCategoryFilter.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {

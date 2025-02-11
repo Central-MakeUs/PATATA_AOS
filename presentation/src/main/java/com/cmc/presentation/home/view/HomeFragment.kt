@@ -132,7 +132,6 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private fun initSearchBar() {
         binding.searchbarHome.
             setOnSearchBarClickListener { viewModel.onClickSearchBar() }
-
     }
     private fun initSpotCategory() {
         categoryViews = listOf(
@@ -212,6 +211,8 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
     private fun navigateSearch() { (activity as GlobalNavigation).navigateSearch() }
     private fun navigateCategorySpot(category: SpotCategory) {
-        navigate(R.id.navigate_category_spots, Bundle().apply { putInt(NavigationKeys.Category.ARGUMENT_CATEGORY_ID, category.id) })
+        navigate(R.id.navigate_category_spots, Bundle().apply {
+            putInt(NavigationKeys.Category.ARGUMENT_CATEGORY_ID, category.id)
+        })
     }
 }

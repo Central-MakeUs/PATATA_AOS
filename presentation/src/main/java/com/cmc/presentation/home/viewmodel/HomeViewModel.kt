@@ -45,6 +45,7 @@ class HomeViewModel @Inject constructor(
         _state.update {
             it.copy(selectedCategory = category)
         }
+        sendSideEffect(HomeSideEffect.NavigateCategorySpot(category))
     }
 
     fun onClickCategoryTab(category: SpotCategory) {
