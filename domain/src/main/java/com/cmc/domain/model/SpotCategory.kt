@@ -10,5 +10,6 @@ enum class SpotCategory(val id: Int) {
 
     companion object {
         fun fromId(id: Int) = entries.first { it.id == id }
+        fun isRecommended(id: Int) = id == RECOMMEND.id
     }
 }

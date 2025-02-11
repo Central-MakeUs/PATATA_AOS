@@ -11,6 +11,7 @@ import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LONGITUDE
 import com.cmc.domain.feature.location.GetCurrentLocationUseCase
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.feature.spot.usecase.GetPaginatedCategorySpotsUseCase
+import com.cmc.domain.feature.spot.usecase.ToggleSpotScrapUseCase
 import com.cmc.domain.model.CategorySortType
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.home.adapter.SpotHorizontalPaginatedCardAdapter
@@ -35,6 +36,7 @@ import javax.inject.Inject
 class CategorySpotsViewModel @Inject constructor(
     private val getPaginatedCategorySpotsUseCase: GetPaginatedCategorySpotsUseCase,
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
+    private val toggleSpotScrapUseCase: ToggleSpotScrapUseCase,
 ): ViewModel() {
 
     private val _state = MutableStateFlow(CategorySpotsState())
@@ -47,12 +49,35 @@ class CategorySpotsViewModel @Inject constructor(
         observeStateChanges()
     }
 
+    fun onClickSpotScrapButton(spotId: Int) {
+        viewModelScope.launch {
+            toggleSpotScrapUseCase.invoke(spotId)
+                .onSuccess {
+                    val newPagingData = state.value.categorySpots.map { spot ->
+                        if (spot.spot.spotId == spotId) {
+                            val isScraped = spot.isScraped.not()
+                            spot.copy(
+                                isScraped = isScraped,
+                                scrapCount = spot.scrapCount + if (isScraped) 1 else - 1
+                            )
+                        } else {
+                            spot
+                        }
+                    }
+
+                    _state.update {
+                        it.copy(
+                            categorySpots = newPagingData
+                        )
+                    }
+                }
+        }
+    }
     fun onClickCategoryTab(category: SpotCategory) {
         _state.update {
             it.copy(selectedCategoryTab = category)
         }
     }
-
     fun onClickCategorySortButton() {
         sendSideEffect(CategorySpotsSideEffect.ShowSortDialog)
     }

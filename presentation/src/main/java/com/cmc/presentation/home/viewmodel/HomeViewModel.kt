@@ -2,11 +2,13 @@ package com.cmc.presentation.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.map
 import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LATITUDE
 import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LONGITUDE
 import com.cmc.domain.feature.location.GetCurrentLocationUseCase
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.feature.spot.usecase.GetCategorySpotsUseCase
+import com.cmc.domain.feature.spot.usecase.ToggleSpotScrapUseCase
 import com.cmc.domain.model.CategorySortType
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.spot.model.SpotWithStatusUiModel
@@ -29,6 +31,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getCategorySpotsUseCase: GetCategorySpotsUseCase,
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
+    private val toggleSpotScrapUseCase: ToggleSpotScrapUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<HomeState>(HomeState())
@@ -64,21 +67,26 @@ class HomeViewModel @Inject constructor(
 
     fun onClickSpotScrapButton(spotId: Int) {
         viewModelScope.launch {
-            // TODO: Scrap Toggle API 호출
-            val isSuccess: Boolean = true
-            if (isSuccess) {
-                _state.update {
-                    it.copy(
-                        categorySpots = it.categorySpots.map { spot ->
-                            if (spot.spot.spotId == spotId) {
-                                spot.copy(isScraped = !spot.isScraped)
-                            } else {
-                                spot
-                            }
+            toggleSpotScrapUseCase.invoke(spotId)
+                .onSuccess {
+                    val newPagingData = state.value.categorySpots.map { spot ->
+                        if (spot.spot.spotId == spotId) {
+                            val isScraped = spot.isScraped.not()
+                            spot.copy(
+                                isScraped = isScraped,
+                                scrapCount = spot.scrapCount + if (isScraped) 1 else - 1
+                            )
+                        } else {
+                            spot
                         }
-                    )
+                    }
+
+                    _state.update {
+                        it.copy(
+                            categorySpots = newPagingData
+                        )
+                    }
                 }
-            }
         }
     }
 

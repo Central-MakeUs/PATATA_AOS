@@ -1,14 +1,17 @@
 package com.cmc.presentation.home.adapter
 
+import android.os.Bundle
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import com.cmc.common.constants.BundleKeys
+import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.spot.component.SpotHorizontalCardView
 import com.cmc.presentation.spot.model.SpotWithStatusUiModel
 
 class SpotHorizontalPaginatedCardAdapter(
-    private val onArchiveClick: (SpotWithStatusUiModel) -> Unit,
-    private val onImageClick: (SpotWithStatusUiModel) -> Unit
+    private val onArchiveClick: (Int) -> Unit,
+    private val onImageClick: (Int) -> Unit
 ) : PagingDataAdapter<SpotWithStatusUiModel, SpotHorizontalPaginatedCardAdapter.SpotHorizontalCardViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SpotHorizontalCardViewHolder {
@@ -18,7 +21,7 @@ class SpotHorizontalPaginatedCardAdapter(
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
         }
-        return SpotHorizontalCardViewHolder(spotView)
+        return SpotHorizontalCardViewHolder(spotView, onArchiveClick, onImageClick)
     }
 
     override fun onBindViewHolder(holder: SpotHorizontalCardViewHolder, position: Int) {
@@ -26,20 +29,44 @@ class SpotHorizontalPaginatedCardAdapter(
         holder.bind(spot)
     }
 
-    inner class SpotHorizontalCardViewHolder(private val cardView: SpotHorizontalCardView) :
-        androidx.recyclerview.widget.RecyclerView.ViewHolder(cardView) {
+    override fun onBindViewHolder(
+        holder: SpotHorizontalCardViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        val item = getItem(position) ?: return
+
+        if (payloads.isNotEmpty()) {
+            val bundle = payloads[0] as Bundle
+            if (bundle.containsKey(BundleKeys.Spot.KEY_IS_SCRAPED)) {
+                holder.binding.updateScrapState(
+                    bundle.getBoolean(BundleKeys.Spot.KEY_IS_SCRAPED),
+                    item.scrapCount
+                )
+            }
+        } else {
+            holder.bind(item)
+        }
+    }
+
+    class SpotHorizontalCardViewHolder(
+        val binding: SpotHorizontalCardView,
+        private val onArchiveClick: (Int) -> Unit,
+        private val onImageClick: (Int) -> Unit,
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(binding) {
 
         fun bind(spot: SpotWithStatusUiModel) {
-            cardView.setHorizontalCardView(
-                imageUrl = spot.image, // Glide 등을 활용해 image를 로드할 수 있음
-                title = spot.spot.spotName, // SpotUiModel에서 SpotName 가져오기
+            binding.setHorizontalCardView(
+                imageUrl = spot.image,
+                title = spot.spot.spotName,
                 location = spot.spot.address,
                 archiveCount = spot.scrapCount,
                 commentCount = spot.reviewCount,
                 tags = spot.spot.tags,
-                isRecommended = false, // 추천 여부 (추가 로직 필요)
-                archiveClickListener = { onArchiveClick.invoke(spot) },
-                cardClickListener = { onImageClick.invoke(spot) }
+                isScraped = spot.isScraped,
+                isRecommended = SpotCategory.isRecommended(spot.spot.categoryId),
+                archiveClickListener = { onArchiveClick.invoke(spot.spot.spotId) },
+                cardClickListener = { onImageClick.invoke(spot.spot.spotId) }
             )
         }
     }
@@ -52,6 +79,15 @@ class SpotHorizontalPaginatedCardAdapter(
 
             override fun areContentsTheSame(oldItem: SpotWithStatusUiModel, newItem: SpotWithStatusUiModel): Boolean {
                 return oldItem == newItem
+            }
+
+            override fun getChangePayload(
+                oldItem: SpotWithStatusUiModel,
+                newItem: SpotWithStatusUiModel
+            ): Any? {
+                return if (oldItem.isScraped != newItem.isScraped) {
+                    Bundle().apply { putBoolean(BundleKeys.Spot.KEY_IS_SCRAPED, newItem.isScraped) }
+                } else null
             }
         }
     }

@@ -78,7 +78,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 location = "서울시 마포구",
                 imageResId = com.cmc.design.R.drawable.img_sample,
                 tags = listOf("#야경맛집", "#사진찍기좋아요"),
-                isArchived = false,
+                isScraped = false,
                 isRecommended = true
             ),
             SpotPolaroidView.SpotPolaroidItem(
@@ -86,7 +86,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 location = "서울시 성동구",
                 imageResId = com.cmc.design.R.drawable.img_sample,
                 tags = listOf("#공원", "#데이트코스"),
-                isArchived = true,
+                isScraped = true,
                 isRecommended = false
             ),
             SpotPolaroidView.SpotPolaroidItem(
@@ -94,7 +94,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 location = "서울시 성동구",
                 imageResId = com.cmc.design.R.drawable.img_sample,
                 tags = listOf("#가을", "#데이트코스"),
-                isArchived = false,
+                isScraped = false,
                 isRecommended = false
             ),
             SpotPolaroidView.SpotPolaroidItem(
@@ -102,7 +102,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 location = "서울시 성동구",
                 imageResId = com.cmc.design.R.drawable.img_sample,
                 tags = listOf("#산", "#야경"),
-                isArchived = true,
+                isScraped = true,
                 isRecommended = true
             ),
             SpotPolaroidView.SpotPolaroidItem(
@@ -110,7 +110,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 location = "서울시 성동구",
                 imageResId = com.cmc.design.R.drawable.img_sample,
                 tags = listOf("#벚꽃", "#데이트코스"),
-                isArchived = false,
+                isScraped = false,
                 isRecommended = false
             )
         )
@@ -150,9 +150,8 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
     private fun initHorizontalCardView() {
         categoryRecommendAdapter = SpotHorizontalCardAdapter(
-            onArchiveClick = {
-                // TODO: SPOT ID 반영
-                viewModel.onClickSpotScrapButton(spotId = 0)
+            onArchiveClick = { spotId ->
+                viewModel.onClickSpotScrapButton(spotId = spotId)
             },
             onImageClick = {
                 Toast.makeText(context, "서울숲 은행나무길 카드 클릭됨", Toast.LENGTH_SHORT).show()

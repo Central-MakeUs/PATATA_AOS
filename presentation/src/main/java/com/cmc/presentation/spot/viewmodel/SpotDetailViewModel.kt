@@ -3,6 +3,7 @@ package com.cmc.presentation.spot.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc.domain.feature.spot.usecase.GetSpotDetailUseCase
+import com.cmc.domain.feature.spot.usecase.ToggleSpotScrapUseCase
 import com.cmc.presentation.spot.model.CommentUiModel
 import com.cmc.presentation.spot.model.SpotDetailUiModel
 import com.cmc.presentation.spot.model.toUiModel
@@ -20,6 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SpotDetailViewModel @Inject constructor(
     private val getSpotDetailUseCase: GetSpotDetailUseCase,
+    private val toggleSpotScrapUseCase: ToggleSpotScrapUseCase,
 ): ViewModel() {
 
     private val _state = MutableStateFlow(SpotDetailState())
@@ -37,13 +39,30 @@ class SpotDetailViewModel @Inject constructor(
                         it.copy(spotDetail = result.toUiModel())
                     }
                 }
-                .onFailure {  }
+                .onFailure { 
+                    // TODO: 없을 때, 액션 추가
+                        // ex) Alert 띄우기, 뒤로가기
+                }
         }
     }
 
 
     fun clickFooterButton(spotIsMine: Boolean) {
         sendSideEffect(SpotDetailSideEffect.ShowBottomSheet(spotIsMine))
+    }
+    fun onClickScrapButton() {
+        viewModelScope.launch {
+            toggleSpotScrapUseCase.invoke(_state.value.spotDetail.spotId)
+                .onSuccess {
+                    _state.update {
+                        it.copy(
+                            spotDetail = it.spotDetail.copy(
+                                isScraped = it.spotDetail.isScraped.not()
+                            )
+                        )
+                    }
+                }
+        }
     }
 
     private fun sendSideEffect(effect: SpotDetailSideEffect) {
@@ -53,7 +72,7 @@ class SpotDetailViewModel @Inject constructor(
     }
 
     data class SpotDetailState(
-        var spotDetail: SpotDetailUiModel? = null,
+        var spotDetail: SpotDetailUiModel = SpotDetailUiModel.defaultInstance(),
         val results: List<TempData> = emptyList(),
         val errorMessage: String? = null,
     )

@@ -78,7 +78,7 @@ class SpotPolaroidView @JvmOverloads constructor(
         val location: String,
         val imageResId: Int,
         val tags: List<String>?,
-        val isArchived: Boolean,
+        val isScraped: Boolean,
         val isRecommended: Boolean = false
     )
 }

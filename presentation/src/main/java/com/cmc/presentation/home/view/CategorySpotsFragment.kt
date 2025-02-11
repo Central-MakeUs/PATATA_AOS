@@ -76,9 +76,8 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
     }
     private fun initHorizontalCardView() {
         categoryRecommendAdapter = SpotHorizontalPaginatedCardAdapter(
-            onArchiveClick = {
-                // TODO: SPOT ID 반영
-//                viewModel.onClickSpotScrapButton(spotId = 0)
+            onArchiveClick = { spotId ->
+                viewModel.onClickSpotScrapButton(spotId = spotId)
             },
             onImageClick = {
                 Toast.makeText(context, "서울숲 은행나무길 카드 클릭됨", Toast.LENGTH_SHORT).show()

@@ -16,7 +16,25 @@ data class SpotDetailUiModel(
     val reviewCount: Int,
     val reviews: List<ReviewUiModel>,
     val isScraped: Boolean,
-)
+) {
+    companion object {
+        fun defaultInstance() = SpotDetailUiModel(
+            spotId = 0,
+            isAuthor = false,
+            spotName = "",
+            description = "",
+            address = "",
+            addressDetail = "",
+            categoryId = 0,
+            authorName = "",
+            images = emptyList(),
+            tags = emptyList(),
+            reviewCount = 0,
+            reviews = emptyList(),
+            isScraped = false
+        )
+    }
+}
 
 fun SpotDetail.toUiModel(): SpotDetailUiModel {
     return SpotDetailUiModel(

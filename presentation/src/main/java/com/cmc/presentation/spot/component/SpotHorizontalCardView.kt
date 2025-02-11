@@ -48,7 +48,7 @@ class SpotHorizontalCardView @JvmOverloads constructor(
         archiveCount: Int,
         commentCount: Int,
         tags: List<String>,
-        isArchived: Boolean = false,
+        isScraped: Boolean = false,
         isRecommended: Boolean = false,
         archiveClickListener: () -> Unit,
         cardClickListener: () -> Unit,
@@ -61,7 +61,7 @@ class SpotHorizontalCardView @JvmOverloads constructor(
         binding.tvSpotTitle.text = title
         binding.tvArchiveCount.text = archiveCount.toString()
         binding.tvReviewCount.text = commentCount.toString()
-        binding.ivSpotArchive.isSelected = isArchived
+        binding.ivSpotArchive.isSelected = isScraped
 
         binding.tvRecommendLabel.visibility = if (isRecommended) View.VISIBLE else View.GONE
 
@@ -69,6 +69,14 @@ class SpotHorizontalCardView @JvmOverloads constructor(
         onCardClickListener = cardClickListener
 
         updateTags(tags)
+    }
+
+    /*
+    * 스크랩 상태 변경
+    * */
+    fun updateScrapState(isScraped: Boolean, scrapCount: Int) {
+        binding.ivSpotArchive.isSelected = isScraped
+        scrapCount.toString().also { binding.tvArchiveCount.text = it }
     }
 
     /**

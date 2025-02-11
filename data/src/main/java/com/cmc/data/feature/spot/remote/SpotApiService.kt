@@ -34,12 +34,10 @@ interface SpotApiService {
         @Path("spotId") spotId: Int
     ): ApiResponse<Unit>
 
-
     @PATCH("scrap/{spotId}")
     suspend fun toggleSpotScrap(
         @Path("spotId") spotId: Int
     ): ApiResponse<Unit>
-
 
     @POST("review/create")
     suspend fun createReview(

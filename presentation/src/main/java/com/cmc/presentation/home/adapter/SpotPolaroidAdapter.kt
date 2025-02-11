@@ -38,7 +38,7 @@ class SpotPolaroidAdapter(
                 location = spot.location,
                 imageResId = spot.imageResId,
                 tags = spot.tags,
-                isArchived = spot.isArchived,
+                isArchived = spot.isScraped,
                 isBadgeVisible = spot.isRecommended,
                 archiveClick = { onArchiveClick.invoke(spot) },
                 imageClick = { onImageClick.invoke(spot) },

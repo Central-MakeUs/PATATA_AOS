@@ -54,6 +54,7 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
                 tvSpotDescription.text = it.description
                 updateTags(it.tags)
                 setCommentCount(it.reviewCount)
+                ivSpotArchive.isSelected = it.isScraped
             }
         }
 
@@ -78,7 +79,7 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
     override fun initView() {
         initData(arguments)
         setViewPager()
-        setSpotContent()
+        setClickListener()
         setReviewRecyclerView()
     }
 
@@ -109,14 +110,8 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
         )
     }
 
-    private fun setSpotContent() {
-
-        binding.ivSpotArchive.apply {
-//            isSelected = false
-            setOnClickListener { isSelected = isSelected.not() }
-            // TODO: ViewModel에 이벤트 전달
-        }
-
+    private fun setClickListener() {
+        binding.ivSpotArchive.setOnClickListener { viewModel.onClickScrapButton() }
         binding.tvSpotLocationCopy.setOnClickListener { 
             // TODO: 주소 클립보드에 복사
         }
