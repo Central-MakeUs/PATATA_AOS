@@ -1,6 +1,7 @@
 package com.cmc.presentation.splash.viewmodel
 
 import android.util.Base64
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc.domain.feature.auth.usecase.GetAccessTokenUseCase
@@ -50,6 +51,7 @@ class SplashViewModel @Inject constructor(
             launch {
                 onBoardingState = onBoardingStateDeferred.await()
                 accessToken = accessTokenDeferred.await()
+                Log.d("AccessToken", "accessToken: $accessToken")
                 refreshToken = refreshTokenDeferred.await()
             }
 
