@@ -6,7 +6,10 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
+import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LATITUDE
+import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LONGITUDE
 import com.cmc.domain.feature.location.GetCurrentLocationUseCase
+import com.cmc.domain.feature.location.Location
 import com.cmc.domain.feature.spot.usecase.GetPaginatedCategorySpotsUseCase
 import com.cmc.domain.model.CategorySortType
 import com.cmc.domain.model.SpotCategory
@@ -92,23 +95,38 @@ class CategorySpotsViewModel @Inject constructor(
             }.collectLatest { (sortType, category) ->
                     getCurrentLocationUseCase.invoke()
                         .onSuccess { location ->
-                            getPaginatedCategorySpotsUseCase.invoke(
-                                categoryId = category.id,
-                                latitude = location.latitude,
-                                longitude = location.longitude,
-                                sortBy = sortType.name
-                            ).cachedIn(viewModelScope)
-                                .map { pagingData -> pagingData.map { data -> data.toUiModel() }}
-                                .collectLatest { data ->
-                                    _state.update {
-                                        it.copy(
-                                            categorySpots = data
-                                        )
-                                    }
+                            updateCategorySpots(category, location, sortType)
+                        }.onFailure { e ->
+                            when (e) {
+                                is SecurityException -> {
+                                    val location = Location(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
+                                    updateCategorySpots(category, location, sortType)
                                 }
+                            }
                         }
                 }
         }
+    }
+
+    private suspend fun updateCategorySpots(
+        category: SpotCategory,
+        location: Location,
+        sortType: CategorySortType,
+        ) {
+        getPaginatedCategorySpotsUseCase.invoke(
+            categoryId = category.id,
+            latitude = location.latitude,
+            longitude = location.longitude,
+            sortBy = sortType.name
+        ).cachedIn(viewModelScope)
+            .map { pagingData -> pagingData.map { data -> data.toUiModel() }}
+            .collectLatest { data ->
+                _state.update {
+                    it.copy(
+                        categorySpots = data
+                    )
+                }
+            }
     }
 
     private fun sendSideEffect(effect: CategorySpotsSideEffect) {

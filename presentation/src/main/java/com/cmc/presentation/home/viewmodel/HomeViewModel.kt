@@ -2,7 +2,10 @@ package com.cmc.presentation.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LATITUDE
+import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LONGITUDE
 import com.cmc.domain.feature.location.GetCurrentLocationUseCase
+import com.cmc.domain.feature.location.Location
 import com.cmc.domain.feature.spot.usecase.GetCategorySpotsUseCase
 import com.cmc.domain.model.CategorySortType
 import com.cmc.domain.model.SpotCategory
@@ -90,20 +93,31 @@ class HomeViewModel @Inject constructor(
                 .collectLatest { category ->
                     getCurrentLocationUseCase.invoke()
                         .onSuccess { location ->
-                            getCategorySpotsUseCase.invoke(
-                                categoryId = category.id,
-                                latitude = location.latitude,
-                                longitude = location.longitude,
-                                sortBy = CategorySortType.getDefault().name
-                            ).onSuccess { dataList ->
-                                _state.update {
-                                    it.copy(
-                                        categorySpots = dataList.map { data -> data.toUiModel() }
-                                    )
+                            updateCategorySpots(category, location)
+                        }.onFailure { e ->
+                            when (e) {
+                                is SecurityException -> {
+                                    val location = Location(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
+                                    updateCategorySpots(category, location)
                                 }
                             }
                         }
                 }
+        }
+    }
+
+    private suspend fun updateCategorySpots(category: SpotCategory, location: Location) {
+        getCategorySpotsUseCase.invoke(
+            categoryId = category.id,
+            latitude = location.latitude,
+            longitude = location.longitude,
+            sortBy = CategorySortType.getDefault().name
+        ).onSuccess { dataList ->
+            _state.update {
+                it.copy(
+                    categorySpots = dataList.map { data -> data.toUiModel() }
+                )
+            }
         }
     }
 

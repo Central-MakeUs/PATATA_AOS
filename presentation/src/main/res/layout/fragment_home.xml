@@ -107,6 +107,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:paddingHorizontal="16dp"
+                app:layout_goneMarginBottom="50dp"
                 android:overScrollMode="never"
                 android:nestedScrollingEnabled="false"
                 app:layout_constraintTop_toBottomOf="@+id/tab_category_filter"/>
@@ -115,6 +116,7 @@
                 android:id="@+id/layout_category_tab_no_result"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="50dp"
                 app:layout_constraintTop_toBottomOf="@+id/tab_category_filter"
                 app:layout_constraintStart_toStartOf="parent"
@@ -127,8 +129,7 @@
                     android:id="@+id/iv_search_no_result"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_no_search_result"
-                    android:contentDescription="@string/img_desc_search_no_result"/>
+                    android:src="@drawable/ic_no_search_result"/>
 
                 <TextView
                     android:id="@+id/tv_search_no_result"
@@ -136,7 +137,7 @@
                     android:textColor="@color/text_disabled"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/search_no_result_text"
+                    android:text="@string/categories_item_empty_text"
                     android:gravity="center"
                     android:layout_marginTop="@dimen/default_spacing"/>
             </LinearLayout>
