@@ -9,7 +9,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 internal class LocationRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context
@@ -20,31 +19,30 @@ internal class LocationRepositoryImpl @Inject constructor(
 
     @Suppress("MissingPermission")
     override suspend fun getCurrentLocation(): Result<Location> {
-        return runCatching {
-            val location = suspendCancellableCoroutine<android.location.Location> { continuation ->
+        return try {
+            suspendCancellableCoroutine { continuation ->
                 fusedLocationClient.lastLocation
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful && task.result != null) {
-                            continuation.resume(task.result)
-                        } else {
-                            continuation.resume(createMockLocation())
+                    .addOnSuccessListener { location ->
+                        if (continuation.isActive) {
+                            continuation.resume(Result.success(location?.let {
+                                Location(it.latitude, it.longitude)
+                            } ?: createMockLocation()))
                         }
                     }
                     .addOnFailureListener { exception ->
-                        continuation.resumeWithException(exception)
+                        if (continuation.isActive) {
+                            continuation.resume(Result.failure(exception))
+                        }
                     }
             }
-            Location(location.latitude, location.longitude)
+        } catch (e: SecurityException) {
+            Result.failure(e)  // 권한이 없을 경우 명확하게 예외 처리
+        } catch (e: Exception) {
+            Result.failure(e)  // 기타 예외 처리
         }
     }
 
-    fun createMockLocation(latitude: Double = 37.489479, longitude: Double = 126.724519, provider: String = "gps"): android.location.Location {
-        return android.location.Location(provider).apply {
-            this.latitude = latitude
-            this.longitude = longitude
-            this.accuracy = 10f  // 임의의 정확도 (단위: 미터)
-            this.altitude = 50.0  // 임의의 고도 (단위: 미터)
-            this.time = System.currentTimeMillis() // 현재 시간 설정
-        }
+    private fun createMockLocation(latitude: Double = 37.489479, longitude: Double = 126.724519): Location {
+        return Location(latitude, longitude)
     }
 }
