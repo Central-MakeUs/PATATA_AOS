@@ -51,7 +51,7 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
                 it.isAuthor
             )
 
-            imageSliderAdapter.setItems(it.images)
+            imageSliderAdapter.setItems(it.images) { binding.dotsIndicator.updateDotCount() }
 
             with(binding) {
                 tvSpotTitle.text = it.spotName

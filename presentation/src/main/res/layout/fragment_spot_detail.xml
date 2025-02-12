@@ -40,19 +40,18 @@
                     app:layout_constraintDimensionRatio="1:1.1"
                     app:layout_constraintTop_toTopOf="parent"/>
 
-                <com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator
+                <com.cmc.design.component.CustomIndicator
                     android:id="@+id/dots_indicator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:orientation="horizontal"
                     android:layout_marginBottom="50dp"
-                    app:dotsColor="@color/blue_100"
-                    app:dotsStrokeColor="@color/gray_50"
-                    app:dotsSize="10dp"
-                    app:dotsSpacing="8dp"
-                    app:dotsCornerRadius="5dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/view_pager"
-                    app:layout_constraintStart_toStartOf="@id/view_pager"
-                    app:layout_constraintEnd_toEndOf="@id/view_pager"/>
+                    app:dotSize="8dp"
+                    app:dotColor="@color/gray_50"
+                    app:dotSelectedColor="@color/blue_100"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/view_pager"/>
 
                 <TextView
                     android:id="@+id/tv_contact"

@@ -26,9 +26,10 @@ class ImageSliderAdapter: RecyclerView.Adapter<ImageSliderAdapter.ImageViewHolde
 
     override fun getItemCount(): Int = images.size
 
-    fun setItems(imageList: List<String>) {
+    fun setItems(imageList: List<String>, callBack: () -> Unit) {
         images = imageList
         notifyDataSetChanged()
+        callBack.invoke()
     }
 
     class ImageViewHolder(private val binding: ViewImageSliderBinding) : RecyclerView.ViewHolder(binding.root) {

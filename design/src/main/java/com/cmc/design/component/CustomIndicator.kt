@@ -19,6 +19,8 @@ class CustomIndicator @JvmOverloads constructor(
     private var dotsCount: Int = 0
     private val dots = mutableListOf<View>()
 
+    private lateinit var viewPager: ViewPager2
+
     private var dotSize: Int = 20
     private var dotColor: Int = R.color.gray_50 // 기본 점 색상 (회색)
     private var dotSelectedColor: Int = R.color.blue_100
@@ -36,7 +38,8 @@ class CustomIndicator @JvmOverloads constructor(
         }
     }
 
-    fun attachTo(viewPager: ViewPager2) {
+    fun attachTo(_viewPager: ViewPager2) {
+        viewPager = _viewPager
         dotsCount = viewPager.adapter?.itemCount ?: 0
         createDots()
 
@@ -46,6 +49,11 @@ class CustomIndicator @JvmOverloads constructor(
                 updateDots(position)
             }
         })
+    }
+
+    fun updateDotCount() {
+        dotsCount = viewPager.adapter?.itemCount ?: 0
+        createDots()
     }
 
     private fun createDots() {
