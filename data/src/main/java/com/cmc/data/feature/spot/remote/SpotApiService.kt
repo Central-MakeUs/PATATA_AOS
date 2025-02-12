@@ -38,7 +38,7 @@ interface SpotApiService {
     @POST("spot/create")
     suspend fun createSpot(
         @Part("spotName") spotName: RequestBody,
-        @Part("spotDesc") spotDesc: RequestBody?,
+        @Part("spotDescription") spotDesc: RequestBody?,
         @Part("spotAddress") spotAddress: RequestBody,
         @Part("spotAddressDetail") spotAddressDetail: RequestBody?,
         @Part("latitude") latitude: RequestBody,
