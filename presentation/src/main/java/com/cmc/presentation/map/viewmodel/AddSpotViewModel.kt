@@ -5,11 +5,9 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc.domain.feature.spot.usecase.CreateSpotUseCase
+import com.cmc.domain.model.ImageMetadata
 import com.cmc.domain.model.SpotCategory
-import com.cmc.presentation.model.ImageDataUiModel
-import com.cmc.presentation.model.toDomain
-import com.cmc.presentation.model.toUris
-import com.cmc.presentation.util.toImageDataList
+import com.cmc.presentation.util.toImageMetaDataList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -97,7 +95,7 @@ class AddSpotViewModel @Inject constructor(
                     longitude = it.longitude,
                     categoryId = it.selectedCategory!!.id,
                     tags = it.tags,
-                    images = it.selectedImages.map { item -> item.toDomain() },
+                    images = it.selectedImages,
                 ).onSuccess {
                     sendSideEffect(AddSpotSideEffect.NavigateToCreateSpotSuccess)
                 }.onFailure { e ->
@@ -108,22 +106,20 @@ class AddSpotViewModel @Inject constructor(
     }
 
     // 위치 변경 된 이미지 반영
-    fun setSelectedImages(images: List<ImageDataUiModel>) {
+    fun setSelectedImages(images: List<ImageMetadata>) {
         _state.update {
             it.copy(selectedImages = images)
         }
     }
     fun updateSelectedImages(images: List<Uri>) {
-        // 이미지 변환, Uri to ImageDataUiModel
-        val imageResults = images.toImageDataList(context)
-
+        // 이미지 ImageMetaData로 변환
+        val imageResults = images.toImageMetaDataList(context)
         val successfulImages = imageResults.mapNotNull { it.getOrNull() }
         val failedImages = imageResults.filter { it.isFailure }
-            // 실패 이미지 액션 ex) 팝업
 
-        // 3장 초과 여부 확인
+        // 이미지 갯수 검사
         val oldImages = _state.value.selectedImages
-        val newImages = successfulImages.filterNot { it.uri in _state.value.selectedImages.toUris() }
+        val newImages = successfulImages.filterNot { newImage -> newImage.uri in _state.value.selectedImages.map { it.uri } }
 
         val checkedImageCountNewImages = if (oldImages.size + newImages.size > MAX_IMAGE_COUNT) {
             viewModelScope.launch {
@@ -134,6 +130,7 @@ class AddSpotViewModel @Inject constructor(
             oldImages + newImages
         }
 
+        // 이미지 용량 검사
         // TODO: 이미지 용량 관련 정책 확정 시 구현
 //        val maxSize = 5 * 1024 * 1024 // 5MB (바이트 단위)
 //         장 당 5MB, 최대 10MB
@@ -146,7 +143,7 @@ class AddSpotViewModel @Inject constructor(
     }
 
 
-    fun removeSelectedImage(image: ImageDataUiModel) {
+    fun removeSelectedImage(image: ImageMetadata) {
         _state.update { it.copy(selectedImages = it.selectedImages - image) }
     }
 
@@ -199,7 +196,7 @@ class AddSpotViewModel @Inject constructor(
         val addressDetail: String = "",
         val description: String = "",
         val selectedCategory: SpotCategory? = null,
-        val selectedImages: List<ImageDataUiModel> = emptyList(),
+        val selectedImages: List<ImageMetadata> = emptyList(),
         val tags: List<String> = emptyList(),
         val isRegisterEnabled: Boolean = false,  // 등록 버튼 활성화 여부
         val isLoading: Boolean = false,

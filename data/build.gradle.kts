@@ -75,4 +75,7 @@ dependencies {
 
     // Paging
     implementation(libs.androidx.paging.runtime)
+
+    // exifinterface
+    implementation(libs.androidx.exifinterface)
 }

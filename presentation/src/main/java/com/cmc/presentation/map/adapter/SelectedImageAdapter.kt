@@ -1,21 +1,22 @@
 package com.cmc.presentation.map.adapter
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.cmc.domain.model.ImageMetadata
 import com.cmc.presentation.databinding.ViewSelectedImageBinding
-import com.cmc.presentation.model.ImageDataUiModel
 import java.util.Collections
 
 class SelectedImageAdapter(
-    private val onRemoveImage: (ImageDataUiModel) -> Unit,
+    private val onRemoveImage: (ImageMetadata) -> Unit,
 ) : RecyclerView.Adapter<SelectedImageAdapter.SelectedImageViewHolder>() {
 
-    private val images = mutableListOf<ImageDataUiModel>()
+    private val images = mutableListOf<ImageMetadata>()
 
-    fun updateImages(newImages: List<ImageDataUiModel>) {
+    fun updateImages(newImages: List<ImageMetadata>) {
         images.clear()
         images.addAll(newImages)
         notifyDataSetChanged()
@@ -35,7 +36,7 @@ class SelectedImageAdapter(
         notifyItemMoved(fromPosition, toPosition)
     }
 
-    fun getImages(): List<ImageDataUiModel> = images.toList()
+    fun getImages(): List<ImageMetadata> = images.toList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectedImageViewHolder {
         val binding = ViewSelectedImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -50,11 +51,11 @@ class SelectedImageAdapter(
     override fun getItemCount(): Int = images.size
 
     inner class SelectedImageViewHolder(private val binding: ViewSelectedImageBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(image: ImageDataUiModel) {
+        fun bind(image: ImageMetadata) {
             binding.layoutRepresentsImage.isVisible = absoluteAdapterPosition == 0
             binding.ivDeleteButton.setOnClickListener { onRemoveImage(image) }
             Glide.with(binding.root)
-                .load(image.uri)
+                .load(Uri.parse(image.uri))
                 .placeholder(com.cmc.design.R.drawable.img_sample)
                 .into(binding.ivSelectedImage)
         }

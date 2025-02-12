@@ -4,7 +4,7 @@ import com.cmc.domain.feature.spot.base.PaginatedResponse
 import com.cmc.domain.feature.spot.model.Review
 import com.cmc.domain.feature.spot.model.SpotDetail
 import com.cmc.domain.feature.spot.model.SpotWithStatus
-import com.cmc.domain.model.ImageData
+import com.cmc.domain.model.ImageMetadata
 
 interface SpotRepository {
 
@@ -33,7 +33,7 @@ interface SpotRepository {
         longitude: Double,
         categoryId: Int,
         tags: List<String>?,
-        images: List<ImageData>,
+        images: List<ImageMetadata>,
     ): Result<Unit>
 
     suspend fun deleteSpot(spotId: Int): Result<Unit>

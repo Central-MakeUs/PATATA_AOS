@@ -1,7 +1,7 @@
 package com.cmc.domain.feature.spot.usecase
 
 import com.cmc.domain.feature.spot.repository.SpotRepository
-import com.cmc.domain.model.ImageData
+import com.cmc.domain.model.ImageMetadata
 import javax.inject.Inject
 
 class CreateSpotUseCase @Inject constructor(
@@ -16,7 +16,7 @@ class CreateSpotUseCase @Inject constructor(
         longitude: Double,
         categoryId: Int,
         tags: List<String>?,
-        images: List<ImageData>
+        images: List<ImageMetadata>
     ): Result<Unit> {
         return spotRepository.createSpot(
             spotName = spotName,
