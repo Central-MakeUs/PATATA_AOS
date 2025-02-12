@@ -15,7 +15,7 @@ data class SpotDetailResponseDto(
     @SerializedName("spotAddress")
     val address: String,
     @SerializedName("spotAddressDetail")
-    val addressDetail: String,
+    val addressDetail: String?,
     @SerializedName("categoryId")
     val categoryId: Int,
     @SerializedName("memberName")

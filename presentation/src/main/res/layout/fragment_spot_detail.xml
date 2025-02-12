@@ -54,6 +54,28 @@
                     app:layout_constraintStart_toStartOf="@id/view_pager"
                     app:layout_constraintEnd_toEndOf="@id/view_pager"/>
 
+                <TextView
+                    android:id="@+id/tv_contact"
+                    style="@style/caption_medium"
+                    android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:layout_marginStart="17dp"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintTop_toTopOf="@+id/dots_indicator"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/dots_indicator"
+                    app:layout_constraintEnd_toStartOf="@+id/dots_indicator"/>
+
+                <include
+                    android:id="@+id/view_spot_badge"
+                    layout="@layout/view_spot_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/default_spacing"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layout_spot_content"
                     android:layout_width="match_parent"

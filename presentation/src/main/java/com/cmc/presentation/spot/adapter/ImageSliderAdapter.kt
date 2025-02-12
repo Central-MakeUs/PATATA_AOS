@@ -1,16 +1,16 @@
 package com.cmc.presentation.spot.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.cmc.presentation.databinding.ViewImageSliderBinding
-import com.cmc.presentation.spot.model.ImageViewPagerModel
 
-class ImageSliderAdapter(
-    private val itemList: List<ImageViewPagerModel>
-): RecyclerView.Adapter<ImageSliderAdapter.ImageViewHolder>() {
+class ImageSliderAdapter: RecyclerView.Adapter<ImageSliderAdapter.ImageViewHolder>() {
+
+    private var images: List<String> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val binding = ViewImageSliderBinding.inflate(
@@ -20,25 +20,35 @@ class ImageSliderAdapter(
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        val item = itemList[position]
-        holder.bind(item)
+        val item = images[position]
+        holder.bind(item, images)
     }
 
-    override fun getItemCount(): Int = itemList.size
+    override fun getItemCount(): Int = images.size
+
+    fun setItems(imageList: List<String>) {
+        images = imageList
+        notifyDataSetChanged()
+    }
 
     class ImageViewHolder(private val binding: ViewImageSliderBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: ImageViewPagerModel) {
+        fun bind(image: String, images: List<String>) {
             with(binding) {
-                Glide.with(root)
-                    .load(item.url)
-                    .placeholder(com.cmc.design.R.drawable.img_sample)
+                Glide.with(ivImage.context)
+                    .load(image)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(ivImage)
+            }
 
-                tvContact.text = item.contact
-                tvContact.setCompoundDrawablesWithIntrinsicBounds(item.contactResId, 0, 0, 0)
+            preloadNextImages(binding.root.context, absoluteAdapterPosition, images)
+        }
 
-                viewSpotBadge.root.isVisible = item.isRecommended
-                viewSpotBadge.viewCornerFold.isVisible = false
+        private fun preloadNextImages(context: Context, position: Int, images: List<String>) {
+            val endPoint = if (position + 3 > images.size) images.size else position + 3
+            images.subList(position + 1, endPoint).forEach {
+                Glide.with(context)
+                    .load(it)
+                    .preload()
             }
         }
     }

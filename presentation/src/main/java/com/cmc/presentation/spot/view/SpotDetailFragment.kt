@@ -1,8 +1,10 @@
 package com.cmc.presentation.spot.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmc.common.base.BaseFragment
@@ -29,6 +31,8 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
 
     private val viewModel: SpotDetailViewModel by viewModels()
 
+    private lateinit var imageSliderAdapter: ImageSliderAdapter
+
     override fun initObserving() {
         repeatWhenUiStarted {
             launch { viewModel.state.collect { state -> updateUI(state) } }
@@ -37,15 +41,17 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
     }
 
     private fun updateUI(state: SpotDetailState) {
-        state.spotDetail?.let {
+        state.spotDetail.let {
             val categoryItem = SpotCategoryItem(
-                SpotCategory.fromId(it.categoryId) ?: SpotCategory.ALL
+                SpotCategory.fromId(it.categoryId) ?: SpotCategory.RECOMMEND
             )
             setAppBar(
                 getString(categoryItem.getName()),
                 categoryItem.getIcon(),
                 it.isAuthor
             )
+
+            imageSliderAdapter.setItems(it.images)
 
             with(binding) {
                 tvSpotTitle.text = it.spotName
@@ -55,9 +61,9 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
                 updateTags(it.tags)
                 setCommentCount(it.reviewCount)
                 ivSpotArchive.isSelected = it.isScraped
+                binding.viewSpotBadge.root.isVisible = SpotCategory.isRecommended(it.categoryId)
             }
         }
-
     }
 
     private fun updateTags(tags: List<String>?) {
@@ -89,10 +95,13 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
     }
 
     private fun setViewPager() {
-        val adapter = ImageSliderAdapter(getViewPagerDumpData())
+        imageSliderAdapter = ImageSliderAdapter()
+
         val viewPager = binding.viewPager
-        viewPager.adapter = adapter
+        viewPager.adapter = imageSliderAdapter
         binding.dotsIndicator.attachTo(viewPager)
+
+        binding.viewSpotBadge.viewCornerFold.isVisible = false
     }
 
     private fun setAppBar(
