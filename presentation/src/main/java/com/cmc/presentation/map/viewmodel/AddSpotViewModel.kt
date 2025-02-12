@@ -1,10 +1,17 @@
 package com.cmc.presentation.map.viewmodel
 
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.domain.feature.spot.usecase.CreateSpotUseCase
 import com.cmc.domain.model.SpotCategory
+import com.cmc.presentation.model.ImageDataUiModel
+import com.cmc.presentation.model.toDomain
+import com.cmc.presentation.model.toUris
+import com.cmc.presentation.util.toImageDataList
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +23,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddSpotViewModel @Inject constructor(): ViewModel() {
+class AddSpotViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val createSpotUseCase: CreateSpotUseCase,
+): ViewModel() {
 
     private val _state = MutableStateFlow(AddSpotState())
     val state: StateFlow<AddSpotState> = _state.asStateFlow()
@@ -75,26 +85,68 @@ class AddSpotViewModel @Inject constructor(): ViewModel() {
             _sideEffect.emit(AddSpotSideEffect.NavigateToAroundMe)
         }
     }
-
-    fun updateSelectedImages(images: List<Uri>) {
-        val updatedList = (_state.value.selectedImages + images).distinct()
-
-        // 3장 초과 여부 확인
-        val finalList = if (updatedList.size > MAX_IMAGE_COUNT) {
-            viewModelScope.launch {
-                _sideEffect.emit(AddSpotSideEffect.ShowSnackbar("이미지는 최대 ${MAX_IMAGE_COUNT}장까지 업로드가 가능합니다."))
+    fun onClickRegisterButton() {
+        viewModelScope.launch {
+            state.value.let {
+                createSpotUseCase.invoke(
+                    spotName = it.spotName,
+                    spotDesc = it.description,
+                    spotAddress = it.address,
+                    spotAddressDetail = it.addressDetail,
+                    latitude = it.latitude,
+                    longitude = it.longitude,
+                    categoryId = it.selectedCategory!!.id,
+                    tags = it.tags,
+                    images = it.selectedImages.map { item -> item.toDomain() },
+                ).onSuccess {
+                    sendSideEffect(AddSpotSideEffect.NavigateToCreateSpotSuccess)
+                }.onFailure { e ->
+                    e.stackTrace
+                }
             }
-            updatedList.subList(0, MAX_IMAGE_COUNT)
-        } else {
-            updatedList
-        }
-
-        _state.update {
-            it.copy(selectedImages = finalList)
         }
     }
 
-    fun removeSelectedImage(image: Uri) {
+    // 위치 변경 된 이미지 반영
+    fun setSelectedImages(images: List<ImageDataUiModel>) {
+        _state.update {
+            it.copy(selectedImages = images)
+        }
+    }
+    fun updateSelectedImages(images: List<Uri>) {
+        // 이미지 변환, Uri to ImageDataUiModel
+        val imageResults = images.toImageDataList(context)
+
+        val successfulImages = imageResults.mapNotNull { it.getOrNull() }
+        val failedImages = imageResults.filter { it.isFailure }
+            // 실패 이미지 액션 ex) 팝업
+
+        // 3장 초과 여부 확인
+        val oldImages = _state.value.selectedImages
+        val newImages = successfulImages.filterNot { it.uri in _state.value.selectedImages.toUris() }
+
+        val checkedImageCountNewImages = if (oldImages.size + newImages.size > MAX_IMAGE_COUNT) {
+            viewModelScope.launch {
+                _sideEffect.emit(AddSpotSideEffect.ShowSnackbar("이미지는 최대 ${MAX_IMAGE_COUNT}장까지 업로드가 가능합니다."))
+            }
+            oldImages + newImages.subList(0, MAX_IMAGE_COUNT - oldImages.size)
+        } else {
+            oldImages + newImages
+        }
+
+        // TODO: 이미지 용량 관련 정책 확정 시 구현
+//        val maxSize = 5 * 1024 * 1024 // 5MB (바이트 단위)
+//         장 당 5MB, 최대 10MB
+
+        if (successfulImages.isNotEmpty()) {
+            _state.update {
+                it.copy(selectedImages = checkedImageCountNewImages)
+            }
+        }
+    }
+
+
+    fun removeSelectedImage(image: ImageDataUiModel) {
         _state.update { it.copy(selectedImages = it.selectedImages - image) }
     }
 
@@ -133,6 +185,12 @@ class AddSpotViewModel @Inject constructor(): ViewModel() {
                 state.tags.isNotEmpty()
     }
 
+    private fun sendSideEffect(effect: AddSpotSideEffect) {
+        viewModelScope.launch {
+            _sideEffect.emit(effect)
+        }
+    }
+
     data class AddSpotState(
         val spotName: String = "",
         val latitude: Double = 0.0,
@@ -141,7 +199,7 @@ class AddSpotViewModel @Inject constructor(): ViewModel() {
         val addressDetail: String = "",
         val description: String = "",
         val selectedCategory: SpotCategory? = null,
-        val selectedImages: List<Uri> = emptyList(),
+        val selectedImages: List<ImageDataUiModel> = emptyList(),
         val tags: List<String> = emptyList(),
         val isRegisterEnabled: Boolean = false,  // 등록 버튼 활성화 여부
         val isLoading: Boolean = false,
@@ -153,6 +211,7 @@ class AddSpotViewModel @Inject constructor(): ViewModel() {
         data object ShowPhotoPicker : AddSpotSideEffect()
         data object NavigateToAroundMe : AddSpotSideEffect()
         data object NavigateToSpotAddedSuccess : AddSpotSideEffect()
+        data object NavigateToCreateSpotSuccess : AddSpotSideEffect()
         data class ShowSnackbar(val message: String) : AddSpotSideEffect()
     }
 

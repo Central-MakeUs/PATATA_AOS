@@ -4,6 +4,7 @@ import com.cmc.domain.feature.spot.base.PaginatedResponse
 import com.cmc.domain.feature.spot.model.Review
 import com.cmc.domain.feature.spot.model.SpotDetail
 import com.cmc.domain.feature.spot.model.SpotWithStatus
+import com.cmc.domain.model.ImageData
 
 interface SpotRepository {
 
@@ -22,6 +23,18 @@ interface SpotRepository {
     ): Result<List<SpotWithStatus>>
 
     suspend fun getSpotDetail(spotId: Int): Result<SpotDetail>
+
+    suspend fun createSpot(
+        spotName: String,
+        spotDesc: String?,
+        spotAddress: String,
+        spotAddressDetail: String?,
+        latitude: Double,
+        longitude: Double,
+        categoryId: Int,
+        tags: List<String>?,
+        images: List<ImageData>,
+    ): Result<Unit>
 
     suspend fun deleteSpot(spotId: Int): Result<Unit>
 

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,13 +17,16 @@ import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.ContentSheetAddSpotCategoryFilterBinding
 import com.cmc.presentation.databinding.FragmentAddSpotBinding
+import com.cmc.presentation.map.adapter.SelectedImageAdapter
 import com.cmc.presentation.map.viewmodel.AddSpotViewModel
+import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.NavigateToAroundMe
+import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.NavigateToSpotAddedSuccess
+import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.ShowCategoryPicker
+import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.ShowPhotoPicker
+import com.cmc.presentation.model.SpotCategoryItem
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.*
-import com.cmc.presentation.map.adapter.SelectedImageAdapter
-import com.cmc.presentation.model.SpotCategoryItem
 
 @AndroidEntryPoint
 class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_add_spot) {
@@ -76,7 +80,7 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
         }
     }
     private fun setupRecyclerView() {
-        imageAdapter = SelectedImageAdapter { uri -> viewModel.removeSelectedImage(uri) }
+        imageAdapter = SelectedImageAdapter { image -> viewModel.removeSelectedImage(image) }
 
         binding.rvSelectedImages.apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -106,10 +110,14 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
 
         binding.layoutChooseCategoryTitle.setOnClickListener { viewModel.openCategoryPicker() }
         binding.layoutChoosePictureButton.setOnClickListener { viewModel.openPhotoPicker() }
+        binding.layoutRegisterButton.setOnClickListener { viewModel.onClickRegisterButton() }
     }
 
     private fun updateUI(state: AddSpotViewModel.AddSpotState) {
         binding.apply {
+            tvInputAddress.text = state.address
+            groupSpotDesc.isVisible = state.description.isEmpty()
+
             // 카테고리 선택 UI 업데이트
             tvChooseCategory.apply {
                 text = state.selectedCategory?.let { getString(SpotCategoryItem(it).getName()) } ?: getString(R.string.hint_choose_category)
@@ -128,7 +136,7 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
 
             // 태그 및 이미지 업데이트
             updateTags(state.tags)
-            imageAdapter.updateImages(state.selectedImages)
+            imageAdapter.updateImages(state.selectedImages.toList())
 
             // 등록 버튼 활성화 상태 업데이트
             layoutRegisterButton.isEnabled = state.isRegisterEnabled
@@ -197,7 +205,9 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
     }
 
     private val pickImagesLauncher = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
-        if (uris.isNotEmpty()) { viewModel.updateSelectedImages(uris) }
+        if (uris.isNotEmpty()) {
+            viewModel.updateSelectedImages(uris)
+        }
     }
 
     private fun createItemTouchCallback() = object : ItemTouchHelper.Callback() {
@@ -215,8 +225,7 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
         override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
             super.onSelectedChanged(viewHolder, actionState)
             if (actionState == ItemTouchHelper.ACTION_STATE_IDLE) {
-                viewModel.updateSelectedImages(imageAdapter.getImages())
-                imageAdapter.notifyDataSetChanged()
+                viewModel.setSelectedImages(imageAdapter.getImages())
             }
         }
 

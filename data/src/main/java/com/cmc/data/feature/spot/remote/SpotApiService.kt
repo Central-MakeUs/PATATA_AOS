@@ -3,13 +3,18 @@ package com.cmc.data.feature.spot.remote
 import com.cmc.data.base.ApiResponse
 import com.cmc.data.feature.spot.model.CategorySpotsResponseDto
 import com.cmc.data.feature.spot.model.CreateReviewRequest
+import com.cmc.data.feature.spot.model.CreateSpotResponseDto
 import com.cmc.data.feature.spot.model.ReviewResponseDto
 import com.cmc.data.feature.spot.model.SpotDetailResponseDto
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -28,6 +33,20 @@ interface SpotApiService {
     suspend fun getSpotDetail(
         @Path("spotId") spotId: Int
     ): ApiResponse<SpotDetailResponseDto>
+
+    @Multipart
+    @POST("spot/create")
+    suspend fun createSpot(
+        @Part("spotName") spotName: RequestBody,
+        @Part("spotDesc") spotDesc: RequestBody?,
+        @Part("spotAddress") spotAddress: RequestBody,
+        @Part("spotAddressDetail") spotAddressDetail: RequestBody?,
+        @Part("latitude") latitude: RequestBody,
+        @Part("longitude") longitude: RequestBody,
+        @Part("categoryId") categoryId: RequestBody,
+        @Part("tags") tags: RequestBody?,
+        @Part images: List<MultipartBody.Part>
+    ): ApiResponse<CreateSpotResponseDto>
 
     @DELETE("spot/{spotId}")
     suspend fun deleteSpot(
