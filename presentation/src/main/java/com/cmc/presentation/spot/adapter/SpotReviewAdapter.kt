@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.cmc.presentation.databinding.ViewCommentBinding
 import com.cmc.presentation.spot.model.ReviewUiModel
+import com.example.common.util.DateTimeFormatterUtil.formatUtcToLocal
 
-class SpotCommentAdapter
-    : RecyclerView.Adapter<SpotCommentAdapter.SpotCommentViewHolder>() {
+class SpotReviewAdapter : RecyclerView.Adapter<SpotReviewAdapter.SpotCommentViewHolder>() {
 
-    private val items: List<ReviewUiModel> = emptyList()
+    private var items: List<ReviewUiModel> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SpotCommentViewHolder {
         val binding = ViewCommentBinding.inflate(
@@ -20,24 +20,24 @@ class SpotCommentAdapter
 
     override fun onBindViewHolder(holder: SpotCommentViewHolder, position: Int) {
         val comment = items[position]
-        comment.let { holder.bind(comment) }
+        holder.bind(comment)
     }
 
     override fun getItemCount(): Int = items.size
 
+    fun setItems(itemList: List<ReviewUiModel>) {
+        items = itemList
+        notifyDataSetChanged()
+    }
+
     class SpotCommentViewHolder(private val binding: ViewCommentBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
         fun bind(item: ReviewUiModel) {
             with(binding) {
                 tvCommentPoster.text = item.memberName
                 tvCommentDesc.text = item.reviewText
-                // TODO: Date 값 추가 시, 변경
-                tvCommentDate.text = buildString {
-                    append("24.07.10")
-                    append("  ")
-                    append("00:48")
-                }
+//                tvCommentDate.text = formatUtcToLocal(item.created)
+                tvCommentDate.text = formatUtcToLocal("2024-02-03T14:30:00Z")
             }
         }
     }

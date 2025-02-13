@@ -74,6 +74,11 @@
         <item name="android:lineSpacingExtra">8sp</item>
     </style>
 
+    <style name="body_small_medium" parent="font_semi_bold">
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+    </style>
+
     <style name="body_small" parent="font_regular">
         <item name="android:textSize">14sp</item>
         <item name="android:lineSpacingExtra">6sp</item>

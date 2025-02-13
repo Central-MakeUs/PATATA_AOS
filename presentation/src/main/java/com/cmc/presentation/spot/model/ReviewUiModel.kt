@@ -13,6 +13,6 @@ fun Review.toUiModel(): ReviewUiModel {
     return ReviewUiModel(
         reviewId = reviewId,
         memberName = memberName,
-        reviewText = reviewText
+        reviewText = reviewText,
     )
 }

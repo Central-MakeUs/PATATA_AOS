@@ -9,13 +9,14 @@ data class ReviewResponseDto(
     @SerializedName("memberName")
     val memberName: String,
     @SerializedName("reviewText")
-    val reviewText: String
+    val reviewText: String,
 )
+// TODO: 생성일자 추가 해주시면 반영하기
 
 fun ReviewResponseDto.toDomain(): Review {
     return Review(
         reviewId = reviewId,
         memberName = memberName,
-        reviewText = reviewText
+        reviewText = reviewText,
     )
 }
