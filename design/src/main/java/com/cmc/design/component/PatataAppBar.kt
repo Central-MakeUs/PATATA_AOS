@@ -211,6 +211,10 @@ class PatataAppBar @JvmOverloads constructor(
         }
     }
 
+    fun changeBackgroundStyle(style: Int) {
+        applyBackgroundStyle(style)
+    }
+
     /**
      * Body Type을 변경하는 함수
      * @param type BodyType

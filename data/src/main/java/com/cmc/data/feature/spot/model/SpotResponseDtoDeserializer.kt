@@ -1,7 +1,5 @@
-package com.cmc.data.feature.spot
+package com.cmc.data.feature.spot.model
 
-import com.cmc.data.feature.spot.model.SpotResponseDto
-import com.cmc.data.feature.spot.model.SpotWithStatusResponseDto
 import com.cmc.domain.base.exception.InvalidJsonFormatException
 import com.google.gson.*
 import java.lang.reflect.Type

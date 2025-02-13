@@ -2,54 +2,43 @@ package com.cmc.presentation.search.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LoadState
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.cmc.presentation.search.SpotPagingSource
+import androidx.paging.map
+import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LATITUDE
+import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LONGITUDE
+import com.cmc.domain.feature.location.GetCurrentLocationUseCase
+import com.cmc.domain.feature.location.Location
+import com.cmc.domain.feature.spot.usecase.GetSearchSpotsUseCase
+import com.cmc.domain.feature.spot.usecase.ToggleSpotScrapUseCase
+import com.cmc.domain.model.CategorySortType
 import com.cmc.presentation.search.adapter.SpotThumbnailAdapter
+import com.cmc.presentation.search.model.SpotWithDistanceUiModel
+import com.cmc.presentation.search.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchViewModel @Inject constructor() : ViewModel() {
-
-    data class SearchState(
-        val query: String = "",
-        val sortType: SortType = SortType.DISTANCE,
-        val results: PagingData<TempSpotResult> = PagingData.empty(),
-        val errorMessage: String? = null,
-        val searchStatus: SearchStatus = SearchStatus.IDLE
-    )
-
-    data class TempSpotResult(
-        val title: String,
-        val distance: Double,  // 거리 정렬을 위해 Double 타입
-        val likes: Int,
-        val scraps: Int,
-        val imageUrl: String,
-        val isBookmarked: Boolean
-    )
-
-    enum class SearchStatus {
-        IDLE,
-        LOADING,
-        SUCCESS,
-        ERROR,
-        EMPTY,
-        LOADED,
-    }
-
-    enum class SortType(val text: String) {
-        DISTANCE("거리순"),
-        RECOMMEND("추천순")
-    }
-
-    sealed class SearchSideEffect {
-        data class ShowToast(val message: String) : SearchSideEffect()
-    }
+class SearchViewModel @Inject constructor(
+    private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
+    private val getSearchSpotsUseCase: GetSearchSpotsUseCase,
+    private val toggleSpotScrapUseCase: ToggleSpotScrapUseCase,
+) : ViewModel() {
 
     private val _state = MutableStateFlow(SearchState())
     val state: StateFlow<SearchState> = _state.asStateFlow()
@@ -57,49 +46,22 @@ class SearchViewModel @Inject constructor() : ViewModel() {
     private val _sideEffect = MutableSharedFlow<SearchSideEffect>()
     val sideEffect: SharedFlow<SearchSideEffect> = _sideEffect.asSharedFlow()
 
+    init {
+        observeStateChange()
+    }
+
     // 검색 수행
     fun performSearch(query: String) {
-        val sortType = state.value.sortType
         if (query.isBlank()) {
             _state.update { it.copy(query = query, searchStatus = SearchStatus.IDLE) }
             return
         }
 
         _state.update {
-            it.copy(query = query, sortType = sortType, searchStatus = SearchStatus.LOADING)
-        }
-
-        viewModelScope.launch {
-            getSearchResults(query, sortType)
-                .cachedIn(viewModelScope)
-                .catch {
-                    _state.update { it.copy(errorMessage = "오류 발생", searchStatus = SearchStatus.EMPTY) }
-                }
-                .distinctUntilChanged()
-                .onStart {
-                    _state.update {
-                        it.copy(
-                            searchStatus = SearchStatus.LOADING
-                        )
-                    }
-                }
-                .collectLatest { pagingData ->
-                    _state.update {
-                        it.copy(
-                            results = pagingData,
-                            searchStatus = SearchStatus.SUCCESS
-                        )
-                    }
-                }
+            it.copy(query = query, searchStatus = SearchStatus.LOADING)
         }
     }
 
-    private fun getSearchResults(query: String, sortType: SortType): Flow<PagingData<TempSpotResult>> {
-        return Pager(
-            config = PagingConfig(pageSize = 10, enablePlaceholders = false, prefetchDistance = 2),
-            pagingSourceFactory = { SpotPagingSource(query, sortType) }
-        ).flow
-    }
 
     /**
      * paging adpater의 state를 viewModel에서 관리하도록 설정
@@ -128,16 +90,47 @@ class SearchViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun getSortType(): SortType = state.value.sortType
+    fun getSortType(): CategorySortType = state.value.sortType
 
-    fun setSortType(sortType: SortType) {
-        viewModelScope.launch {
-            _state.emit(
-                state.value.copy(
-                    sortType = sortType
-                )
-            )
+    fun onClickSearchSortButton() {
+        sendSideEffect(SearchSideEffect.ShowSortDialog)
+    }
+    fun onClickSortByDistance() {
+        _state.update {
+            it.copy(sortType = CategorySortType.DISTANCE)
         }
+    }
+    fun onClickSortByRecommend() {
+        _state.update {
+            it.copy(sortType = CategorySortType.RECOMMEND)
+        }
+    }
+    fun onClickSpotScrapButton(spotId: Int) {
+        viewModelScope.launch {
+            toggleSpotScrapUseCase.invoke(spotId)
+                .onSuccess {
+                    val newPagingData = state.value.results.map { spot ->
+                        if (spot.spotId == spotId) {
+                            val isScraped = spot.isScraped.not()
+                            spot.copy(
+                                isScraped = isScraped,
+                                scrapCount = spot.scrapCount + if (isScraped) 1 else - 1
+                            )
+                        } else {
+                            spot
+                        }
+                    }
+
+                    _state.update {
+                        it.copy(
+                            results = newPagingData
+                        )
+                    }
+                }
+        }
+    }
+    fun onClickSpotImage(spotId: Int) {
+        sendSideEffect(SearchSideEffect.NavigateSpotDetail(spotId))
     }
 
     fun clickToastBtn(message: String) {
@@ -149,4 +142,79 @@ class SearchViewModel @Inject constructor() : ViewModel() {
             _sideEffect.emit(effect)
         }
     }
+
+    private fun observeStateChange() {
+        viewModelScope.launch {
+            combine(
+                _state.map { it.query }.distinctUntilChanged(),
+                _state.map { it.sortType }.distinctUntilChanged()
+            ) { query, sortType ->
+                query to sortType
+            }
+            .filter { (query, _) -> query.isNotEmpty() }
+            .collectLatest { (query, sortType) ->
+                getCurrentLocationUseCase.invoke()
+                    .onSuccess { location ->
+                        updateSearchSpots(query, location, sortType)
+                    }
+                    .onFailure { e ->
+                        when (e) {
+                            is SecurityException -> {
+                                val location = Location(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
+                                updateSearchSpots(query, location, sortType)
+                            }
+                        }
+                    }
+            }
+        }
+    }
+
+    private suspend fun updateSearchSpots(keyword: String, location: Location, sortType: CategorySortType) {
+        getSearchSpotsUseCase.invoke(keyword, location.latitude, location.longitude, sortType.name)
+            .cachedIn(viewModelScope)
+            .catch {
+                _state.update { it.copy(errorMessage = "오류 발생", searchStatus = SearchStatus.EMPTY) }
+            }
+            .distinctUntilChanged()
+            .onStart {
+                _state.update {
+                    it.copy(
+                        searchStatus = SearchStatus.LOADING
+                    )
+                }
+            }
+            .collectLatest { pagingData ->
+                _state.update {
+                    it.copy(
+                        results = pagingData.map { data -> data.toUiModel() },
+                        searchStatus = SearchStatus.SUCCESS
+                    )
+                }
+            }
+    }
+
+
+    data class SearchState(
+        val query: String = "",
+        val sortType: CategorySortType = CategorySortType.getDefault(),
+        val results: PagingData<SpotWithDistanceUiModel> = PagingData.empty(),
+        val errorMessage: String? = null,
+        val searchStatus: SearchStatus = SearchStatus.IDLE
+    )
+
+    enum class SearchStatus {
+        IDLE,
+        LOADING,
+        SUCCESS,
+        ERROR,
+        EMPTY,
+        LOADED,
+    }
+
+    sealed class SearchSideEffect {
+        data class NavigateSpotDetail(val spotId: Int): SearchSideEffect()
+        data class ShowToast(val message: String) : SearchSideEffect()
+        data object ShowSortDialog : SearchSideEffect()
+    }
+
 }

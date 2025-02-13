@@ -5,6 +5,7 @@ import com.cmc.data.feature.spot.model.CategorySpotsResponseDto
 import com.cmc.data.feature.spot.model.CreateReviewRequest
 import com.cmc.data.feature.spot.model.CreateSpotResponseDto
 import com.cmc.data.feature.spot.model.ReviewResponseDto
+import com.cmc.data.feature.spot.model.SearchSpotsResponseDto
 import com.cmc.data.feature.spot.model.SpotDetailResponseDto
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -28,6 +29,15 @@ interface SpotApiService {
         @Query("longitude") longitude: Double,
         @Query("sortBy") sortBy: String
     ): ApiResponse<CategorySpotsResponseDto>
+
+    @GET("spot/search")
+    suspend fun getSearchSpots(
+        @Query("spotName") spotName: String,
+        @Query("page") page: Int,
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("sortBy") sortBy: String
+    ): ApiResponse<SearchSpotsResponseDto>
 
     @GET("spot/{spotId}")
     suspend fun getSpotDetail(

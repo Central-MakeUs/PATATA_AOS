@@ -1,6 +1,5 @@
 package com.cmc.data.feature.spot.model
 
-import com.cmc.data.feature.spot.SpotWithStatusResponseDtoDeserializer
 import com.cmc.domain.feature.spot.model.SpotWithStatus
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName

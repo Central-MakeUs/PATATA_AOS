@@ -3,6 +3,7 @@ package com.cmc.domain.feature.spot.repository
 import com.cmc.domain.feature.spot.base.PaginatedResponse
 import com.cmc.domain.feature.spot.model.Review
 import com.cmc.domain.feature.spot.model.SpotDetail
+import com.cmc.domain.feature.spot.model.SpotWithDistance
 import com.cmc.domain.feature.spot.model.SpotWithStatus
 import com.cmc.domain.model.ImageMetadata
 
@@ -21,6 +22,13 @@ interface SpotRepository {
         longitude: Double,
         sortBy: String,
     ): Result<List<SpotWithStatus>>
+
+    suspend fun getPaginatedSearchSpots(
+        keyword: String,
+        latitude: Double,
+        longitude: Double,
+        sortBy: String,
+    ): PaginatedResponse<SpotWithDistance>
 
     suspend fun getSpotDetail(spotId: Int): Result<SpotDetail>
 
