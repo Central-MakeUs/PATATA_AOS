@@ -38,11 +38,8 @@ class SpotHorizontalPaginatedCardAdapter(
 
         if (payloads.isNotEmpty()) {
             val bundle = payloads[0] as Bundle
-            if (bundle.containsKey(BundleKeys.Spot.KEY_IS_SCRAPED)) {
-                holder.binding.updateScrapState(
-                    bundle.getBoolean(BundleKeys.Spot.KEY_IS_SCRAPED),
-                    item.scrapCount
-                )
+            if (bundle.containsKey(BundleKeys.Spot.KEY_IS_CHANGED_SCRAP)) {
+                holder.binding.updateScrapState(item.isScraped, item.scrapCount)
             }
         } else {
             holder.bind(item)
@@ -86,7 +83,7 @@ class SpotHorizontalPaginatedCardAdapter(
                 newItem: SpotWithStatusUiModel
             ): Any? {
                 return if (oldItem.isScraped != newItem.isScraped) {
-                    Bundle().apply { putBoolean(BundleKeys.Spot.KEY_IS_SCRAPED, newItem.isScraped) }
+                    Bundle().apply { putBoolean(BundleKeys.Spot.KEY_IS_CHANGED_SCRAP, true) }
                 } else null
             }
         }

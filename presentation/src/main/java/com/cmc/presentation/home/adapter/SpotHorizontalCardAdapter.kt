@@ -40,11 +40,8 @@ class SpotHorizontalCardAdapter(
 
         if (payloads.isNotEmpty()) {
             val bundle = payloads[0] as Bundle
-            if (bundle.containsKey(BundleKeys.Spot.KEY_IS_SCRAPED)) {
-                holder.binding.updateScrapState(
-                    bundle.getBoolean(BundleKeys.Spot.KEY_IS_SCRAPED),
-                    item.scrapCount
-                )
+            if (bundle.containsKey(BundleKeys.Spot.KEY_IS_CHANGED_SCRAP)) {
+                holder.binding.updateScrapState(item.isScraped, item.scrapCount)
             }
         } else {
             holder.bind(item)
@@ -99,7 +96,7 @@ class SpotHorizontalCardAdapter(
 
         override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
             return if (oldList[oldItemPosition].isScraped != newList[newItemPosition].isScraped) {
-                Bundle().apply { putBoolean(BundleKeys.Spot.KEY_IS_SCRAPED, newList[newItemPosition].isScraped) }
+                Bundle().apply { putBoolean(BundleKeys.Spot.KEY_IS_CHANGED_SCRAP, true) }
             } else null
         }
     }
