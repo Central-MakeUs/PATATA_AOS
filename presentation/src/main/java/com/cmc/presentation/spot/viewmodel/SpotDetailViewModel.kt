@@ -2,9 +2,9 @@ package com.cmc.presentation.spot.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.domain.feature.spot.usecase.CreateReviewUseCase
 import com.cmc.domain.feature.spot.usecase.GetSpotDetailUseCase
 import com.cmc.domain.feature.spot.usecase.ToggleSpotScrapUseCase
-import com.cmc.presentation.spot.model.CommentUiModel
 import com.cmc.presentation.spot.model.SpotDetailUiModel
 import com.cmc.presentation.spot.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +22,7 @@ import javax.inject.Inject
 class SpotDetailViewModel @Inject constructor(
     private val getSpotDetailUseCase: GetSpotDetailUseCase,
     private val toggleSpotScrapUseCase: ToggleSpotScrapUseCase,
+    private val createReviewUseCase: CreateReviewUseCase,
 ): ViewModel() {
 
     private val _state = MutableStateFlow(SpotDetailState())
@@ -65,6 +66,23 @@ class SpotDetailViewModel @Inject constructor(
         }
     }
 
+    fun submitReviewEditor(text: String) {
+        viewModelScope.launch {
+            createReviewUseCase.invoke(state.value.spotDetail.spotId,text)
+                .onSuccess { review ->
+                    _state.update {
+                        it.copy(
+                            it.spotDetail.copy(
+                                reviews = it.spotDetail.reviews + review.toUiModel()
+                            )
+                        )
+                    }
+                }.onFailure { e ->
+                    e.stackTrace
+                }
+        }
+    }
+
     private fun sendSideEffect(effect: SpotDetailSideEffect) {
         viewModelScope.launch {
             _sideEffect.emit(effect)
@@ -73,7 +91,6 @@ class SpotDetailViewModel @Inject constructor(
 
     data class SpotDetailState(
         var spotDetail: SpotDetailUiModel = SpotDetailUiModel.defaultInstance(),
-        val results: List<TempData> = emptyList(),
         val errorMessage: String? = null,
     )
 
@@ -81,13 +98,4 @@ class SpotDetailViewModel @Inject constructor(
         data class ShowToast(val message: String) : SpotDetailSideEffect()
         data class ShowBottomSheet(val spotIsMine: Boolean): SpotDetailSideEffect()
     }
-
-    data class TempData(
-        val title: String,
-        val images: List<String>,
-        val location: String,
-        val description: String,
-        val tags: List<String>,
-        val comments: List<CommentUiModel>
-    )
 }

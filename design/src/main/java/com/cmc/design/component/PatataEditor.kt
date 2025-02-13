@@ -102,9 +102,9 @@ class PatataEditor @JvmOverloads constructor(
     }
 
     /**
-     * 검색 실행 리스너 설정
+     * Submit 리스너 설정
      */
-    fun setOnSearchListener(listener: ((String) -> Unit)? = null) {
+    fun setOnSubmitListener(listener: ((String) -> Unit)? = null) {
         onSubmitListener = listener
     }
 

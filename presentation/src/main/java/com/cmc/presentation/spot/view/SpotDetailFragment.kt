@@ -1,6 +1,7 @@
 package com.cmc.presentation.spot.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.TextView
 import androidx.core.view.isVisible
@@ -43,6 +44,7 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
         setViewPager()
         setClickListener()
         setReviewRecyclerView()
+        setEditor()
     }
 
     private fun updateUI(state: SpotDetailState) {
@@ -153,6 +155,11 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
             layoutManager = LinearLayoutManager(context)
             this.adapter = spotReviewAdapter
             setHasFixedSize(true)
+        }
+    }
+    private fun setEditor() {
+        binding.editorInput.setOnSubmitListener { text ->
+            viewModel.submitReviewEditor(text)
         }
     }
 }
