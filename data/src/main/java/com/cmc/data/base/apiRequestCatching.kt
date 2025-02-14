@@ -8,17 +8,22 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
+import kotlin.reflect.KClass
 
-suspend fun <T, R> apiRequestCatching(
+suspend fun <T : Any, R> apiRequestCatching(
     apiCall: suspend () -> ApiResponse<T>,
     transform: (T) -> R = { it as R },
     successCallBack: suspend (T) ->  Unit = {},
+    responseClass: KClass<T>? = null,
 ): Result<R> {
     return runCatching {
         val response = apiCall()
         if (response.isSuccess && response.result != null) {
             successCallBack(response.result)
             Result.success(transform(response.result))
+        } else if (response.isSuccess && responseClass == Unit::class) {
+            successCallBack(Unit as T)
+            Result.success(Unit as R)
         } else {
             Result.failure(ApiException.ServerError(response.message))
         }
