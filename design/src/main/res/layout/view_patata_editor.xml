@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_searchbar_root"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:paddingStart="@dimen/default_spacing"
+    android:paddingEnd="@dimen/default_spacing"
+    android:background="@drawable/bg_searchbar"
+    android:clipToPadding="false"
+    android:clipChildren="false">
+
+    <!-- 검색어 입력 EditText -->
+    <EditText
+        android:id="@+id/et_editor_input"
+        style="@style/body_small"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="8dp"
+        android:hint="@string/hint_comment"
+        android:background="@android:color/transparent"
+        android:textColor="@color/text_info"
+        android:textColorHint="@color/text_disabled"
+        android:inputType="text"
+        android:imeOptions="actionDone"
+        android:singleLine="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/iv_upload_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <!-- 검색 아이콘 -->
+    <ImageView
+        android:id="@+id/iv_upload_icon"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:src="@drawable/selector_editor_upload"
+        android:contentDescription="@string/img_desc_search"
+        android:padding="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

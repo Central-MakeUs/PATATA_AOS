@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/SplashFragment"
-        android:name="com.cmc.presentation.splash.SplashFragment"
+        android:name="com.cmc.presentation.splash.view.SplashFragment"
         tools:layout="@layout/fragment_splash">
     </fragment>
 

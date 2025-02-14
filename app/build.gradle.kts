@@ -1,10 +1,15 @@
-import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
+    kotlin("kapt")
+    id("dagger.hilt.android.plugin")
+}
+
+val properties = Properties().apply {
+    load(project.rootProject.file("local.properties").reader())
 }
 
 android {
@@ -17,13 +22,11 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        resValue("string", "naver_map_client_id", properties["NAVER_MAP_CLIENT_ID"] as String)
     }
     signingConfigs {
-        val properties = Properties().apply {
-            load(project.rootProject.file("local.properties").reader())
-        }
         getByName("debug") {
             storeFile = file(properties["DEBUG_KEY_STORE_PATH"] as String)
             storePassword = properties["DEBUG_STORE_PASSWORD"] as String
@@ -65,6 +68,9 @@ android {
     dataBinding {
         enable = true
     }
+    hilt {
+        enableAggregatingTask = false
+    }
 }
 
 dependencies {
@@ -85,6 +91,28 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+
+    // Kotlin Coroutines
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+
+    // Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+
+    // OkHttp (Logging Interceptor)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+
+    // Naver
+    implementation(libs.map.sdk)
+
 }

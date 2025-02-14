@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:elevation="10dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/layout_badge_content"
+        android:layout_width="76dp"
+        android:layout_height="100dp"
+        android:paddingTop="11dp"
+        android:paddingBottom="9dp"
+        android:background="@drawable/bg_bottom_rounded_8">
+
+        <!-- 중앙 아이콘 -->
+        <ImageView
+            android:id="@+id/iv_recommend_icon"
+            android:layout_width="42dp"
+            android:layout_height="60dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_spot_badge_character"/>
+
+        <!-- 하단 텍스트 -->
+        <TextView
+            android:id="@+id/tv_recommend_label"
+            style="@style/caption_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iv_recommend_icon"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="6dp"
+            android:text="작가 추천 스팟"
+            android:textColor="@color/blue_50"/>
+    </RelativeLayout>
+
+    <!-- 파란 삼각형 (View로 구현) -->
+    <View
+        android:id="@+id/view_corner_fold"
+        android:layout_width="4dp"
+        android:layout_height="4dp"
+        android:layout_gravity="top|end"
+        android:layout_toRightOf="@id/layout_badge_content"
+        android:rotation="270"
+        android:background="@drawable/bg_triangle_blue"/>
+</RelativeLayout>

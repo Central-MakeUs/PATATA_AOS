@@ -5,41 +5,43 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/nav_splash">
 
-    <include app:graph="@navigation/nav_feat_graph"/>
-    <include app:graph="@navigation/nav_feat2_graph"/>
-    <include app:graph="@navigation/nav_feat3_graph"/>
+    <include app:graph="@navigation/nav_home"/>
+    <include app:graph="@navigation/nav_map"/>
+    <include app:graph="@navigation/nav_archive"/>
+    <include app:graph="@navigation/nav_my"/>
 
     <include app:graph="@navigation/nav_splash"/>
     <include app:graph="@navigation/nav_onboarding"/>
     <include app:graph="@navigation/nav_login"/>
+    <include app:graph="@navigation/nav_search"/>
+    <include app:graph="@navigation/nav_spot_detail"/>
 
     <action
-        android:id="@+id/navigate_onboarding"
+        android:id="@+id/nav_onboarding"
         app:destination="@+id/nav_onboarding"
-        app:popUpTo="@layout/fragment_splash"
+        app:popUpTo="@id/nav_splash"
         app:popUpToInclusive="true"/>
 
     <action
-        android:id="@+id/navigate_login"
+        android:id="@+id/nav_login"
         app:destination="@+id/nav_login"
-        app:popUpTo="@layout/fragment_onboarding"
+        app:popUpTo="@id/nav_onboarding"
         app:popUpToInclusive="true"/>
 
     <action
-        android:id="@+id/navigate_home"
-        app:destination="@+id/nav_feat_graph"
-        app:popUpTo="@layout/fragment_first"
+        android:id="@+id/nav_home"
+        app:destination="@+id/nav_home"
+        app:popUpTo="@id/nav_splash"
         app:popUpToInclusive="true"/>
 
     <action
-        android:id="@+id/navigate_second"
-        app:destination="@id/nav_feat2_graph"
-        app:popUpTo="@id/nav_feat_graph"
-        app:popUpToInclusive="true" />
+        android:id="@+id/nav_search"
+        app:destination="@+id/nav_search"
+        app:popUpTo="@layout/fragment_search"/>
 
     <action
-        android:id="@+id/navigate_third"
-        app:destination="@id/nav_feat3_graph"/>
-
+        android:id="@+id/nav_spot_detail"
+        app:destination="@+id/nav_spot_detail"
+        app:popUpTo="@layout/fragment_spot_detail"/>
 
 </navigation>

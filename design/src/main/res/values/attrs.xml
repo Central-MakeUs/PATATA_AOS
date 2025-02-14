@@ -1,0 +1,90 @@
+<!-- res/values/attrs.xml -->
+<resources>
+    <attr name="isEnabled" format="boolean"/>
+
+    <!-- PatataAppBar 커스텀 속성 -->
+    <declare-styleable name="PatataAppBar">
+        <attr name="bodyType" format="enum">
+            <enum name="main" value="0"/>
+            <enum name="searchbar" value="1"/>
+            <enum name="title" value="2"/>
+        </attr>
+
+        <attr name="headButtonType" format="enum">
+            <enum name="back" value="0"/>
+            <enum name="list" value="1"/>
+            <enum name="map" value="2"/>
+            <enum name="none" value="-1"/>
+        </attr>
+
+        <attr name="footButtonType" format="enum">
+            <enum name="complaint" value="0"/>
+            <enum name="more" value="1"/>
+            <enum name="cancel" value="2"/>
+            <enum name="select" value="3"/>
+            <enum name="delete" value="4"/>
+            <enum name="setting" value="5"/>
+            <enum name="none" value="-1"/>
+        </attr>
+
+        <attr name="appbarSearchBarStyle" format="enum">
+            <enum name="light" value="0"/>
+            <enum name="dark" value="1"/>
+        </attr>
+
+        <attr name="appBarBackgroundStyle" format="enum">
+            <enum name="transparent" value="0"/>
+            <enum name="white" value="1"/>
+        </attr>
+    </declare-styleable>
+
+
+    <!-- PatataSearchBar 커스텀 속성 -->
+    <declare-styleable name="PatataSearchBar">
+        <attr name="searchBarStyle" format="enum">
+            <enum name="light" value="0"/>
+            <enum name="dark" value="1"/>
+        </attr>
+
+        <attr name="isEnabled" />
+    </declare-styleable>
+
+    <!-- PatataEditor 커스텀 속성 -->
+    <declare-styleable name="PatataEditor">
+        <attr name="editorStyle" format="enum">
+            <enum name="light" value="0"/>
+            <enum name="dark" value="1"/>
+        </attr>
+    </declare-styleable>
+
+    <!-- PatataEditText 커스텀 속성 -->
+    <declare-styleable name="PatataEditText">
+        <attr name="customEditTextStyle" format="enum">
+            <enum name="light" value="0"/>
+            <enum name="dark" value="1"/>
+        </attr>
+
+        <attr name="isEnabled" />
+        <attr name="isSingLine" format="boolean"/>
+        <attr name="editTextMaxLength" format="integer"/>
+        <attr name="editTextTextAppearance" format="reference"/>
+        <attr name="showCancelButton" format="boolean"/>
+        <attr name="editTextHint" format="reference"/>
+    </declare-styleable>
+
+    <!-- CustomTab Layout 커스텀 속성 -->
+    <declare-styleable name="CustomTabLayout">
+        <attr name="customTabIndicatorColor" format="color"/>
+        <attr name="customTabSelectedTextColor" format="color"/>
+        <attr name="customTabUnselectedTextColor" format="color"/>
+        <attr name="customTabBackground" format="reference"/>
+        <attr name="customTabSelectedTextAppearance" format="reference"/>
+        <attr name="customTabUnselectedTextAppearance" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="CustomIndicator">
+        <attr name="dotSize" format="dimension" />
+        <attr name="dotColor" format="reference" />
+        <attr name="dotSelectedColor" format="reference" />
+    </declare-styleable>
+</resources>

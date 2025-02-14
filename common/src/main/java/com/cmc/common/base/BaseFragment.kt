@@ -1,6 +1,7 @@
 package com.cmc.common.base
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,13 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 abstract class BaseFragment<T: ViewDataBinding>(@LayoutRes val layoutRes: Int)
     : Fragment() {
@@ -30,12 +38,39 @@ abstract class BaseFragment<T: ViewDataBinding>(@LayoutRes val layoutRes: Int)
         initObserving()
     }
 
-    abstract fun initView()
-
     abstract fun initObserving()
+
+    abstract fun initView()
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun LifecycleOwner.repeatWhenUiStarted(block: suspend CoroutineScope.() -> Unit) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                block()
+            }
+        }
+    }
+
+    /**
+     * 프래그먼트 navigate
+     *
+     * @param direction 다음 프래그먼트로 이동할 Direction
+     * */
+    protected fun navigate(destinationId: Int, args: Bundle? = null) {
+        val controller = findNavController()
+        controller.navigate(destinationId, args)
+    }
+
+    protected fun finish() {
+        val fragmentManager = childFragmentManager
+        if (fragmentManager.backStackEntryCount > 0) {
+            fragmentManager.popBackStack()
+        } else {
+            activity?.onBackPressedDispatcher?.onBackPressed()
+        }
     }
 }

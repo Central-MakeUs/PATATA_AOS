@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="4dp"
+    android:layout_marginVertical="8dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- 장소 이미지 -->
+    <ImageView
+        android:id="@+id/iv_spot_image"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/bg_rounded_6"
+        android:clipToOutline="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        tools:src="@drawable/img_sample"/>
+
+    <!-- 북마크 아이콘 -->
+    <ImageView
+        android:id="@+id/iv_spot_archive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/selector_archive_outline"
+        app:layout_constraintTop_toTopOf="@id/iv_spot_image"
+        app:layout_constraintEnd_toEndOf="@id/iv_spot_image" />
+
+    <!-- 장소 이름 -->
+    <TextView
+        android:id="@+id/tv_spot_title"
+        style="@style/subtitle_small"
+        android:textColor="@color/text_default"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="서울숲 은행나무길"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/iv_spot_image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:maxLines="1" />
+
+    <!-- 장소 위치 -->
+    <TextView
+        android:id="@+id/tv_spot_distance"
+        style="@style/caption_small"
+        android:textColor="@color/text_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="5.3Km"
+        android:layout_marginTop="5dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_spot_title"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- 아카이브 수 -->
+    <TextView
+        android:id="@+id/tv_archive_count"
+        style="@style/caption_small"
+        android:textColor="@color/text_disabled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="117"
+        android:layout_marginStart="10dp"
+        android:drawablePadding="2dp"
+        app:layout_constraintStart_toEndOf="@id/tv_spot_distance"
+        app:layout_constraintTop_toTopOf="@id/tv_spot_distance"
+        app:layout_constraintBottom_toBottomOf="@id/tv_spot_distance"
+        android:drawableStart="@drawable/ic_archive_s" />
+
+    <!-- 코멘트 수 -->
+    <TextView
+        android:id="@+id/tv_review_count"
+        style="@style/caption_small"
+        android:textColor="@color/text_disabled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="117"
+        android:layout_marginStart="8dp"
+        android:drawablePadding="2dp"
+        app:layout_constraintStart_toEndOf="@id/tv_archive_count"
+        app:layout_constraintTop_toTopOf="@id/tv_spot_distance"
+        app:layout_constraintBottom_toBottomOf="@id/tv_spot_distance"
+        android:drawableStart="@drawable/ic_comment_s" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

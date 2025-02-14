@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_home"
+    app:startDestination="@id/HomeFragment">
+
+    <fragment
+        android:id="@+id/HomeFragment"
+        android:name="com.cmc.presentation.home.view.HomeFragment"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/navigate_today_spot_recommendation"
+            app:destination="@id/TodaySpotRecommendationFragment"/>
+
+        <action
+            android:id="@+id/navigate_category_spots"
+            app:destination="@+id/CategorySpotsFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/TodaySpotRecommendationFragment"
+        android:name="com.cmc.presentation.home.view.TodaySpotRecommendationFragment"
+        tools:layout="@layout/fragment_today_spot_recommendation">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/CategorySpotsFragment"
+        android:name="com.cmc.presentation.home.view.CategorySpotsFragment"
+        tools:layout="@layout/fragment_category_spots"/>
+</navigation>

@@ -7,8 +7,25 @@
 
     <fragment
         android:id="@+id/LoginFragment"
-        android:name="com.cmc.presentation.login.LoginFragment"
+        android:name="com.cmc.presentation.login.view.LoginFragment"
         tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/navigate_profile_setting"
+            app:destination="@id/ProfileSettingFragment"/>
     </fragment>
+
+    <fragment
+        android:id="@+id/ProfileSettingFragment"
+        android:name="com.cmc.presentation.login.view.ProfileSettingFragment"
+        tools:layout="@layout/fragment_profile_setting">
+        <action
+            android:id="@+id/navigate_signup_success"
+            app:destination="@id/SignUpSuccessFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/SignUpSuccessFragment"
+        android:name="com.cmc.presentation.login.view.SignUpSuccessFragment"
+        tools:layout="@layout/fragment_sign_up_success"/>
 
 </navigation>

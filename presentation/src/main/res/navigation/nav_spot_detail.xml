@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/SpotDetailFragment"
+    android:id="@+id/nav_spot_detail">
+
+    <fragment
+        android:id="@+id/SpotDetailFragment"
+        android:name="com.cmc.presentation.spot.view.SpotDetailFragment"
+        tools:layout="@layout/fragment_spot_detail"/>
+
+</navigation>

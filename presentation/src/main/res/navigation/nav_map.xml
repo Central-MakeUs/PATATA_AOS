@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/AroundMeFragment"
+    android:id="@+id/nav_map">
+
+    <fragment
+        android:id="@+id/AroundMeFragment"
+        android:name="com.cmc.presentation.map.view.AroundMeFragment"
+        tools:layout="@layout/fragment_around_me">
+
+        <action
+            android:id="@+id/navigate_select_location"
+            app:destination="@id/SelectLocationFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/SelectLocationFragment"
+        android:name="com.cmc.presentation.map.view.SelectLocationFragment"
+        tools:layout="@layout/fragment_select_location">
+        <action
+            android:id="@+id/navigate_add_spot"
+            app:destination="@id/AddSpotFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/AddSpotFragment"
+        android:name="com.cmc.presentation.map.view.AddSpotFragment"
+        tools:layout="@layout/fragment_add_spot">
+
+        <action
+            android:id="@+id/navigate_spot_added_success"
+            app:destination="@id/SpotAddedSuccessFragment"
+            app:popUpTo="@id/AddSpotFragment"
+            app:popUpToInclusive="true"/>
+
+        <action
+            android:id="@+id/navigate_add_spot_to_around_me"
+            app:destination="@id/AroundMeFragment"
+            app:popUpTo="@id/AroundMeFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/SpotAddedSuccessFragment"
+        android:name="com.cmc.presentation.map.view.SpotAddedSuccessFragment"
+        tools:layout="@layout/fragment_spot_added_success">
+        <action
+            android:id="@+id/navigate_added_success_to_around_me"
+            app:destination="@id/AroundMeFragment"
+            app:popUpTo="@id/SpotAddedSuccessFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+</navigation>

@@ -13,3 +13,14 @@ kotlin {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
     }
 }
+
+dependencies {
+
+    // Hilt
+    implementation(libs.javax.inject)
+    // Kotlin Coroutines
+    implementation(libs.kotlinx.coroutines.core)
+    // paging
+    implementation(libs.androidx.paging.common)
+
+}

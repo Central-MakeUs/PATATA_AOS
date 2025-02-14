@@ -5,16 +5,25 @@
     <style name="font_regular">
         <item name="android:fontFamily">@font/pretendard_regular</item>
         <item name="android:includeFontPadding">false</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:scrollHorizontally">false</item>
     </style>
 
     <style name="font_bold">
         <item name="android:fontFamily">@font/pretendard_bold</item>
         <item name="android:includeFontPadding">false</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:scrollHorizontally">false</item>
     </style>
 
     <style name="font_semi_bold">
         <item name="android:fontFamily">@font/pretendard_semi_bold</item>
         <item name="android:includeFontPadding">false</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:scrollHorizontally">false</item>
     </style>
 
     <!-- FONT STYLE -->
@@ -37,9 +46,15 @@
         <item name="android:textColor">@color/gray_100</item>
     </style>
 
+    <style name="subtitle_extra_large" parent="font_semi_bold">
+        <item name="android:textSize">20sp</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+    </style>
+
     <style name="subtitle_large" parent="font_semi_bold">
         <item name="android:textSize">18sp</item>
         <item name="android:lineSpacingExtra">8sp</item>
+        <item name="android:lineSpacingMultiplier">0.7</item>
     </style>
 
     <style name="subtitle_medium" parent="font_semi_bold">
@@ -47,9 +62,15 @@
         <item name="android:lineSpacingExtra">8sp</item>
     </style>
 
+    <style name="subtitle_small_medium" parent="font_semi_bold">
+        <item name="android:textSize">15sp</item>
+        <item name="android:lineSpacingExtra">7sp</item>
+    </style>
+
     <style name="subtitle_small" parent="font_semi_bold">
         <item name="android:textSize">14sp</item>
         <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:lineSpacingMultiplier">0.7</item>
     </style>
 
     <style name="subtitle_extra_small" parent="font_semi_bold">
@@ -60,6 +81,11 @@
     <style name="body_medium" parent="font_regular">
         <item name="android:textSize">16sp</item>
         <item name="android:lineSpacingExtra">8sp</item>
+    </style>
+
+    <style name="body_small_medium" parent="font_semi_bold">
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">6sp</item>
     </style>
 
     <style name="body_small" parent="font_regular">

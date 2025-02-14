@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/ic_triangle_right_angle_4dp.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="4dp"
+    android:height="4dp"
+    android:viewportWidth="4"
+    android:viewportHeight="4">
+
+    <!-- 직각 삼각형 -->
+    <path
+        android:fillColor="#4FC3F7"
+        android:pathData="M0,0 L4,0 L0,4 Z"/>
+</vector>
+
