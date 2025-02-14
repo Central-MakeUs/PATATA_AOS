@@ -5,16 +5,25 @@
     <style name="font_regular">
         <item name="android:fontFamily">@font/pretendard_regular</item>
         <item name="android:includeFontPadding">false</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:scrollHorizontally">false</item>
     </style>
 
     <style name="font_bold">
         <item name="android:fontFamily">@font/pretendard_bold</item>
         <item name="android:includeFontPadding">false</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:scrollHorizontally">false</item>
     </style>
 
     <style name="font_semi_bold">
         <item name="android:fontFamily">@font/pretendard_semi_bold</item>
         <item name="android:includeFontPadding">false</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:scrollHorizontally">false</item>
     </style>
 
     <!-- FONT STYLE -->
