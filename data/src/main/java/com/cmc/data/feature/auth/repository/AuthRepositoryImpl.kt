@@ -1,13 +1,11 @@
 package com.cmc.data.feature.auth.repository
 
-import android.content.Context
-import com.cmc.data.base.TokenApiService
-import com.cmc.data.feature.auth.model.LoginRequest
-import com.cmc.data.feature.auth.model.toDomain
-import com.cmc.data.feature.auth.remote.AuthApiService
 import com.cmc.data.base.apiRequestCatching
 import com.cmc.data.base.asFlow
+import com.cmc.data.feature.auth.model.LoginRequest
 import com.cmc.data.feature.auth.model.NickNameRequest
+import com.cmc.data.feature.auth.model.toDomain
+import com.cmc.data.feature.auth.remote.AuthApiService
 import com.cmc.data.preferences.AppPreferences
 import com.cmc.data.preferences.TokenPreferences
 import com.cmc.data.preferences.UserPreferences
@@ -95,7 +93,8 @@ internal class AuthRepositoryImpl @Inject constructor(
         return apiRequestCatching(
             apiCall = { authApiService.updateNickName(
                 NickNameRequest(nickName)
-            )}
+            )},
+            responseClass = Unit::class,
         )
     }
 }

@@ -23,6 +23,7 @@
                 android:textColor="@color/gray_100"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="36dp"
                 android:text="@string/title_spot_added_success"/>
 
@@ -31,7 +32,10 @@
                 android:textColor="@color/blue_50"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="none"
+                android:maxLines="3"
                 android:gravity="center"
+                android:layout_gravity="center"
                 android:layout_marginTop="14dp"
                 android:text="@string/desc_spot_added_success"/>
 

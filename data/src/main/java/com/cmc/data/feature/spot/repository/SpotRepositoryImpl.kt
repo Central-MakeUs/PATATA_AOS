@@ -154,7 +154,7 @@ class SpotRepositoryImpl @Inject constructor(
     override suspend fun deleteReview(reviewId: Int): Result<Unit> {
         return apiRequestCatching(
             apiCall = { spotApiService.deleteReview(reviewId) },
-            transform = {}
+            responseClass = Unit::class
         )
     }
 
