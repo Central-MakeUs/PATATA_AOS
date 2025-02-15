@@ -13,6 +13,37 @@
         <action
             android:id="@+id/navigate_select_location"
             app:destination="@id/SelectLocationFragment"/>
+
+        <action
+            android:id="@+id/navigate_around_me_to_search_input"
+            app:destination="@+id/SearchInputFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/SearchInputFragment"
+        android:name="com.cmc.presentation.map.view.SearchInputFragment"
+        tools:layout="@layout/fragment_search_input">
+
+        <action
+            android:id="@+id/navigate_search_input_to_search_result_map"
+            app:destination="@+id/SearchResultMapFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/SearchResultMapFragment"
+        android:name="com.cmc.presentation.map.view.SearchResultMapFragment"
+        tools:layout="@layout/fragment_search_result_map">
+
+        <action
+            android:id="@+id/navigate_search_result_map_to_search_input"
+            app:destination="@+id/SearchInputFragment"
+            app:popUpTo="@id/SearchResultMapFragment"/>
+
+        <action
+            android:id="@+id/navigate_search_result_map_to_around_me"
+            app:destination="@+id/SearchInputFragment"
+            app:popUpTo="@id/SearchInputFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment

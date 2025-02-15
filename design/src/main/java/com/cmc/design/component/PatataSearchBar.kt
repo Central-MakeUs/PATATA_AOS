@@ -152,6 +152,9 @@ class PatataSearchBar @JvmOverloads constructor(
         applyStyle(isDarkMode)
     }
 
+    fun setDisable() {
+        isEnabled = false
+    }
 
     // SearchBar 속성 isEnabled 가 false 경우 클릭용 SearchBar 로 판단
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {

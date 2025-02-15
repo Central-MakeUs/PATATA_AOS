@@ -8,9 +8,10 @@ import com.cmc.domain.feature.location.GetCurrentLocationUseCase
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.feature.spot.usecase.GetCategorySpotsWithMapUseCase
 import com.cmc.domain.model.SpotCategory
-import com.cmc.presentation.spot.model.MapScreenLocation
-import com.cmc.presentation.spot.model.SpotWithMapUiModel
-import com.cmc.presentation.spot.model.toListUiModel
+import com.cmc.presentation.map.model.MapScreenLocation
+import com.cmc.presentation.map.model.SpotWithMapUiModel
+import com.cmc.presentation.map.model.toListUiModel
+import com.naver.maps.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,6 +68,9 @@ class AroundMeViewModel @Inject constructor(
         _state.update { it.copy(exploreVisible = false) }
     }
 
+    fun onClickSearchBar(targetLocation: LatLng) {
+        sendSideEffect(AroundMeSideEffect.NavigateSearch(targetLocation))
+    }
     fun onClickCategoryTab(position: Int) {
         _state.update {
             it.copy(selectedTabPosition = position)
@@ -144,6 +148,7 @@ class AroundMeViewModel @Inject constructor(
     sealed class AroundMeSideEffect {
         data object RequestLocationPermission : AroundMeSideEffect()
         data object NavigateAddLocation: AroundMeSideEffect()
+        data class NavigateSearch(val targetLocation: LatLng): AroundMeSideEffect()
         class UpdateCurrentLocation(val location: Location): AroundMeSideEffect()
     }
 }

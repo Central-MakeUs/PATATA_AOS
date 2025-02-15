@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.cmc.common.base.BaseFragment
+import com.cmc.common.constants.NavigationKeys
 import com.cmc.design.component.PatataAlert
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.model.SpotCategory
@@ -23,7 +25,7 @@ import com.cmc.presentation.map.manager.MarkerManager
 import com.cmc.presentation.map.viewmodel.AroundMeViewModel
 import com.cmc.presentation.map.viewmodel.AroundMeViewModel.AroundMeSideEffect
 import com.cmc.presentation.model.SpotCategoryItem
-import com.cmc.presentation.spot.model.MapScreenLocation
+import com.cmc.presentation.map.model.MapScreenLocation
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapView
@@ -49,17 +51,12 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
             }
 
             launch {
-                viewModel.sideEffect.collectLatest { effect ->
-                    when (effect) {
-                        is AroundMeSideEffect.RequestLocationPermission -> { checkLocationRequest() }
-                        is AroundMeSideEffect.NavigateAddLocation -> { navigateAddLocation() }
-                        is AroundMeSideEffect.UpdateCurrentLocation -> { moveCameraPosition(effect.location) }
-                    }
-                }
+                viewModel.sideEffect.collectLatest { effect -> handleEffect(effect) }
             }
         }
     }
     override fun initView() {
+        setAppBar()
         setMap()
         setCategory()
         setButton()
@@ -77,7 +74,21 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
 
         binding.layoutExploreThisArea.isVisible = state.exploreVisible
     }
+    private fun handleEffect(effect: AroundMeSideEffect) {
+        when (effect) {
+            is AroundMeSideEffect.RequestLocationPermission -> { checkLocationRequest() }
+            is AroundMeSideEffect.NavigateAddLocation -> { navigateAddLocation() }
+            is AroundMeSideEffect.NavigateSearch -> { navigateSearch(effect.targetLocation) }
+            is AroundMeSideEffect.UpdateCurrentLocation -> { moveCameraPosition(effect.location) }
+        }
+    }
 
+    private fun setAppBar() {
+        binding.appbar.setupAppBar(
+            onBodyClick = { viewModel.onClickSearchBar(naverMap.cameraPosition.target) },
+            searchBarDisable = true
+        )
+    }
     private fun setMap() {
         mapView = binding.viewMap
         mapView.getMapAsync(this)
@@ -166,6 +177,12 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     }
 
     private fun navigateAddLocation() { navigate(R.id.navigate_select_location) }
+    private fun navigateSearch(targetLocation: LatLng) {
+        navigate(R.id.navigate_around_me_to_search_input, Bundle().apply {
+            putDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE, targetLocation.latitude)
+            putDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE, targetLocation.longitude)
+        })
+    }
 
     private fun checkLocationRequest() {
         val permissions = arrayOf(

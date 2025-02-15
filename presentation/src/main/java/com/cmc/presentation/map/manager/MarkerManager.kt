@@ -2,7 +2,7 @@ package com.cmc.presentation.map.manager
 
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.model.SpotCategoryItem
-import com.cmc.presentation.spot.model.SpotWithMapUiModel
+import com.cmc.presentation.map.model.SpotWithMapUiModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.Marker

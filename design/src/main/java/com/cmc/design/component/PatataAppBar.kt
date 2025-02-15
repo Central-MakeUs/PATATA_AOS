@@ -22,6 +22,7 @@ class PatataAppBar @JvmOverloads constructor(
         ViewPatataAppbarBinding.inflate(LayoutInflater.from(context), this, true)
 
     private var onHeadButtonClickListener: ((HeaderType) -> Unit)? = null
+    private var onBodyClickListener: ((BodyType) -> Unit)? = null
     private var onFootButtonClickListener: ((FooterType) -> Unit)? = null
 
     private var headerType: HeaderType = HeaderType.NONE
@@ -68,6 +69,7 @@ class PatataAppBar @JvmOverloads constructor(
         }
     }
     private fun setBody(bodyType: BodyType) {
+        this.bodyType = bodyType
         when (bodyType) {
             BodyType.MAIN -> {
                 binding.ivMainTextLogo.visibility = View.VISIBLE
@@ -84,6 +86,10 @@ class PatataAppBar @JvmOverloads constructor(
                 binding.searchbar.visibility = View.GONE
                 binding.tvAppbarTitle.visibility = View.VISIBLE
             }
+        }
+
+        binding.searchbar.setOnSearchBarClickListener {
+            onBodyClickListener?.invoke(bodyType)
         }
     }
     private fun setFooter(type: FooterType) {
@@ -169,20 +175,27 @@ class PatataAppBar @JvmOverloads constructor(
         icon: Int? = null,
         iconPosition: IconPosition = IconPosition.START,
         onHeadButtonClick: ((HeaderType) -> Unit)? = null,
+        onBodyClick: ((BodyType) -> Unit)? = null,
         onFootButtonClick: ((FooterType) -> Unit)? = null,
         onSearch: ((String) -> Unit)? = null,
         onTextChange: ((String) -> Unit)? = null,
+        searchBarDisable: Boolean = false,
     ) {
         if (bodyType == BodyType.TITLE) {
             throw IllegalArgumentException("BodyType이 TITLE일 때는 setupAppBar(title: String)를 사용해야 합니다.")
         }
 
         onHeadButtonClickListener = onHeadButtonClick
+        onBodyClickListener = onBodyClick
         onFootButtonClickListener = onFootButtonClick
 
         binding.searchbar.apply {
             setOnSearchListener(onSearch)
             setOnTextChangeListener(onTextChange)
+        }
+
+        if (searchBarDisable) {
+            binding.searchbar.setDisable()
         }
     }
     /**

@@ -17,4 +17,8 @@ object NavigationKeys {
         const val ARGUMENT_CATEGORY_ID = "categoryId"
     }
 
+    object Search {
+        const val ARGUMENT_KEYWORD = "keyword"
+    }
+
 }

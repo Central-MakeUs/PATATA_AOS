@@ -1,4 +1,4 @@
-package com.cmc.presentation.spot.model
+package com.cmc.presentation.map.model
 
 import com.cmc.domain.feature.spot.model.SpotWithMap
 

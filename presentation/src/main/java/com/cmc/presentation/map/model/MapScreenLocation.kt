@@ -1,4 +1,4 @@
-package com.cmc.presentation.spot.model
+package com.cmc.presentation.map.model
 
 data class MapScreenLocation(
     val minLatitude: Double,
@@ -7,7 +7,7 @@ data class MapScreenLocation(
     val maxLongitude: Double,
 ) {
     companion object {
-        fun getDefault(): MapScreenLocation{
+        fun getDefault(): MapScreenLocation {
             return MapScreenLocation(0.0, 0.0, 0.0, 0.0)
         }
     }
