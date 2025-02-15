@@ -3,10 +3,11 @@ package com.cmc.design.component
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.ColorRes
+import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.StyleRes
 import androidx.appcompat.content.res.AppCompatResources
@@ -28,27 +29,34 @@ class CustomTabLayout @JvmOverloads constructor(
     private val binding: ViewCustomTabLayoutBinding =
         ViewCustomTabLayoutBinding.inflate(LayoutInflater.from(context), this, true)
 
-    private val tabLayout: TabLayout = binding.tabLayout
-    private val tabList: MutableList<Pair<String, Drawable?>> = mutableListOf()
+    private var onTabSelectedListener: ((Int) -> Unit)? = null
 
-    private var textColor: Int = R.color.text_info
+    private val tabLayout: TabLayout = binding.tabLayout
+    private val tabResourcesList: MutableList<Pair<String, Drawable?>> = mutableListOf()
+    private var selectedTabPosition: Int? = null
+    private var isInitialSelection = true
+
     private var tabBackground: Int = R.drawable.selector_tab
     private var textAppearance: Int = R.style.caption_medium
+    private var indicatorColor = context.getColor(R.color.transparent)
+    private var selectedTextColor = context.getColor(R.color.black)
+    private var unselectedTextColor = context.getColor(R.color.text_info)
+    private var selectedTextAppearance = R.style.caption_medium
+    private var unselectedTextAppearance = R.style.caption_medium
 
     init {
         initAttributes(context, attrs)
-
     }
 
     private fun initAttributes(context: Context, attrs: AttributeSet?) {
         context.theme.obtainStyledAttributes(attrs, R.styleable.CustomTabLayout, 0, 0).apply {
             try {
-                val indicatorColor = getColor(R.styleable.CustomTabLayout_customTabIndicatorColor, context.getColor(R.color.transparent))
-                val selectedTextColor = getColor(R.styleable.CustomTabLayout_customTabSelectedTextColor, context.getColor(R.color.black))
-                val unselectedTextColor = getColor(R.styleable.CustomTabLayout_customTabUnselectedTextColor, context.getColor(R.color.text_info))
-                tabBackground = getResourceId(R.styleable.CustomTabLayout_customTabBackground, R.drawable.selector_tab)
-                val selectedTextAppearance = getResourceId(R.styleable.CustomTabLayout_customTabSelectedTextAppearance, R.style.caption_medium)
-                val unselectedTextAppearance = getResourceId(R.styleable.CustomTabLayout_customTabUnselectedTextAppearance, R.style.caption_medium)
+                tabBackground = getResourceId(R.styleable.CustomTabLayout_customTabBackground, R.drawable.selector_tab_navy)
+                indicatorColor = getColor(R.styleable.CustomTabLayout_customTabIndicatorColor, context.getColor(R.color.transparent))
+                selectedTextColor = getColor(R.styleable.CustomTabLayout_customTabSelectedTextColor, context.getColor(R.color.black))
+                unselectedTextColor = getColor(R.styleable.CustomTabLayout_customTabUnselectedTextColor, context.getColor(R.color.text_info))
+                selectedTextAppearance = getResourceId(R.styleable.CustomTabLayout_customTabSelectedTextAppearance, R.style.caption_medium)
+                unselectedTextAppearance = getResourceId(R.styleable.CustomTabLayout_customTabUnselectedTextAppearance, R.style.caption_medium)
 
                 // 속성 적용
                 tabLayout.setSelectedTabIndicatorColor(indicatorColor)
@@ -57,8 +65,12 @@ class CustomTabLayout @JvmOverloads constructor(
                 tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                     override fun onTabSelected(tab: Tab?) {
                         tab?.customView?.findViewById<TextView>(R.id.tab_text)?.apply {
-                            setTextAppearance(selectedTextAppearance)
-                            setTextColor(selectedTextColor)
+                            if (isInitialSelection.not() || tab.position != 0) {
+                                selectedTabPosition = tab.position
+                                onTabSelectedListener?.invoke(tab.position)
+                                setTextAppearance(selectedTextAppearance)
+                                setTextColor(selectedTextColor)
+                            }
                         }
                     }
 
@@ -69,40 +81,66 @@ class CustomTabLayout @JvmOverloads constructor(
                         }
                     }
 
-                    override fun onTabReselected(tab: Tab?) {}
+                    override fun onTabReselected(tab: Tab?) {
+                        tab?.customView?.findViewById<TextView>(R.id.tab_text)?.apply {
+                            if (isInitialSelection && tab.position == 0) {
+                                tab.customView?.isSelected = true
+                                selectedTabPosition = tab.position
+                                isInitialSelection = false
+                                onTabSelectedListener?.invoke(tab.position)
+                                setTextAppearance(selectedTextAppearance)
+                                setTextColor(selectedTextColor)
+                            }
+                        }
+                    }
                 })
+
             } finally {
                 recycle()
             }
         }
     }
 
+    fun setTabSelectedListener(listener: ((Int) -> Unit)? = null) {
+        onTabSelectedListener = listener
+    }
+
     fun setTabList(tabs: List<Pair<String, Drawable?>>) {
-        tabList.clear()
-        tabList.addAll(tabs)
+        tabResourcesList.clear()
+        tabResourcesList.addAll(tabs)
 
         addTabs()
     }
 
+    fun setSelectedTabPosition(position: Int) {
+        if (position in (0 ..tabLayout.tabCount)) {
+            tabLayout.selectTab(tabLayout.getTabAt(position))
+        }
+    }
+
+    fun getSelectedTabPosition(): Int? = selectedTabPosition
+
     private fun addTabs() {
         tabLayout.removeAllTabs()
-        tabList.forEach {
+        tabResourcesList.forEach {
             tabLayout.addTab(
                 newTabs(
                     background = tabBackground,
                     text = it.first,
-                    textColor = textColor,
+                    textColor = unselectedTextColor,
                     textAppearance = textAppearance,
                     icon = it.second
                 )
             )
         }
+
+        tabLayout.getTabAt(0)?.customView?.isSelected = false
     }
 
     private fun newTabs(
         @DrawableRes background: Int,
         text: String,
-        @ColorRes textColor: Int,
+        @ColorInt textColor: Int,
         @StyleRes textAppearance: Int,
         icon: Drawable?,
     ): Tab {
@@ -112,7 +150,7 @@ class CustomTabLayout @JvmOverloads constructor(
                     val layoutParams = tabText.layoutParams as ViewGroup.MarginLayoutParams
 
                     layoutRoot.background = AppCompatResources.getDrawable(context, background)
-                    tabText.setTextColor(context.getColor(textColor))
+                    tabText.setTextColor(textColor)
                     tabText.text = text
                     tabText.setTextAppearance(textAppearance)
 
@@ -125,6 +163,7 @@ class CustomTabLayout @JvmOverloads constructor(
                         layoutParams.setMargins(4.dp,0,4.dp,0)
                     }
 
+                    layoutRoot.isSelected = false
                 }.root
             )
         }

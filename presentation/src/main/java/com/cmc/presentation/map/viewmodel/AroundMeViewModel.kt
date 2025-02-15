@@ -2,9 +2,15 @@ package com.cmc.presentation.map.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LATITUDE
+import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LONGITUDE
 import com.cmc.domain.feature.location.GetCurrentLocationUseCase
 import com.cmc.domain.feature.location.Location
-import com.cmc.presentation.model.SpotUiModel
+import com.cmc.domain.feature.spot.usecase.GetCategorySpotsWithMapUseCase
+import com.cmc.domain.model.SpotCategory
+import com.cmc.presentation.spot.model.MapScreenLocation
+import com.cmc.presentation.spot.model.SpotWithMapUiModel
+import com.cmc.presentation.spot.model.toListUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,6 +18,9 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,6 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AroundMeViewModel @Inject constructor(
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
+    private val getCategorySpotsWithMapUseCase: GetCategorySpotsWithMapUseCase,
 ): ViewModel() {
 
     private val _state = MutableStateFlow(AroundMeState())
@@ -27,8 +37,8 @@ class AroundMeViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<AroundMeSideEffect>()
     val sideEffect: SharedFlow<AroundMeSideEffect> = _sideEffect.asSharedFlow()
 
-    fun checkLocationPermission() {
-        sendSideEffect(AroundMeSideEffect.RequestLocationPermission)
+    init {
+        observeStateChanges()
     }
 
     fun getCurrentLocation() {
@@ -37,83 +47,58 @@ class AroundMeViewModel @Inject constructor(
             result.onSuccess { location ->
                 sendSideEffect(AroundMeSideEffect.UpdateCurrentLocation(location))
             }.onFailure { exception ->
-                // TODO: exception 별 처리 추가
                 sendSideEffect(AroundMeSideEffect.RequestLocationPermission)
             }
         }
     }
 
-    fun getDumpData() {
-        val dummySpots = listOf(
-            SpotUiModel(
-                spotId = 1,
-                spotName = "강북구청 전망대",
-                address = "서울특별시 강북구 도봉로 365",
-//                latitude = 37.6393,
-//                longitude = 127.0256,
-                tags = emptyList(),
-                categoryId = 5,
-            ),
-            SpotUiModel(
-                spotId = 1,
-                spotName = "강북구청 전망대",
-                address = "서울특별시 강북구 도봉로 365",
-//                latitude = 37.6393,
-//                longitude = 127.0256,
-                tags = emptyList(),
-                categoryId = 5,
-            ),
-            SpotUiModel(
-                spotId = 1,
-                spotName = "강북구청 전망대",
-                address = "서울특별시 강북구 도봉로 365",
-//                latitude = 37.6393,
-//                longitude = 127.0256,
-                tags = emptyList(),
-                categoryId = 5,
-            ),
-            SpotUiModel(
-                spotId = 1,
-                spotName = "강북구청 전망대",
-                address = "서울특별시 강북구 도봉로 365",
-//                latitude = 37.6393,
-//                longitude = 127.0256,
-                tags = emptyList(),
-                categoryId = 5,
-            ),
-            SpotUiModel(
-                spotId = 1,
-                spotName = "강북구청 전망대",
-                address = "서울특별시 강북구 도봉로 365",
-//                latitude = 37.6393,
-//                longitude = 127.0256,
-                tags = emptyList(),
-                categoryId = 5,
-            ),
-            SpotUiModel(
-                spotId = 1,
-                spotName = "강북구청 전망대",
-                address = "서울특별시 강북구 도봉로 365",
-//                latitude = 37.6393,
-//                longitude = 127.0256,
-                tags = emptyList(),
-                categoryId = 5,
-            ),
-            SpotUiModel(
-                spotId = 1,
-                spotName = "강북구청 전망대",
-                address = "서울특별시 강북구 도봉로 365",
-//                latitude = 37.6393,
-//                longitude = 127.0256,
-                tags = emptyList(),
-                categoryId = 5,
-            )
-        )
+
+    fun updateMapScreenLocation(mapScreenLocation: MapScreenLocation) {
+        _state.update {
+            it.copy(mapScreenLocation = mapScreenLocation)
+        }
+    }
+
+    fun movedCameraPosition() {
+        _state.update { it.copy(exploreVisible = true) }
+    }
+
+    fun invalidateCameraMove() {
+        _state.update { it.copy(exploreVisible = false) }
+    }
+
+    fun onClickCategoryTab(position: Int) {
+        _state.update {
+            it.copy(selectedTabPosition = position)
+        }
+    }
+    fun onClickExploreThisArea() {
+        _state.update {
+            it.copy(selectedTabPosition = SpotCategory.ALL.id)
+        }
+    }
+    fun onClickAddLocationButton() {
+        sendSideEffect(AroundMeSideEffect.NavigateAddLocation)
+    }
+
+
+    private fun observeStateChanges() {
         viewModelScope.launch {
-            _state.update {
-                state.value.copy(
-                    results = dummySpots,
-                )
+            _state.map { it.selectedTabPosition }.distinctUntilChanged()
+                .collectLatest { selectedTabPosition ->
+                if (selectedTabPosition != null) {
+                    getCurrentLocationUseCase.invoke()
+                        .onSuccess { location ->
+                            updateCategorySpots(selectedTabPosition, _state.value.mapScreenLocation, location)
+                        }.onFailure { e ->
+                            when (e) {
+                                is SecurityException -> {
+                                    val location = Location(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
+                                    updateCategorySpots(selectedTabPosition, _state.value.mapScreenLocation, location)
+                                }
+                            }
+                        }
+                }
             }
         }
     }
@@ -124,14 +109,41 @@ class AroundMeViewModel @Inject constructor(
         }
     }
 
+    private suspend fun updateCategorySpots(
+        categoryId: Int,
+        mapScreenLocation: MapScreenLocation,
+        userLocation: Location
+    ) {
+        getCategorySpotsWithMapUseCase.invoke(
+            categoryId = categoryId,
+            minLatitude = mapScreenLocation.minLatitude,
+            minLongitude = mapScreenLocation.minLongitude,
+            maxLatitude = mapScreenLocation.maxLatitude,
+            maxLongitude = mapScreenLocation.maxLongitude,
+            userLatitude = userLocation.latitude,
+            userLongitude = userLocation.longitude,
+            withSearch = false
+        ).onSuccess { spots ->
+            _state.update {
+                it.copy(results = spots.toListUiModel())
+            }
+        }.onFailure { e ->
+            e.stackTrace
+        }
+    }
+
     data class AroundMeState(
-        val results: List<SpotUiModel>? = null,
+        val results: List<SpotWithMapUiModel>? = null,
+        val selectedTabPosition: Int? = null,
+        val mapScreenLocation: MapScreenLocation = MapScreenLocation.getDefault(),
+        val exploreVisible: Boolean = false,
         val errorMessage: String? = null,
         val isLoading: Boolean = false
     )
 
     sealed class AroundMeSideEffect {
         data object RequestLocationPermission : AroundMeSideEffect()
+        data object NavigateAddLocation: AroundMeSideEffect()
         class UpdateCurrentLocation(val location: Location): AroundMeSideEffect()
     }
 }

@@ -4,6 +4,7 @@ import com.cmc.domain.feature.spot.base.PaginatedResponse
 import com.cmc.domain.feature.spot.model.Review
 import com.cmc.domain.feature.spot.model.SpotDetail
 import com.cmc.domain.feature.spot.model.SpotWithDistance
+import com.cmc.domain.feature.spot.model.SpotWithMap
 import com.cmc.domain.feature.spot.model.SpotWithStatus
 import com.cmc.domain.model.ImageMetadata
 
@@ -31,6 +32,27 @@ interface SpotRepository {
         sortBy: String,
         totalCountCallBack: (Int) -> Unit,
     ): PaginatedResponse<SpotWithDistance>
+
+    suspend fun getCategorySpotsWithMap(
+        categoryId: Int,
+        minLatitude: Double,
+        minLongitude: Double,
+        maxLatitude: Double,
+        maxLongitude: Double,
+        userLatitude: Double,
+        userLongitude: Double,
+        withSearch: Boolean,
+    ): Result<List<SpotWithMap>>
+
+    suspend fun getSearchSpotsWithMap(
+        keyword: String,
+        minLatitude: Double,
+        minLongitude: Double,
+        maxLatitude: Double,
+        maxLongitude: Double,
+        userLatitude: Double,
+        userLongitude: Double,
+    ): Result<SpotWithMap>
 
     suspend fun getSpotDetail(spotId: Int): Result<SpotDetail>
 

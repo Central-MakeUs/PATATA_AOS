@@ -7,6 +7,7 @@ import com.cmc.data.feature.spot.model.CreateSpotResponseDto
 import com.cmc.data.feature.spot.model.ReviewResponseDto
 import com.cmc.data.feature.spot.model.SearchSpotsResponseDto
 import com.cmc.data.feature.spot.model.SpotDetailResponseDto
+import com.cmc.data.feature.spot.model.SpotWithMapResponseDto
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
@@ -38,6 +39,29 @@ interface SpotApiService {
         @Query("longitude") longitude: Double,
         @Query("sortBy") sortBy: String
     ): ApiResponse<SearchSpotsResponseDto>
+
+    @GET("map/in-bound")
+    suspend fun getCategorySpotsWithMap(
+        @Query("categoryId") categoryId: Int?,
+        @Query("minLatitude") minLatitude: Double,
+        @Query("minLongitude") minLongitude: Double,
+        @Query("maxLatitude") maxLatitude: Double,
+        @Query("maxLongitude") maxLongitude: Double,
+        @Query("userLatitude") userLatitude: Double,
+        @Query("userLongitude") userLongitude: Double,
+        @Query("withSearch") withSearch: Boolean,
+    ): ApiResponse<List<SpotWithMapResponseDto>>
+
+    @GET("map/search")
+    suspend fun getSearchSpotsWithMap(
+        @Query("spotName") spotName: String,
+        @Query("minLatitude") minLatitude: Double,
+        @Query("minLongitude") minLongitude: Double,
+        @Query("maxLatitude") maxLatitude: Double,
+        @Query("maxLongitude") maxLongitude: Double,
+        @Query("userLatitude") userLatitude: Double,
+        @Query("userLongitude") userLongitude: Double,
+    ): ApiResponse<SpotWithMapResponseDto>
 
     @GET("spot/{spotId}")
     suspend fun getSpotDetail(
