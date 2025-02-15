@@ -44,6 +44,7 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
 
     private fun updateUI(state: SearchState) {
         updateSortText(state.sortType.text)
+        state.spotCount.toString().also { binding.tvSpotResultCount.text = it }
 
         viewLifecycleOwner.lifecycleScope.launch {
             spotThumbnailAdapter.submitData(state.results)

@@ -13,12 +13,14 @@ class GetSearchSpotsUseCase @Inject constructor(
         latitude: Double,
         longitude: Double,
         sortBy: String,
+        totalCountCallBack: (Int) -> Unit,
     ): PaginatedResponse<SpotWithDistance> {
         return spotRepository.getPaginatedSearchSpots(
             keyword = keyword,
             latitude = latitude,
             longitude = longitude,
             sortBy = sortBy,
+            totalCountCallBack = totalCountCallBack
         )
     }
 }

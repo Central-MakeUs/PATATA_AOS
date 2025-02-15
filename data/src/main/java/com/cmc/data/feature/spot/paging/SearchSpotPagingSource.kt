@@ -11,7 +11,8 @@ class SearchSpotPagingSource(
     private val keyword: String,
     private val latitude: Double,
     private val longitude: Double,
-    private val sortBy: String
+    private val sortBy: String,
+    private val callBack: (Int) -> Unit,
 ) : PagingSource<Int, SpotWithDistance>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SpotWithDistance> {
@@ -29,6 +30,8 @@ class SearchSpotPagingSource(
 
             val nextPage = if (result.currentPage < result.totalPages - 1) result.currentPage + 1 else null
             val prevPage = if (result.currentPage == 0) null else result.currentPage - 1
+
+            callBack(result.totalCount)
 
             LoadResult.Page(
                 data = result.items,

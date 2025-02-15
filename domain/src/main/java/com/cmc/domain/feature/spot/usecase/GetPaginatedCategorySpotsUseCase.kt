@@ -13,12 +13,14 @@ class GetPaginatedCategorySpotsUseCase @Inject constructor(
         latitude: Double,
         longitude: Double,
         sortBy: String,
+        totalCountCallBack: (Int) -> Unit,
     ): PaginatedResponse<SpotWithStatus> {
         return spotRepository.getPaginatedCategorySpots(
             categoryId = categoryId,
             latitude = latitude,
             longitude = longitude,
             sortBy = sortBy,
+            totalCountCallBack = totalCountCallBack
         )
     }
 }

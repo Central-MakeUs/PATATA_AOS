@@ -14,6 +14,7 @@ interface SpotRepository {
         latitude: Double,
         longitude: Double,
         sortBy: String,
+        totalCountCallBack: (Int) -> Unit,
     ): PaginatedResponse<SpotWithStatus>
 
     suspend fun getCategorySpots(
@@ -28,6 +29,7 @@ interface SpotRepository {
         latitude: Double,
         longitude: Double,
         sortBy: String,
+        totalCountCallBack: (Int) -> Unit,
     ): PaginatedResponse<SpotWithDistance>
 
     suspend fun getSpotDetail(spotId: Int): Result<SpotDetail>

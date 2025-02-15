@@ -9,10 +9,10 @@ import androidx.exifinterface.media.ExifInterface
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.cmc.data.base.apiRequestCatching
-import com.cmc.data.feature.spot.paging.CategorySpotPagingSource
 import com.cmc.data.feature.spot.model.CreateReviewRequest
 import com.cmc.data.feature.spot.model.toDomain
 import com.cmc.data.feature.spot.model.toListDomain
+import com.cmc.data.feature.spot.paging.CategorySpotPagingSource
 import com.cmc.data.feature.spot.paging.SearchSpotPagingSource
 import com.cmc.data.feature.spot.remote.SpotApiService
 import com.cmc.domain.base.exception.AppInternalException
@@ -42,7 +42,8 @@ class SpotRepositoryImpl @Inject constructor(
         categoryId: Int,
         latitude: Double,
         longitude: Double,
-        sortBy: String
+        sortBy: String,
+        totalCountCallBack: (Int) -> Unit,
     ): PaginatedResponse<SpotWithStatus> {
         return Pager(
             config = PagingConfig(
@@ -50,7 +51,9 @@ class SpotRepositoryImpl @Inject constructor(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                CategorySpotPagingSource(spotApiService, categoryId, latitude, longitude, sortBy)
+                CategorySpotPagingSource(spotApiService, categoryId, latitude, longitude, sortBy) { count ->
+                    totalCountCallBack(count)
+                }
             }
         ).flow
     }
@@ -77,7 +80,8 @@ class SpotRepositoryImpl @Inject constructor(
         keyword: String,
         latitude: Double,
         longitude: Double,
-        sortBy: String
+        sortBy: String,
+        totalCountCallBack: (Int) -> Unit,
     ): PaginatedResponse<SpotWithDistance> {
         return Pager(
             config = PagingConfig(
@@ -85,7 +89,9 @@ class SpotRepositoryImpl @Inject constructor(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                SearchSpotPagingSource(spotApiService, keyword, latitude, longitude, sortBy)
+                SearchSpotPagingSource(spotApiService, keyword, latitude, longitude, sortBy) { count ->
+                    totalCountCallBack(count)
+                }
             }
         ).flow
     }

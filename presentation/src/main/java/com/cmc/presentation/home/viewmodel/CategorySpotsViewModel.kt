@@ -107,7 +107,6 @@ class CategorySpotsViewModel @Inject constructor(
                     isLoading = isLoading,
                     isEmpty = isNothing,
                     isError = isError,
-                    spotCount = adapter.itemCount
                 )
             }
         }
@@ -141,20 +140,25 @@ class CategorySpotsViewModel @Inject constructor(
         location: Location,
         sortType: CategorySortType,
         ) {
-        getPaginatedCategorySpotsUseCase.invoke(
-            categoryId = category.id,
-            latitude = location.latitude,
-            longitude = location.longitude,
-            sortBy = sortType.name
-        ).cachedIn(viewModelScope)
-            .map { pagingData -> pagingData.map { data -> data.toUiModel() }}
-            .collectLatest { data ->
-                _state.update {
-                    it.copy(
-                        categorySpots = data
-                    )
+            getPaginatedCategorySpotsUseCase.invoke(
+                categoryId = category.id,
+                latitude = location.latitude,
+                longitude = location.longitude,
+                sortBy = sortType.name,
+                totalCountCallBack = { count ->
+                    _state.update {
+                        it.copy(spotCount = count)
+                    }
                 }
-            }
+            ).cachedIn(viewModelScope)
+                .map { pagingData -> pagingData.map { data -> data.toUiModel() }}
+                .collectLatest { data ->
+                    _state.update {
+                        it.copy(
+                            categorySpots = data
+                        )
+                    }
+                }
     }
 
     private fun sendSideEffect(effect: CategorySpotsSideEffect) {
@@ -168,7 +172,7 @@ class CategorySpotsViewModel @Inject constructor(
         var isEmpty: Boolean = true,
         var isError: Boolean = false,
         var categorySpots: PagingData<SpotWithStatusUiModel> = PagingData.empty(),
-        var spotCount: Int= 0,
+        var spotCount: Int = 0,
         var selectedCategoryTab: SpotCategory = SpotCategory.ALL,
         var sortType: CategorySortType = CategorySortType.getDefault(),
     )
