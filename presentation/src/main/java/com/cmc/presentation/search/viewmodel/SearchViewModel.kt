@@ -169,8 +169,21 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateSearchSpots(keyword: String, location: Location, sortType: CategorySortType) {
-        getSearchSpotsUseCase.invoke(keyword, location.latitude, location.longitude, sortType.name)
+    private suspend fun updateSearchSpots(
+        keyword: String,
+        location: Location,
+        sortType: CategorySortType
+    ) {
+        getSearchSpotsUseCase.invoke(
+            keyword = keyword,
+            latitude = location.latitude,
+            longitude = location.longitude,
+            sortBy = sortType.name,
+            totalCountCallBack = { count ->
+                _state.update {
+                    it.copy(spotCount = count)
+                }
+            })
             .cachedIn(viewModelScope)
             .catch {
                 _state.update { it.copy(errorMessage = "오류 발생", searchStatus = SearchStatus.EMPTY) }
@@ -198,6 +211,7 @@ class SearchViewModel @Inject constructor(
         val query: String = "",
         val sortType: CategorySortType = CategorySortType.getDefault(),
         val results: PagingData<SpotWithDistanceUiModel> = PagingData.empty(),
+        val spotCount: Int = 0,
         val errorMessage: String? = null,
         val searchStatus: SearchStatus = SearchStatus.IDLE
     )

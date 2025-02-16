@@ -9,10 +9,10 @@ import androidx.exifinterface.media.ExifInterface
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.cmc.data.base.apiRequestCatching
-import com.cmc.data.feature.spot.paging.CategorySpotPagingSource
 import com.cmc.data.feature.spot.model.CreateReviewRequest
 import com.cmc.data.feature.spot.model.toDomain
 import com.cmc.data.feature.spot.model.toListDomain
+import com.cmc.data.feature.spot.paging.CategorySpotPagingSource
 import com.cmc.data.feature.spot.paging.SearchSpotPagingSource
 import com.cmc.data.feature.spot.remote.SpotApiService
 import com.cmc.domain.base.exception.AppInternalException
@@ -20,6 +20,7 @@ import com.cmc.domain.feature.spot.base.PaginatedResponse
 import com.cmc.domain.feature.spot.model.Review
 import com.cmc.domain.feature.spot.model.SpotDetail
 import com.cmc.domain.feature.spot.model.SpotWithDistance
+import com.cmc.domain.feature.spot.model.SpotWithMap
 import com.cmc.domain.feature.spot.model.SpotWithStatus
 import com.cmc.domain.feature.spot.repository.SpotRepository
 import com.cmc.domain.model.ImageMetadata
@@ -42,7 +43,8 @@ class SpotRepositoryImpl @Inject constructor(
         categoryId: Int,
         latitude: Double,
         longitude: Double,
-        sortBy: String
+        sortBy: String,
+        totalCountCallBack: (Int) -> Unit,
     ): PaginatedResponse<SpotWithStatus> {
         return Pager(
             config = PagingConfig(
@@ -50,7 +52,9 @@ class SpotRepositoryImpl @Inject constructor(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                CategorySpotPagingSource(spotApiService, categoryId, latitude, longitude, sortBy)
+                CategorySpotPagingSource(spotApiService, categoryId, latitude, longitude, sortBy) { count ->
+                    totalCountCallBack(count)
+                }
             }
         ).flow
     }
@@ -77,7 +81,8 @@ class SpotRepositoryImpl @Inject constructor(
         keyword: String,
         latitude: Double,
         longitude: Double,
-        sortBy: String
+        sortBy: String,
+        totalCountCallBack: (Int) -> Unit,
     ): PaginatedResponse<SpotWithDistance> {
         return Pager(
             config = PagingConfig(
@@ -85,9 +90,59 @@ class SpotRepositoryImpl @Inject constructor(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                SearchSpotPagingSource(spotApiService, keyword, latitude, longitude, sortBy)
+                SearchSpotPagingSource(spotApiService, keyword, latitude, longitude, sortBy) { count ->
+                    totalCountCallBack(count)
+                }
             }
         ).flow
+    }
+
+    override suspend fun getCategorySpotsWithMap(
+        categoryId: Int,
+        minLatitude: Double,
+        minLongitude: Double,
+        maxLatitude: Double,
+        maxLongitude: Double,
+        userLatitude: Double,
+        userLongitude: Double,
+        withSearch: Boolean,
+    ): Result<List<SpotWithMap>> {
+        return apiRequestCatching(
+            apiCall = { spotApiService.getCategorySpotsWithMap(
+                categoryId = if (categoryId == SpotCategory.ALL.id) null else categoryId,
+                minLatitude = minLatitude,
+                minLongitude = minLongitude,
+                maxLatitude = maxLatitude,
+                maxLongitude = maxLongitude,
+                userLatitude = userLatitude,
+                userLongitude = userLongitude,
+                withSearch = withSearch,
+            ) },
+            transform = { it.toListDomain() }
+        )
+    }
+
+    override suspend fun getSearchSpotsWithMap(
+        keyword: String,
+        minLatitude: Double,
+        minLongitude: Double,
+        maxLatitude: Double,
+        maxLongitude: Double,
+        userLatitude: Double,
+        userLongitude: Double
+    ): Result<SpotWithMap> {
+        return apiRequestCatching(
+            apiCall = { spotApiService.getSearchSpotsWithMap(
+                spotName = keyword,
+                minLatitude = minLatitude,
+                minLongitude = minLongitude,
+                maxLatitude = maxLatitude,
+                maxLongitude = maxLongitude,
+                userLatitude = userLatitude,
+                userLongitude = userLongitude,
+            ) },
+            transform = { it.toDomain() }
+        )
     }
 
     override suspend fun getSpotDetail(spotId: Int): Result<SpotDetail> {

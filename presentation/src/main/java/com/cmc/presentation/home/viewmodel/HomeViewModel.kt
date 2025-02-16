@@ -2,7 +2,6 @@ package com.cmc.presentation.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.map
 import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LATITUDE
 import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LONGITUDE
 import com.cmc.domain.feature.location.GetCurrentLocationUseCase

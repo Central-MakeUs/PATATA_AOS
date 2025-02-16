@@ -1,5 +1,6 @@
 package com.cmc.data.feature.spot.paging
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.cmc.data.feature.spot.model.toDomain
@@ -12,7 +13,8 @@ class CategorySpotPagingSource(
     private val categoryId: Int,
     private val latitude: Double,
     private val longitude: Double,
-    private val sortBy: String
+    private val sortBy: String,
+    private val callBack: suspend (totalCount: Int) -> Unit,
 ) : PagingSource<Int, SpotWithStatus>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SpotWithStatus> {
@@ -31,6 +33,8 @@ class CategorySpotPagingSource(
 
             val nextPage = if (result.currentPage < result.totalPages - 1) result.currentPage + 1 else null
             val prevPage = if (result.currentPage == 0) null else result.currentPage - 1
+
+            callBack(result.totalCount)
 
             LoadResult.Page(
                 data = result.items,
