@@ -5,15 +5,16 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.cmc.common.adapter.GridSpaceItemDecoration
 import com.cmc.common.base.BaseFragment
+import com.cmc.common.base.GlobalNavigation
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentMyBinding
 import com.cmc.presentation.my.adapter.MyRegisteredSpotAdapter
 import com.cmc.presentation.my.viewmodel.MyViewModel
+import com.cmc.presentation.my.viewmodel.MyViewModel.MySideEffect
+import com.cmc.presentation.my.viewmodel.MyViewModel.MyState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import com.cmc.presentation.my.viewmodel.MyViewModel.MyState
-import com.cmc.presentation.my.viewmodel.MyViewModel.MySideEffect
 
 @AndroidEntryPoint
 class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
@@ -39,6 +40,7 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
     override fun initView() {
         setAppBar()
         setRecyclerView()
+        setButton()
     }
 
     private fun updateUI(state: MyState) {
@@ -51,6 +53,7 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
             is MySideEffect.NavigateToSetting -> {
                 // TODO: 설정 화면으로 이동
             }
+            is MySideEffect.NavigateToCategorySpots -> { navigateCategorySpot(effect.categoryId) }
             is MySideEffect.ShowToast -> {}
         }
     }
@@ -72,6 +75,15 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
             adapter = myRegisteredSpotAdapter
             addItemDecoration(GridSpaceItemDecoration(SPAN_COUNT, GRID_SPACE))
         }
+    }
+    private fun setButton() {
+        binding.layoutExploreSpotButton.setOnClickListener {
+            viewModel.onClickExploreSpotButton()
+        }
+    }
+
+    private fun navigateCategorySpot(categoryId: Int) {
+        (activity as GlobalNavigation).navigateCategorySpots(categoryId)
     }
 
     companion object {

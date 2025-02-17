@@ -10,7 +10,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:bodyType="title"
-            app:footButtonType="setting"
             app:appBarBackgroundStyle="white"
             app:layout_constraintTop_toTopOf="parent"/>
 
@@ -38,6 +37,7 @@
             app:layout_constraintEnd_toStartOf="@+id/tv_change_button"
             tools:text="가나다라마바사"/>
 
+        <!--
         <TextView
             android:id="@+id/tv_change_button"
             style="@style/subtitle_extra_small"
@@ -50,7 +50,7 @@
             app:layout_constraintStart_toEndOf="@+id/tv_nickname"
             app:layout_constraintBottom_toBottomOf="@+id/tv_nickname"
             app:layout_constraintEnd_toEndOf="parent"/>
-
+-->
         <TextView
             android:id="@+id/tv_email"
             style="@style/caption_medium"

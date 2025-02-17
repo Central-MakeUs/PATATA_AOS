@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.cmc.design.component.PatataAppBar.FooterType
+import com.cmc.domain.model.SpotCategory
 
 @HiltViewModel
 class ArchiveViewModel @Inject constructor() : ViewModel() {
@@ -46,6 +47,9 @@ class ArchiveViewModel @Inject constructor() : ViewModel() {
     }
     fun onClickSpotImage(spotId: Int) {
         sendSideEffect(ArchiveSideEffect.NavigateSpotDetail(spotId))
+    }
+    fun onClickExploreSpotButton() {
+        sendSideEffect(ArchiveSideEffect.NavigateToCategorySpots(SpotCategory.ALL.id))
     }
 
     fun tempDeleteImages(selectedImages: List<Int>) {
@@ -85,5 +89,6 @@ class ArchiveViewModel @Inject constructor() : ViewModel() {
         data class ShowDeleteImageDialog(val selectedImages: List<Int>) : ArchiveSideEffect()
         data class ShowSnackbar(val message: String) : ArchiveSideEffect()
         data class NavigateSpotDetail(val spotId: Int) : ArchiveSideEffect()
+        data class NavigateToCategorySpots(val categoryId: Int) : ArchiveSideEffect()
     }
 }

@@ -43,6 +43,7 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
     override fun initView() {
         setAppBar()
         setRecyclerView()
+        setButton()
     }
 
     private fun updateUI(state: ArchiveState) {
@@ -58,6 +59,7 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
             is ArchiveSideEffect.ShowDeleteImageDialog -> { showDeleteImageDialog(effect.selectedImages) }
             is ArchiveSideEffect.ShowSnackbar -> {}
             is ArchiveSideEffect.NavigateSpotDetail -> { navigateSpotDetail(effect.spotId) }
+            is ArchiveSideEffect.NavigateToCategorySpots -> { navigateCategorySpot(effect.categoryId) }
         }
     }
 
@@ -93,6 +95,11 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
             addItemDecoration(GridSpaceItemDecoration(SPAN_COUNT, GRID_SPACE))
         }
     }
+    private fun setButton() {
+        binding.layoutExploreSpotButton.setOnClickListener {
+            viewModel.onClickExploreSpotButton()
+        }
+    }
 
     private fun showDeleteImageDialog(images: List<Int>) {
         PatataAlert(requireContext())
@@ -105,7 +112,11 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
                 }
             }.show()
     }
+
     private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
+    private fun navigateCategorySpot(categoryId: Int) {
+        (activity as GlobalNavigation).navigateCategorySpots(categoryId)
+    }
 
     companion object {
         private const val SPAN_COUNT = 2
