@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/CategorySpotsFragment"
+    android:id="@+id/nav_category_spots">
+
+    <fragment
+        android:id="@+id/CategorySpotsFragment"
+        android:name="com.cmc.presentation.home.view.CategorySpotsFragment"
+        tools:layout="@layout/fragment_category_spots"/>
+
+</navigation>

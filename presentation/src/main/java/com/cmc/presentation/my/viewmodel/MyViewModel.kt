@@ -2,6 +2,7 @@ package com.cmc.presentation.my.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.domain.model.SpotCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,18 +22,19 @@ class MyViewModel @Inject constructor() : ViewModel() {
     private val _sideEffect = MutableSharedFlow<MySideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
-    fun getDumpData() {
-        val dumpData = List(41) { "https://source.unsplash.com/random/400x400?nature${(it % 6) + 1}" }
-        viewModelScope.launch {
-            _state.update {
-                it.copy(images = dumpData)
-            }
-        }
-    }
 
     fun onClickSettingButton() {
         viewModelScope.launch {
             _sideEffect.emit(MySideEffect.NavigateToSetting)
+        }
+    }
+    fun onClickExploreSpotButton() {
+        sendSideEffect(MySideEffect.NavigateToCategorySpots(SpotCategory.ALL.id))
+    }
+
+    private fun sendSideEffect(effect: MySideEffect) {
+        viewModelScope.launch {
+            _sideEffect.emit(effect)
         }
     }
 
@@ -42,6 +44,7 @@ class MyViewModel @Inject constructor() : ViewModel() {
 
     sealed class MySideEffect {
         data object NavigateToSetting : MySideEffect()
+        data class NavigateToCategorySpots(val categoryId: Int) : MySideEffect()
         data class ShowToast(val message: String) : MySideEffect()
     }
 }

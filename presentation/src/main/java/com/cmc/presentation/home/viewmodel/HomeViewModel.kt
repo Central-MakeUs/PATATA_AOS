@@ -48,7 +48,7 @@ class HomeViewModel @Inject constructor(
         _state.update {
             it.copy(selectedCategory = category)
         }
-        sendSideEffect(HomeSideEffect.NavigateCategorySpot(category))
+        sendSideEffect(HomeSideEffect.NavigateCategorySpot(category.id))
     }
     fun onClickCategoryTab(category: SpotCategory) {
         _state.update {
@@ -90,7 +90,7 @@ class HomeViewModel @Inject constructor(
     }
     fun onClickCategoryRecommendMoreButton() {
         viewModelScope.launch {
-            _sideEffect.emit(HomeSideEffect.NavigateCategorySpot(_state.value.selectedCategoryTab))
+            _sideEffect.emit(HomeSideEffect.NavigateCategorySpot(_state.value.selectedCategoryTab.id))
         }
     }
 
@@ -142,7 +142,7 @@ class HomeViewModel @Inject constructor(
 
     sealed class HomeSideEffect {
         data class NavigateSpotDetail(val spotId: Int): HomeSideEffect()
-        data class NavigateCategorySpot(val category: SpotCategory): HomeSideEffect()
+        data class NavigateCategorySpot(val categoryId: Int): HomeSideEffect()
         data object NavigateSearch: HomeSideEffect()
         data object NavigateTodayRecommendedSpot: HomeSideEffect()
     }

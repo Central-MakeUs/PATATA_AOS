@@ -15,6 +15,7 @@
     <include app:graph="@navigation/nav_login"/>
     <include app:graph="@navigation/nav_search"/>
     <include app:graph="@navigation/nav_spot_detail"/>
+    <include app:graph="@navigation/nav_category_spots"/>
 
     <action
         android:id="@+id/nav_onboarding"
@@ -43,5 +44,9 @@
         android:id="@+id/nav_spot_detail"
         app:destination="@+id/nav_spot_detail"
         app:popUpTo="@layout/fragment_spot_detail"/>
+
+    <action
+        android:id="@+id/nav_category_spots"
+        app:destination="@+id/nav_category_spots"/>
 
 </navigation>

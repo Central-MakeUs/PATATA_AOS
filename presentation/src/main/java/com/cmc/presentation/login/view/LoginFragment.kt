@@ -5,10 +5,8 @@ import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Intent
 import android.provider.Settings
-import android.util.Log
 import android.view.View
 import android.view.animation.AnticipateInterpolator
-import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
@@ -18,8 +16,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
+import com.cmc.design.component.PatataAlert
 import com.cmc.design.util.EaseOutBounceInterpolator
-import com.cmc.domain.base.exception.ApiException
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentLoginBinding
 import com.cmc.presentation.login.manager.LoginManager
@@ -65,10 +63,18 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
     }
 
     private fun showGoogleAccountRegistrationPrompt() {
-        Toast.makeText(requireContext(), "구글 계정을 등록해주세요.", Toast.LENGTH_SHORT).show()
-        val intent = Intent(Settings.ACTION_ADD_ACCOUNT)
-        intent.putExtra(Settings.EXTRA_ACCOUNT_TYPES, arrayOf("com.google"))
-        startActivity(intent)
+        PatataAlert(requireContext())
+            .title("구글 계정이 등록되어 있지 않습니다.")
+            .content("Patata 앱에 로그인 하기 위해서는 구글 계정 등록이 필요합니다. 계정을 추가해주세요.")
+            .multiButton {
+                leftButton(getString(R.string.cancel)) { }
+                rightButton(getString(R.string.confirm)) {
+                    val intent = Intent(Settings.ACTION_ADD_ACCOUNT).apply {
+                        putExtra(Settings.EXTRA_ACCOUNT_TYPES, arrayOf("com.google"))
+                    }
+                    startActivity(intent)
+                }
+            }.show()
     }
     private val startForResult: ActivityResultLauncher<IntentSenderRequest> =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->
@@ -89,15 +95,16 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
         binding.layoutGoogleLogin.setOnClickListener {
             repeatWhenUiStarted {
                 try {
+                    val pendingIntent = loginManager.signInIntent(requireActivity())
                     startForResult.launch(
-                        IntentSenderRequest.Builder(loginManager.signInIntent(requireActivity()))
+                        IntentSenderRequest.Builder(pendingIntent)
                             .build()
                     )
-                } catch (e: ApiException) {
-                    Log.e("Login", "ApiException $e")
+                } catch (e: com.google.android.gms.common.api.ApiException) {
+                    e.stackTrace
                     showGoogleAccountRegistrationPrompt()
                 } catch (e: Exception) {
-                    Log.e("Login", "setLoginButton Exception $e")
+                    e.stackTrace
                 }
             }
         }

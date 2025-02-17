@@ -11,7 +11,7 @@
         tools:layout="@layout/fragment_around_me">
 
         <action
-            android:id="@+id/navigate_select_location"
+            android:id="@+id/navigate_around_me_to_select_location"
             app:destination="@id/SelectLocationFragment"/>
 
         <action
@@ -33,6 +33,9 @@
         android:id="@+id/SearchResultMapFragment"
         android:name="com.cmc.presentation.map.view.SearchResultMapFragment"
         tools:layout="@layout/fragment_search_result_map">
+        <action
+            android:id="@+id/navigate_search_result_map_to_select_location"
+            app:destination="@id/SelectLocationFragment"/>
 
         <action
             android:id="@+id/navigate_search_result_map_to_search_input"

@@ -4,13 +4,16 @@ import android.os.Bundle
 import androidx.fragment.app.viewModels
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.constants.NavigationKeys
+import com.cmc.domain.feature.location.Location
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentSelectLocationBinding
 import com.cmc.presentation.map.manager.MarkerManager
 import com.cmc.presentation.map.viewmodel.SelectLocationViewModel
 import com.cmc.presentation.map.viewmodel.SelectLocationViewModel.SelectLocationSideEffect
 import com.cmc.presentation.map.viewmodel.SelectLocationViewModel.SelectLocationState
+import com.cmc.presentation.util.toLatLng
 import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.Projection
@@ -42,6 +45,11 @@ class SelectLocationFragment: BaseFragment<FragmentSelectLocationBinding>(R.layo
         }
     }
     override fun initView() {
+        arguments?.let {
+            val latitude = it.getDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE)
+            val longitude = it.getDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE)
+            viewModel.initCurrentTargetLocation(Location(latitude, longitude))
+        }
         setMap()
         setAppBar()
         seCompleteButtonListener()
@@ -61,10 +69,11 @@ class SelectLocationFragment: BaseFragment<FragmentSelectLocationBinding>(R.layo
             is SelectLocationSideEffect.NavigateToAddSpot -> {
                 navigate(R.id.navigate_add_spot, Bundle().apply {
                     putString(NavigationKeys.AddSpot.ARGUMENT_ADDRESS_NAME, effect.addressName)
-                    putDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE, effect.latLng.latitude)
-                    putDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE, effect.latLng.longitude)
+                    putDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE, effect.location.latitude)
+                    putDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE, effect.location.longitude)
                 })
             }
+            is SelectLocationSideEffect.UpdateCurrentLocation -> { moveCameraPosition(effect.location) }
         }
     }
 
@@ -84,6 +93,8 @@ class SelectLocationFragment: BaseFragment<FragmentSelectLocationBinding>(R.layo
         naverMap = map
         markerManager = MarkerManager(naverMap)
 
+        viewModel.initCameraPosition()
+
         with(naverMap) {
             uiSettings.apply {
                 isZoomControlEnabled = false
@@ -94,9 +105,7 @@ class SelectLocationFragment: BaseFragment<FragmentSelectLocationBinding>(R.layo
             setTargetPointViewPosition(cameraPosition.target, projection)
 
             addOnCameraIdleListener {
-                viewModel.changeCurrentTargetLocation(
-                    naverMap.cameraPosition.target
-                )
+                viewModel.changeCurrentTargetLocation(naverMap.cameraPosition.target)
             }
         }
     }
@@ -109,5 +118,8 @@ class SelectLocationFragment: BaseFragment<FragmentSelectLocationBinding>(R.layo
             y = screenPosition.y - height + binding.selectLocationAppbar.height
         }
     }
-
+    private fun moveCameraPosition(location: Location) {
+        val cameraUpdate = CameraUpdate.scrollTo(location.toLatLng())
+        naverMap.moveCamera(cameraUpdate)
+    }
 }

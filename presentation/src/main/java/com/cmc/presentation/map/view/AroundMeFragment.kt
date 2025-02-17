@@ -77,8 +77,8 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     private fun handleEffect(effect: AroundMeSideEffect) {
         when (effect) {
             is AroundMeSideEffect.RequestLocationPermission -> { checkLocationRequest() }
-            is AroundMeSideEffect.NavigateAddLocation -> { navigateAddLocation() }
-            is AroundMeSideEffect.NavigateSearch -> { navigateSearch(effect.targetLocation) }
+            is AroundMeSideEffect.NavigateAddLocation -> { navigateAddLocation(effect.location) }
+            is AroundMeSideEffect.NavigateSearch -> { navigateSearch(effect.location) }
             is AroundMeSideEffect.UpdateCurrentLocation -> { moveCameraPosition(effect.location) }
         }
     }
@@ -111,7 +111,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     }
     private fun setButton() {
         with(binding) {
-            ivAddLocation.setOnClickListener { viewModel.onClickAddLocationButton() }
+            ivAddLocation.setOnClickListener { viewModel.onClickAddLocationButton(naverMap.cameraPosition.target) }
             ivCurrentLocation.setOnClickListener { viewModel.getCurrentLocation() }
             layoutExploreThisArea.setOnClickListener { viewModel.onClickExploreThisArea() }
         }
@@ -176,11 +176,16 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
             }.show()
     }
 
-    private fun navigateAddLocation() { navigate(R.id.navigate_select_location) }
-    private fun navigateSearch(targetLocation: LatLng) {
+    private fun navigateAddLocation(location: Location) {
+        navigate(R.id.navigate_around_me_to_select_location, Bundle().apply {
+            putDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE, location.latitude)
+            putDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE, location.longitude)
+        })
+    }
+    private fun navigateSearch(location: Location) {
         navigate(R.id.navigate_around_me_to_search_input, Bundle().apply {
-            putDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE, targetLocation.latitude)
-            putDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE, targetLocation.longitude)
+            putDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE, location.latitude)
+            putDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE, location.longitude)
         })
     }
 

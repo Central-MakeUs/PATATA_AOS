@@ -66,7 +66,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             is HomeSideEffect.NavigateTodayRecommendedSpot -> { navigateTodaySpotRecommended() }
             is HomeSideEffect.NavigateSpotDetail -> { navigateSpotDetail(effect.spotId) }
             is HomeSideEffect.NavigateSearch -> { navigateSearch() }
-            is HomeSideEffect.NavigateCategorySpot -> {  navigateCategorySpot(effect.category) }
+            is HomeSideEffect.NavigateCategorySpot -> {  navigateCategorySpot(effect.categoryId) }
         }
     }
 
@@ -210,9 +210,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private fun navigateTodaySpotRecommended() { navigate(R.id.navigate_today_spot_recommendation) }
     private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
     private fun navigateSearch() { (activity as GlobalNavigation).navigateSearch() }
-    private fun navigateCategorySpot(category: SpotCategory) {
-        navigate(R.id.navigate_category_spots, Bundle().apply {
-            putInt(NavigationKeys.Category.ARGUMENT_CATEGORY_ID, category.id)
-        })
+    private fun navigateCategorySpot(categoryId: Int) {
+        (activity as GlobalNavigation).navigateCategorySpots(categoryId)
     }
 }
