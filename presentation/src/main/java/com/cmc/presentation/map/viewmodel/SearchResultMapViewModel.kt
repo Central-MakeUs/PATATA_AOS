@@ -1,5 +1,6 @@
 package com.cmc.presentation.map.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LATITUDE
@@ -71,19 +72,19 @@ class SearchResultMapViewModel @Inject constructor(
             val keyword = state.value.keyword
             getCurrentLocationUseCase.invoke()
                 .onSuccess { location ->
-                    getSpot(keyword = keyword, userLocation = location)
+                    getSpot(keyword = keyword, userLocation = location, needMove = true)
                 }
                 .onFailure { e ->
                     when (e) {
                         is SecurityException -> {
                             val location = Location(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
-                            getSpot(keyword = keyword, userLocation = location)
+                            getSpot(keyword = keyword, userLocation = location, needMove = true)
                         }
                     }
                 }
         }
     }
-    fun searchSpotByMapLocation() {
+    private fun searchSpotByMapLocation() {
         viewModelScope.launch {
             val keyword = state.value.keyword
             val mapScreenLocation = state.value.mapScreenLocation
@@ -101,15 +102,20 @@ class SearchResultMapViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getSpot(keyword: String, mapScreenLocation: MapScreenLocation? = null, userLocation: Location) {
+    private suspend fun getSpot(
+        keyword: String,
+        mapScreenLocation: MapScreenLocation? = null,
+        userLocation: Location,
+        needMove: Boolean = false,
+    ) {
         getSearchSpotsWithMapUseCase.invoke(
             keyword = keyword,
-            mapScreenLocation?.minLatitude,
-            mapScreenLocation?.minLongitude,
-            mapScreenLocation?.maxLongitude,
-            mapScreenLocation?.maxLongitude,
-            userLocation.latitude,
-            userLocation.longitude,
+            minLatitude = mapScreenLocation?.minLatitude,
+            minLongitude = mapScreenLocation?.minLongitude,
+            maxLatitude = mapScreenLocation?.maxLatitude,
+            maxLongitude = mapScreenLocation?.maxLongitude,
+            userLatitude = userLocation.latitude,
+            userLongitude = userLocation.longitude,
         ).onSuccess { spotWithMap ->
             val spot = spotWithMap.toUiModel()
             _state.update {
@@ -119,8 +125,16 @@ class SearchResultMapViewModel @Inject constructor(
                     nearBySpotFetchEnabled = true,
                 )
             }
-
-            sendSideEffect(SearchResultMapSideEffect.UpdateCurrentLocation(Location(spot.latitude, spot.longitude)))
+            if (needMove) {
+                sendSideEffect(
+                    SearchResultMapSideEffect.UpdateCurrentLocation(
+                        Location(
+                            spot.latitude,
+                            spot.longitude
+                        )
+                    )
+                )
+            }
         }.onFailure { e ->
             when (e) {
                 is ApiException.NotFound -> {
@@ -162,7 +176,7 @@ class SearchResultMapViewModel @Inject constructor(
             withSearch = withSearch
         ).onSuccess { spots ->
             val searchSpotList = state.value.searchSpot
-            val newSpots = searchSpotList?.let { listOf(it) + spots.toListUiModel() }
+            val newSpots = searchSpotList?.let { listOf(it) + spots.toListUiModel() }?.distinct()
 
             _state.update {
                 it.copy(
@@ -186,6 +200,9 @@ class SearchResultMapViewModel @Inject constructor(
 
     fun onClickSearchBar(targetLocation: LatLng) {
         sendSideEffect(SearchResultMapSideEffect.NavigateSearch(targetLocation.toLocation()))
+    }
+    fun onClickCancelButton() {
+        sendSideEffect(SearchResultMapSideEffect.NavigateAroundMe)
     }
     fun onClickCategoryTab(position: Int) {
         _state.update {
@@ -242,9 +259,10 @@ class SearchResultMapViewModel @Inject constructor(
 
     sealed class SearchResultMapSideEffect {
         data object RequestLocationPermission : SearchResultMapSideEffect()
+        data object NavigateAroundMe: SearchResultMapSideEffect()
+        data class UpdateCurrentLocation(val location: Location): SearchResultMapSideEffect()
+        data class ShowNoResultAlert(val message: String): SearchResultMapSideEffect()
         data class NavigateAddLocation(val location: Location): SearchResultMapSideEffect()
         data class NavigateSearch(val location: Location): SearchResultMapSideEffect()
-        class UpdateCurrentLocation(val location: Location): SearchResultMapSideEffect()
-        class ShowNoResultAlert(val message: String): SearchResultMapSideEffect()
     }
 }

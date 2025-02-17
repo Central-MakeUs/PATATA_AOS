@@ -75,6 +75,7 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
     }
     private var previousState: SearchResultMapState? = null
     private fun updateUI(state: SearchResultMapState) {
+        Log.d("testLog", "state : ${state.spots}")
         if (previousState?.spots != state.spots && ::markerManager.isInitialized) {
             markerManager.updateMarkersWithData(state.spots)
         }
@@ -96,12 +97,14 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
             is SearchResultMapSideEffect.NavigateSearch -> { navigateSearchInput(effect.location) }
             is SearchResultMapSideEffect.UpdateCurrentLocation -> { moveCameraPosition(effect.location) }
             is SearchResultMapSideEffect.ShowNoResultAlert -> { showSnackBar(effect.message) }
+            is SearchResultMapSideEffect.NavigateAroundMe -> { navigateAroundMe() }
         }
     }
 
     private fun setAppBar() {
         binding.appbar.setupAppBar(
             onBodyClick = { viewModel.onClickSearchBar(naverMap.cameraPosition.target) },
+            onFootButtonClick = { viewModel.onClickCancelButton() },
             searchBarDisable = true
         )
     }
@@ -204,6 +207,7 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
             putDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE, location.longitude)
         })
     }
+    private fun navigateAroundMe() { navigate(R.id.navigate_search_result_map_to_around_me) }
 
     private fun checkLocationRequest() {
         val permissions = arrayOf(

@@ -44,8 +44,8 @@
 
         <action
             android:id="@+id/navigate_search_result_map_to_around_me"
-            app:destination="@+id/SearchInputFragment"
-            app:popUpTo="@id/SearchInputFragment"
+            app:destination="@+id/AroundMeFragment"
+            app:popUpTo="@id/AroundMeFragment"
             app:popUpToInclusive="true"/>
     </fragment>
 
