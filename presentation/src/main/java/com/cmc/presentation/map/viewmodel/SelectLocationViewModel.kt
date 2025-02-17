@@ -6,6 +6,8 @@ import android.location.Geocoder
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.domain.feature.location.Location
+import com.cmc.presentation.util.toLocation
 import com.naver.maps.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -41,23 +43,30 @@ class SelectLocationViewModel @Inject constructor(
         }
     }
 
-    fun changeCurrentTargetLocation(latLng : LatLng) {
-        _state.update {
-            it.copy(currentTargetLatLng = latLng)
-        }
-        changeCurrentTargetAddress(latLng)
+    fun initCurrentTargetLocation(location: Location) {
+        _state.update { it.copy(currentTargetLatLng = location) }
+    }
+    fun initCameraPosition() {
+        sendSideEffect(SelectLocationSideEffect.UpdateCurrentLocation(state.value.currentTargetLatLng))
     }
 
-    private fun changeCurrentTargetAddress(latLng: LatLng) {
+    fun changeCurrentTargetLocation(targetLocation : LatLng) {
+        _state.update {
+            it.copy(currentTargetLatLng = targetLocation.toLocation())
+        }
+        changeCurrentTargetAddress(targetLocation.toLocation())
+    }
+
+    private fun changeCurrentTargetAddress(location: Location) {
         val geocoder = Geocoder(context, Locale.KOREAN)
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1) { addresses ->
+                geocoder.getFromLocation(location.latitude, location.longitude, 1) { addresses ->
                     updateAddressState(addresses)
                 }
             } else {
-                val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+                val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
                 updateAddressState(addresses)
             }
         } catch (e: IOException) {
@@ -74,13 +83,20 @@ class SelectLocationViewModel @Inject constructor(
         }
     }
 
+    private fun sendSideEffect(effect: SelectLocationSideEffect) {
+        viewModelScope.launch {
+            _sideEffect.emit(effect)
+        }
+    }
+
     data class SelectLocationState(
         val isLoading: Boolean = false,
         var currentTargetAddress: String = "",
-        val currentTargetLatLng: LatLng = LatLng(0.0, 0.0)
+        val currentTargetLatLng: Location = Location(0.0, 0.0)
     )
 
     sealed class SelectLocationSideEffect {
-        data class NavigateToAddSpot(val addressName: String, val latLng: LatLng): SelectLocationSideEffect()
+        data class NavigateToAddSpot(val addressName: String, val location: Location): SelectLocationSideEffect()
+        data class UpdateCurrentLocation(val location: Location): SelectLocationSideEffect()
     }
 }

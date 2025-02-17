@@ -1,5 +1,6 @@
 package com.cmc.presentation.map.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LATITUDE
@@ -11,6 +12,7 @@ import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.map.model.MapScreenLocation
 import com.cmc.presentation.map.model.SpotWithMapUiModel
 import com.cmc.presentation.map.model.toListUiModel
+import com.cmc.presentation.util.toLocation
 import com.naver.maps.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -69,7 +71,7 @@ class AroundMeViewModel @Inject constructor(
     }
 
     fun onClickSearchBar(targetLocation: LatLng) {
-        sendSideEffect(AroundMeSideEffect.NavigateSearch(targetLocation))
+        sendSideEffect(AroundMeSideEffect.NavigateSearch(targetLocation.toLocation()))
     }
     fun onClickCategoryTab(position: Int) {
         _state.update {
@@ -81,8 +83,8 @@ class AroundMeViewModel @Inject constructor(
             it.copy(selectedTabPosition = SpotCategory.ALL.id)
         }
     }
-    fun onClickAddLocationButton() {
-        sendSideEffect(AroundMeSideEffect.NavigateAddLocation)
+    fun onClickAddLocationButton(targetLocation: LatLng) {
+        sendSideEffect(AroundMeSideEffect.NavigateAddLocation(targetLocation.toLocation()))
     }
 
 
@@ -147,8 +149,8 @@ class AroundMeViewModel @Inject constructor(
 
     sealed class AroundMeSideEffect {
         data object RequestLocationPermission : AroundMeSideEffect()
-        data object NavigateAddLocation: AroundMeSideEffect()
-        data class NavigateSearch(val targetLocation: LatLng): AroundMeSideEffect()
-        class UpdateCurrentLocation(val location: Location): AroundMeSideEffect()
+        data class NavigateAddLocation(val location: Location): AroundMeSideEffect()
+        data class NavigateSearch(val location: Location): AroundMeSideEffect()
+        data class UpdateCurrentLocation(val location: Location): AroundMeSideEffect()
     }
 }
