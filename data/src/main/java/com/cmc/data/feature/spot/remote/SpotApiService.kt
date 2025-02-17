@@ -55,10 +55,10 @@ interface SpotApiService {
     @GET("map/search")
     suspend fun getSearchSpotsWithMap(
         @Query("spotName") spotName: String,
-        @Query("minLatitude") minLatitude: Double,
-        @Query("minLongitude") minLongitude: Double,
-        @Query("maxLatitude") maxLatitude: Double,
-        @Query("maxLongitude") maxLongitude: Double,
+        @Query("minLatitude") minLatitude: Double?,
+        @Query("minLongitude") minLongitude: Double?,
+        @Query("maxLatitude") maxLatitude: Double?,
+        @Query("maxLongitude") maxLongitude: Double?,
         @Query("userLatitude") userLatitude: Double,
         @Query("userLongitude") userLongitude: Double,
     ): ApiResponse<SpotWithMapResponseDto>

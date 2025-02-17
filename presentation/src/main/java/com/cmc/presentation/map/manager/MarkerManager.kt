@@ -1,5 +1,6 @@
 package com.cmc.presentation.map.manager
 
+import android.util.Log
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.model.SpotCategoryItem
 import com.cmc.presentation.map.model.SpotWithMapUiModel

@@ -46,10 +46,10 @@ interface SpotRepository {
 
     suspend fun getSearchSpotsWithMap(
         keyword: String,
-        minLatitude: Double,
-        minLongitude: Double,
-        maxLatitude: Double,
-        maxLongitude: Double,
+        minLatitude: Double?,
+        minLongitude: Double?,
+        maxLatitude: Double?,
+        maxLongitude: Double?,
         userLatitude: Double,
         userLongitude: Double,
     ): Result<SpotWithMap>

@@ -7,6 +7,10 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
+import android.view.Gravity
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity.RESULT_CANCELED
@@ -27,6 +31,7 @@ import com.cmc.presentation.map.viewmodel.SearchResultMapViewModel
 import com.cmc.presentation.map.viewmodel.SearchResultMapViewModel.SearchResultMapSideEffect
 import com.cmc.presentation.map.viewmodel.SearchResultMapViewModel.SearchResultMapState
 import com.cmc.presentation.model.SpotCategoryItem
+import com.google.android.material.snackbar.Snackbar
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapView
@@ -60,7 +65,7 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
             val keyword = it.getString(NavigationKeys.Search.ARGUMENT_KEYWORD)
 
             viewModel.initCurrentTargetLocation(Location(latitude, longitude))
-            keyword?.let { text -> binding.appbar.setSearchText(text) }
+            keyword?.let { text -> viewModel.setKeyword(text) }
         }
 
         setAppBar()
@@ -68,27 +73,29 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
         setCategory()
         setButton()
     }
-
+    private var previousState: SearchResultMapState? = null
     private fun updateUI(state: SearchResultMapState) {
-        state.results.let {
-            if (::markerManager.isInitialized) {
-                markerManager.updateMarkersWithData(it)
-            }
+        if (previousState?.spots != state.spots && ::markerManager.isInitialized) {
+            markerManager.updateMarkersWithData(state.spots)
         }
         if (state.selectedTabPosition != null && state.selectedTabPosition != binding.tabMapFilter.getSelectedTabPosition()) {
             binding.tabMapFilter.setSelectedTabPosition(state.selectedTabPosition)
         }
-
-        binding.layoutExploreThisArea.isVisible = state.exploreVisible
+        if (previousState?.keyword != state.keyword) {
+            binding.appbar.setSearchText(state.keyword)
+        }
+        if (previousState?.exploreVisible != state.exploreVisible) {
+            binding.layoutExploreThisArea.isVisible = state.exploreVisible
+        }
+        previousState = state
     }
     private fun handleSideEffect(effect: SearchResultMapSideEffect) {
         when (effect) {
             is SearchResultMapSideEffect.RequestLocationPermission -> {}
             is SearchResultMapSideEffect.NavigateAddLocation -> { navigateAddLocation(effect.location) }
-            is SearchResultMapSideEffect.MoveCameraTarget -> { moveCameraPosition(effect.location) }
             is SearchResultMapSideEffect.NavigateSearch -> { navigateSearchInput(effect.location) }
-            is SearchResultMapSideEffect.UpdateCurrentLocation -> {}
-
+            is SearchResultMapSideEffect.UpdateCurrentLocation -> { moveCameraPosition(effect.location) }
+            is SearchResultMapSideEffect.ShowNoResultAlert -> { showSnackBar(effect.message) }
         }
     }
 
@@ -130,7 +137,7 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
     override fun onMapReady(map: NaverMap) {
         naverMap = map
 
-        viewModel.initCameraPosition()
+        viewModel.searchSpotByKeyword()
 
         with(naverMap) {
             markerManager = MarkerManager(this@with)
@@ -226,4 +233,19 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
             showLocationPermissionDialog()
         }
     }
+
+    private fun showSnackBar(message: String) {
+        val snackbar = Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).apply {
+            setBackgroundTint(ContextCompat.getColor(requireContext(), com.cmc.design.R.color.gray_100))
+            setTextColor(ContextCompat.getColor(requireContext(), com.cmc.design.R.color.blue_20))
+        }
+
+        // 텍스트 중앙 정렬
+        val textView = snackbar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+        textView.textAlignment = View.TEXT_ALIGNMENT_CENTER
+        textView.gravity = Gravity.CENTER
+
+        snackbar.show()
+    }
+
 }

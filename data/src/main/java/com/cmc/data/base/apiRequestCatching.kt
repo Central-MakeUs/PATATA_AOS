@@ -25,7 +25,8 @@ suspend fun <T : Any, R> apiRequestCatching(
             successCallBack(Unit as T)
             Result.success(Unit as R)
         } else {
-            Result.failure(ApiException.ServerError(response.message))
+            val createException = mapErrorCodeToException(response.code, response.message)
+            Result.failure(createException)
         }
     }.getOrElse { exception ->
         when (exception) {
@@ -40,15 +41,21 @@ suspend fun <T : Any, R> apiRequestCatching(
 
 private fun createException(errorBody: String?): Exception {
     val errorResponse = GsonProvider.gson.fromJson(errorBody, ErrorResponse::class.java)
-    val createExceptionFunc = errorCodeMap[errorResponse.code] ?: { msg: String -> ApiException.ServerError(msg) }
-    return createExceptionFunc(errorResponse.message)
+    val createException = mapErrorCodeToException(errorResponse.code, errorResponse.message)
+    return createException
+}
+
+private fun mapErrorCodeToException(errorCode: String, message: String): ApiException {
+    return errorCodeMap[errorCode]?.invoke(message) ?: ApiException.ServerError(message)
 }
 
 private val errorCodeMap = mapOf(
     ApiCode.Auth.INVALID_GOOGLE_ID_TOKEN to { msg: String -> ApiException.NotFound(msg) },
     ApiCode.Auth.GOOGLE_ID_TOKEN_VERIFICATION_FAILED to { msg: String -> ApiException.Unauthorized(msg) },
-    ApiCode.Common.GENERIC_ERROR to { msg: String -> ApiException.BadRequest(msg) }
+    ApiCode.Common.GENERIC_ERROR to { msg: String -> ApiException.BadRequest(msg) },
+    ApiCode.Spot.SPOT_SEARCH_NO_RESULT to { msg: String -> ApiException.NotFound(msg) },
 )
+
 fun <R> Result<R>.asFlow(): Flow<Result<R>> {
     return flow {
         emit(this@asFlow)
