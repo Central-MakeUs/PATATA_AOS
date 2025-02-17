@@ -1,6 +1,5 @@
 package com.cmc.presentation.map.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LATITUDE

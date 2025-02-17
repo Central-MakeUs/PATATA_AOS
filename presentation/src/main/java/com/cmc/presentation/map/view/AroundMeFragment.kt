@@ -177,7 +177,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     }
 
     private fun navigateAddLocation(location: Location) {
-        navigate(R.id.navigate_select_location, Bundle().apply {
+        navigate(R.id.navigate_around_me_to_select_location, Bundle().apply {
             putDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE, location.latitude)
             putDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE, location.longitude)
         })

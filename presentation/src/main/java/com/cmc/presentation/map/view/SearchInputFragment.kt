@@ -8,11 +8,11 @@ import com.cmc.domain.feature.location.Location
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentSearchInputBinding
 import com.cmc.presentation.map.viewmodel.SearchInputViewModel
+import com.cmc.presentation.map.viewmodel.SearchInputViewModel.SearchInputSideEffect
+import com.cmc.presentation.map.viewmodel.SearchInputViewModel.SearchInputState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import com.cmc.presentation.map.viewmodel.SearchInputViewModel.SearchInputSideEffect
-import com.cmc.presentation.map.viewmodel.SearchInputViewModel.SearchInputState
 
 @AndroidEntryPoint
 class SearchInputFragment: BaseFragment<FragmentSearchInputBinding>(R.layout.fragment_search_input) {
@@ -61,7 +61,7 @@ class SearchInputFragment: BaseFragment<FragmentSearchInputBinding>(R.layout.fra
     private fun navigateSearchResultMap(keyword: String, location: Location) {
         navigate(R.id.navigate_search_input_to_search_result_map, Bundle().apply{
             putDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE, location.latitude)
-            putDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE, location.longitude)
+            putDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE, location.longitude)
             putString(NavigationKeys.Search.ARGUMENT_KEYWORD, keyword)
         })
     }
