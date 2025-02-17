@@ -64,7 +64,6 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
         }
     }
     private fun setRecyclerView() {
-//        viewModel.getDumpData()
         myRegisteredSpotAdapter = MyRegisteredSpotAdapter(
             onPhotoClick = {}
         )

@@ -23,17 +23,6 @@ class ArchiveViewModel @Inject constructor() : ViewModel() {
     private val _sideEffect = MutableSharedFlow<ArchiveSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
-    fun getDumpData() {
-        val dumpData = List(41) { it to "https://source.unsplash.com/random/400x400?nature${(it % 6) + 1}" }
-        viewModelScope.launch {
-            _state.update {
-                it.copy(
-                    images = dumpData,
-                    footerType = if (dumpData.isEmpty()) FooterType.NONE else it.footerType
-                )
-            }
-        }
-    }
 
     fun togglePhotoSelection(imageId: Int) {
         _state.update {

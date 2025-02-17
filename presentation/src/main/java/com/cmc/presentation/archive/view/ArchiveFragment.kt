@@ -75,8 +75,6 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
         }
     }
     private fun setRecyclerView() {
-        viewModel.getDumpData()
-
         archiveAdapter = ArchivePhotoAdapter(
             isSelectionMode = { viewModel.state.value.footerType == FooterType.DELETE },
             isSelected = { imageId -> viewModel.state.value.selectedImages.contains(imageId) },
@@ -84,9 +82,7 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
                 if (viewModel.state.value.footerType == FooterType.DELETE) {
                     viewModel.togglePhotoSelection(spotId)
                 } else {
-                    // TODO: API 데이터 반영 시, 넘겨 받은 spotId로 이동
-                    viewModel.onClickSpotImage(6)
-//                    viewModel.onClickSpotImage(spotId)
+                    viewModel.onClickSpotImage(spotId)
                 }
             }
         )
@@ -110,10 +106,6 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
             }.show()
     }
     private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
-
-    private fun getDumpData(): List<Pair<Int, String>> {
-        return List(41) { it to "https://source.unsplash.com/random/400x400?nature${(it % 6) + 1}" }
-    }
 
     companion object {
         private const val SPAN_COUNT = 2

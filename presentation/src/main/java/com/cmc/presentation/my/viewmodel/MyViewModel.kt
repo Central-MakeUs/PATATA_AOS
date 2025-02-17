@@ -21,14 +21,6 @@ class MyViewModel @Inject constructor() : ViewModel() {
     private val _sideEffect = MutableSharedFlow<MySideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
-    fun getDumpData() {
-        val dumpData = List(41) { "https://source.unsplash.com/random/400x400?nature${(it % 6) + 1}" }
-        viewModelScope.launch {
-            _state.update {
-                it.copy(images = dumpData)
-            }
-        }
-    }
 
     fun onClickSettingButton() {
         viewModelScope.launch {
