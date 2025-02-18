@@ -10,6 +10,7 @@ import com.cmc.domain.feature.location.GetCurrentLocationUseCase
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.feature.spot.usecase.GetCategorySpotsWithMapUseCase
 import com.cmc.domain.feature.spot.usecase.GetSearchSpotsWithMapUseCase
+import com.cmc.domain.feature.spot.usecase.ToggleSpotScrapUseCase
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.map.model.MapScreenLocation
 import com.cmc.presentation.map.model.SpotWithMapUiModel
@@ -36,6 +37,7 @@ class SearchResultMapViewModel @Inject constructor(
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
     private val getSearchSpotsWithMapUseCase: GetSearchSpotsWithMapUseCase,
     private val getCategorySpotsWithMapUseCase: GetCategorySpotsWithMapUseCase,
+    private val toggleSpotScrapUseCase: ToggleSpotScrapUseCase,
 ): ViewModel() {
 
     private val _state = MutableStateFlow(SearchResultMapState())
@@ -215,6 +217,14 @@ class SearchResultMapViewModel @Inject constructor(
     fun onClickAddLocationButton(targetLocation: LatLng) {
         sendSideEffect(SearchResultMapSideEffect.NavigateAddLocation(targetLocation.toLocation()))
     }
+    fun onClickMarker(spot: SpotWithMapUiModel) {
+        sendSideEffect(SearchResultMapSideEffect.ShowSpotBottomSheet(spot))
+    }
+    fun onClickSpotScrapButton(spotId: Int) {
+        viewModelScope.launch {
+            toggleSpotScrapUseCase.invoke(listOf(spotId))
+        }
+    }
 
     private fun observeStateChanges() {
         viewModelScope.launch {
@@ -264,5 +274,6 @@ class SearchResultMapViewModel @Inject constructor(
         data class ShowNoResultAlert(val message: String): SearchResultMapSideEffect()
         data class NavigateAddLocation(val location: Location): SearchResultMapSideEffect()
         data class NavigateSearch(val location: Location): SearchResultMapSideEffect()
+        data class ShowSpotBottomSheet(val spot: SpotWithMapUiModel): SearchResultMapSideEffect()
     }
 }

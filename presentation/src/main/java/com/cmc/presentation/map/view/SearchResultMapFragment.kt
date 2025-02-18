@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -17,20 +18,27 @@ import androidx.appcompat.app.AppCompatActivity.RESULT_CANCELED
 import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.core.view.marginBottom
 import androidx.fragment.app.viewModels
+import com.bumptech.glide.Glide
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.constants.NavigationKeys
+import com.cmc.common.util.DistanceFormatter
+import com.cmc.design.component.BottomSheetDialog
 import com.cmc.design.component.PatataAlert
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
+import com.cmc.presentation.databinding.ContentSheetMapSpotBinding
 import com.cmc.presentation.databinding.FragmentSearchResultMapBinding
 import com.cmc.presentation.map.manager.MarkerManager
 import com.cmc.presentation.map.model.MapScreenLocation
+import com.cmc.presentation.map.model.SpotWithMapUiModel
 import com.cmc.presentation.map.viewmodel.SearchResultMapViewModel
 import com.cmc.presentation.map.viewmodel.SearchResultMapViewModel.SearchResultMapSideEffect
 import com.cmc.presentation.map.viewmodel.SearchResultMapViewModel.SearchResultMapState
 import com.cmc.presentation.model.SpotCategoryItem
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
@@ -97,6 +105,7 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
             is SearchResultMapSideEffect.UpdateCurrentLocation -> { moveCameraPosition(effect.location) }
             is SearchResultMapSideEffect.ShowNoResultAlert -> { showSnackBar(effect.message) }
             is SearchResultMapSideEffect.NavigateAroundMe -> { navigateAroundMe() }
+            is SearchResultMapSideEffect.ShowSpotBottomSheet -> { showSpotBottomSheet(effect.spot) }
         }
     }
 
@@ -142,7 +151,7 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
         viewModel.searchSpotByKeyword()
 
         with(naverMap) {
-            markerManager = MarkerManager(this@with) {}
+            markerManager = MarkerManager(this@with) { spot -> viewModel.onClickMarker(spot) }
 
             uiSettings.apply {
                 isZoomControlEnabled = false
@@ -170,6 +179,21 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
             northEast.longitude
         )
     }
+    private fun updateButtonPositions(view: View, isDismiss: Boolean = false) {
+        val bottomSheetTop = view.top ?: return
+        val navigationTop = binding.viewMap.bottom
+        val positionY = if (bottomSheetTop >= navigationTop || isDismiss) navigationTop else bottomSheetTop
+
+        val addLocationY = positionY - binding.ivAddLocation.measuredHeight - binding.ivAddLocation.marginBottom
+        val currentLocationY = addLocationY - binding.ivCurrentLocation.measuredHeight - binding.ivCurrentLocation.marginBottom
+        val exploreThisAreaY = positionY - binding.layoutExploreThisArea.measuredHeight - binding.layoutExploreThisArea.marginBottom
+
+        binding.ivAddLocation.y = addLocationY.toFloat()
+        binding.ivCurrentLocation.y = currentLocationY.toFloat()
+        binding.layoutExploreThisArea.apply {
+            if(isVisible) y = exploreThisAreaY.toFloat()
+        }
+    }
     private fun moveCameraPosition(location: Location) {
         val latLng = LatLng(location.latitude, location.longitude)
         val cameraUpdate = CameraUpdate.scrollTo(latLng)
@@ -192,6 +216,38 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
                     Toast.makeText(requireContext(), "위치 권한이 꼭 필요합니다.", Toast.LENGTH_SHORT).show()
                 }
             }.show()
+    }
+    private fun showSpotBottomSheet(spot: SpotWithMapUiModel) {
+        val contentSheetMapSpot = ContentSheetMapSpotBinding.inflate(LayoutInflater.from(requireContext()))
+
+        BottomSheetDialog(requireContext(), false)
+            .bindBuilder(contentSheetMapSpot, false) { dialog ->
+                with(dialog) {
+                    setBottomSheetViewBind(spot)
+
+                    val bottomSheet = dialog.window?.decorView?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+
+                    dialog.setOnShowListener {
+                        bottomSheet?.let { updateButtonPositions(it)}
+                    }
+                    dialog.setOnDismissListener {
+                        bottomSheet?.let { updateButtonPositions(it, true)}
+                    }
+                    dialog.behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                            updateButtonPositions(bottomSheet)
+                        }
+                        override fun onStateChanged(bottomSheet: View, newState: Int) {
+                            when (newState) {
+                                BottomSheetBehavior.STATE_HIDDEN -> updateButtonPositions(bottomSheet)
+                                BottomSheetBehavior.STATE_EXPANDED -> updateButtonPositions(bottomSheet)
+                            }
+                        }
+                    })
+
+                    show()
+                }
+            }.setOutSideTouchable(requireActivity())
     }
 
     private fun navigateAddLocation(location: Location) {
@@ -249,6 +305,33 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
         textView.gravity = Gravity.CENTER
 
         snackbar.show()
+    }
+
+    private fun ContentSheetMapSpotBinding.setBottomSheetViewBind(spot: SpotWithMapUiModel) {
+        val category = SpotCategoryItem(SpotCategory.fromId(spot.categoryId))
+        tvRecommendLabel.isVisible = SpotCategory.isRecommended(spot.categoryId)
+        tvSpotTitle.text = spot.spotName
+        tvCategory.text = getString(category.getName())
+        category.getIcon()?.let { ivCategory.setImageResource(it) }
+        ivSpotArchive.isSelected = spot.isScraped
+        tvDistance.text = DistanceFormatter.formatDistance(spot.distance)
+        "${spot.address} ${spot.addressDetail}".also { tvSpotLocation.text = it }
+
+        layoutTagContainer.removeAllViews()
+        spot.tags.forEach { tag ->
+            val tagView = LayoutInflater.from(context).inflate(com.cmc.design.R.layout.view_tag_blue, layoutTagContainer, false)
+            tagView.findViewById<TextView>(com.cmc.design.R.id.tv_tag).text = tag
+            layoutTagContainer.addView(tagView)
+        }
+
+        Glide.with(this.root)
+            .load("")
+            .placeholder(com.cmc.design.R.drawable.img_sample)
+            .into(ivSpotImage)
+        ivSpotArchive.setOnClickListener {
+            viewModel.onClickSpotScrapButton(spot.spotId)
+            ivSpotArchive.isSelected = ivSpotArchive.isSelected.not()
+        }
     }
 
 }

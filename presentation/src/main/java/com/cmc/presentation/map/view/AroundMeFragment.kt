@@ -7,8 +7,9 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
+import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity.RESULT_CANCELED
 import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.core.view.marginBottom
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.cmc.common.base.BaseFragment
@@ -23,6 +25,7 @@ import com.cmc.common.constants.NavigationKeys
 import com.cmc.common.util.DistanceFormatter
 import com.cmc.design.component.BottomSheetDialog
 import com.cmc.design.component.PatataAlert
+import com.cmc.design.util.Util.dp
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
@@ -34,6 +37,7 @@ import com.cmc.presentation.map.model.SpotWithMapUiModel
 import com.cmc.presentation.map.viewmodel.AroundMeViewModel
 import com.cmc.presentation.map.viewmodel.AroundMeViewModel.AroundMeSideEffect
 import com.cmc.presentation.model.SpotCategoryItem
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapView
@@ -70,6 +74,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
         setMap()
         setCategory()
         setButton()
+
     }
 
     private fun updateUI(state: AroundMeViewModel.AroundMeState) {
@@ -128,6 +133,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
         }
     }
 
+
     override fun onMapReady(map: NaverMap) {
         viewModel.getCurrentLocation()
         naverMap = map
@@ -164,13 +170,26 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
             northEast.longitude
         )
     }
+    private fun updateButtonPositions(view: View, isDismiss: Boolean = false) {
+        val bottomSheetTop = view.top ?: return
+        val navigationTop = binding.viewMap.bottom
+        val positionY = if (bottomSheetTop >= navigationTop || isDismiss) navigationTop else bottomSheetTop
 
+        val addLocationY = positionY - binding.ivAddLocation.measuredHeight - binding.ivAddLocation.marginBottom
+        val currentLocationY = addLocationY - binding.ivCurrentLocation.measuredHeight - binding.ivCurrentLocation.marginBottom
+        val exploreThisAreaY = positionY - binding.layoutExploreThisArea.measuredHeight - binding.layoutExploreThisArea.marginBottom
+
+        binding.ivAddLocation.y = addLocationY.toFloat()
+        binding.ivCurrentLocation.y = currentLocationY.toFloat()
+        binding.layoutExploreThisArea.apply {
+            if(isVisible) y = exploreThisAreaY.toFloat()
+        }
+    }
     private fun moveCameraPosition(location: Location) {
         val latLng = LatLng(location.latitude, location.longitude)
         val cameraUpdate = CameraUpdate.scrollTo(latLng)
         naverMap.moveCamera(cameraUpdate)
     }
-
     private fun showLocationPermissionDialog() {
         PatataAlert(requireContext())
             .title("위치 권한 요청")
@@ -194,30 +213,28 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
         BottomSheetDialog(requireContext(), false)
             .bindBuilder(contentSheetMapSpot, false) { dialog ->
                 with(dialog) {
-                    val category = SpotCategoryItem(SpotCategory.fromId(spot.categoryId))
-                    tvRecommendLabel.isVisible = SpotCategory.isRecommended(spot.categoryId)
-                    tvSpotTitle.text = spot.spotName
-                    tvCategory.text = getString(category.getName())
-                    category.getIcon()?.let { ivCategory.setImageResource(it) }
-                    ivSpotArchive.isSelected = spot.isScraped
-                    tvDistance.text = DistanceFormatter.formatDistance(spot.distance)
-                    "${spot.address} ${spot.addressDetail}".also { tvSpotLocation.text = it }
+                    setBottomSheetViewBind(spot)
 
-                    layoutTagContainer.removeAllViews()
-                    spot.tags.forEach { tag ->
-                        val tagView = LayoutInflater.from(context).inflate(com.cmc.design.R.layout.view_tag_blue, layoutTagContainer, false)
-                        tagView.findViewById<TextView>(com.cmc.design.R.id.tv_tag).text = tag
-                        layoutTagContainer.addView(tagView)
-                    }
+                    val bottomSheet = dialog.window?.decorView?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
 
-                    Glide.with(this@bindBuilder.root)
-                        .load("")
-                        .placeholder(com.cmc.design.R.drawable.img_sample)
-                        .into(ivSpotImage)
-                    ivSpotArchive.setOnClickListener {
-                        viewModel.onClickSpotScrapButton(spot.spotId)
-                        ivSpotArchive.isSelected = ivSpotArchive.isSelected.not()
+                    dialog.setOnShowListener {
+                        bottomSheet?.let { updateButtonPositions(it)}
                     }
+                    dialog.setOnDismissListener {
+                        bottomSheet?.let { updateButtonPositions(it, true)}
+                    }
+                    dialog.behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                            updateButtonPositions(bottomSheet)
+                        }
+                        override fun onStateChanged(bottomSheet: View, newState: Int) {
+                            when (newState) {
+                                BottomSheetBehavior.STATE_HIDDEN -> updateButtonPositions(bottomSheet)
+                                BottomSheetBehavior.STATE_EXPANDED -> updateButtonPositions(bottomSheet)
+                            }
+                        }
+                    })
+
                     show()
                 }
             }.setOutSideTouchable(requireActivity())
@@ -264,4 +281,31 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
             showLocationPermissionDialog()
         }
     }
+    private fun ContentSheetMapSpotBinding.setBottomSheetViewBind(spot: SpotWithMapUiModel) {
+        val category = SpotCategoryItem(SpotCategory.fromId(spot.categoryId))
+        tvRecommendLabel.isVisible = SpotCategory.isRecommended(spot.categoryId)
+        tvSpotTitle.text = spot.spotName
+        tvCategory.text = getString(category.getName())
+        category.getIcon()?.let { ivCategory.setImageResource(it) }
+        ivSpotArchive.isSelected = spot.isScraped
+        tvDistance.text = DistanceFormatter.formatDistance(spot.distance)
+        "${spot.address} ${spot.addressDetail}".also { tvSpotLocation.text = it }
+
+        layoutTagContainer.removeAllViews()
+        spot.tags.forEach { tag ->
+            val tagView = LayoutInflater.from(context).inflate(com.cmc.design.R.layout.view_tag_blue, layoutTagContainer, false)
+            tagView.findViewById<TextView>(com.cmc.design.R.id.tv_tag).text = tag
+            layoutTagContainer.addView(tagView)
+        }
+
+        Glide.with(this.root)
+            .load("")
+            .placeholder(com.cmc.design.R.drawable.img_sample)
+            .into(ivSpotImage)
+        ivSpotArchive.setOnClickListener {
+            viewModel.onClickSpotScrapButton(spot.spotId)
+            ivSpotArchive.isSelected = ivSpotArchive.isSelected.not()
+        }
+    }
+
 }
