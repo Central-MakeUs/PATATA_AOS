@@ -59,6 +59,8 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
     private lateinit var naverMap: NaverMap
     private lateinit var markerManager: MarkerManager
 
+    private var dialog: com.google.android.material.bottomsheet.BottomSheetDialog? = null
+
     override fun initObserving() {
         repeatWhenUiStarted {
             launch { viewModel.state.collect { state -> updateUI(state) }  }
@@ -180,18 +182,25 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
         )
     }
     private fun updateButtonPositions(view: View, isDismiss: Boolean = false) {
-        val bottomSheetTop = view.top ?: return
-        val navigationTop = binding.viewMap.bottom
-        val positionY = if (bottomSheetTop >= navigationTop || isDismiss) navigationTop else bottomSheetTop
+        if (isAdded) {
+            with(binding) {
+                val bottomSheetTop = view.top ?: return
+                val navigationTop = viewMap.bottom
+                val positionY =
+                    if (bottomSheetTop >= navigationTop || isDismiss) navigationTop else bottomSheetTop
 
-        val currentLocationY = positionY - binding.ivCurrentLocation.measuredHeight - binding.ivCurrentLocation.marginBottom
-        val addLocationY = currentLocationY - binding.ivAddLocation.measuredHeight - binding.ivAddLocation.marginBottom
-        val exploreThisAreaY = positionY - binding.layoutExploreThisArea.measuredHeight - binding.layoutExploreThisArea.marginBottom
+                val currentLocationY =
+                    positionY - ivCurrentLocation.measuredHeight - ivCurrentLocation.marginBottom
+                val addLocationY =
+                    currentLocationY - ivAddLocation.measuredHeight - ivAddLocation.marginBottom
+                val exploreThisAreaY = positionY - layoutExploreThisArea.measuredHeight - layoutExploreThisArea.marginBottom
 
-        binding.ivAddLocation.y = addLocationY.toFloat()
-        binding.ivCurrentLocation.y = currentLocationY.toFloat()
-        binding.layoutExploreThisArea.apply {
-            if(isVisible) y = exploreThisAreaY.toFloat()
+                ivAddLocation.y = addLocationY.toFloat()
+                ivCurrentLocation.y = currentLocationY.toFloat()
+                layoutExploreThisArea.apply {
+                    if (isVisible) y = exploreThisAreaY.toFloat()
+                }
+            }
         }
     }
     private fun moveCameraPosition(location: Location) {
@@ -220,20 +229,22 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
     private fun showSpotBottomSheet(spot: SpotWithMapUiModel) {
         val contentSheetMapSpot = ContentSheetMapSpotBinding.inflate(LayoutInflater.from(requireContext()))
 
-        BottomSheetDialog(requireContext(), false)
-            .bindBuilder(contentSheetMapSpot, false) { dialog ->
-                with(dialog) {
+        dialog = BottomSheetDialog(requireContext(), false)
+            .bindBuilder(contentSheetMapSpot, false) { currentDialog ->
+                with(currentDialog) {
                     setBottomSheetViewBind(spot)
 
-                    val bottomSheet = dialog.window?.decorView?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-
-                    dialog.setOnShowListener {
+                    val bottomSheet = window?.decorView?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+                    setOnDismissListener {
+                        dialog = null
+                    }
+                    currentDialog.setOnShowListener {
                         bottomSheet?.let { updateButtonPositions(it)}
                     }
-                    dialog.setOnDismissListener {
+                    setOnDismissListener {
                         bottomSheet?.let { updateButtonPositions(it, true)}
                     }
-                    dialog.behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                    behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                         override fun onSlide(bottomSheet: View, slideOffset: Float) {
                             updateButtonPositions(bottomSheet)
                         }
@@ -333,4 +344,8 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        dialog?.dismiss()
+    }
 }
