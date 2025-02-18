@@ -76,8 +76,7 @@ class SearchResultMapViewModel @Inject constructor(
             getCurrentLocationUseCase.invoke()
                 .onSuccess { location ->
                     getSpot(keyword = keyword, userLocation = location, needMove = true)
-                }
-                .onFailure { e ->
+                }.onFailure { e ->
                     when (e) {
                         is SecurityException -> {
                             val location = Location(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
@@ -131,11 +130,11 @@ class SearchResultMapViewModel @Inject constructor(
             if (needMove) {
                 sendSideEffect(
                     SearchResultMapSideEffect.UpdateCurrentLocation(
-                        Location(
-                            spot.latitude,
-                            spot.longitude
-                        )
+                        Location(spot.latitude, spot.longitude)
                     )
+                )
+                sendSideEffect(
+                    SearchResultMapSideEffect.ShowSpotBottomSheet(spot)
                 )
             }
         }.onFailure { e ->
