@@ -85,6 +85,9 @@ class AroundMeViewModel @Inject constructor(
     fun onClickAddLocationButton(targetLocation: LatLng) {
         sendSideEffect(AroundMeSideEffect.NavigateAddLocation(targetLocation.toLocation()))
     }
+    fun onClickMarker(spot: SpotWithMapUiModel) {
+        sendSideEffect(AroundMeSideEffect.ShowSpotBottomSheet(spot))
+    }
 
 
     private fun observeStateChanges() {
@@ -151,5 +154,6 @@ class AroundMeViewModel @Inject constructor(
         data class NavigateAddLocation(val location: Location): AroundMeSideEffect()
         data class NavigateSearch(val location: Location): AroundMeSideEffect()
         data class UpdateCurrentLocation(val location: Location): AroundMeSideEffect()
+        data class ShowSpotBottomSheet(val spot: SpotWithMapUiModel): AroundMeSideEffect()
     }
 }

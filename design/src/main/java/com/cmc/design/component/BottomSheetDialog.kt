@@ -4,8 +4,10 @@ package com.cmc.design.component
 import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.viewbinding.ViewBinding
 import com.cmc.design.R
 import com.cmc.design.databinding.ContentSheetHandlebarBinding
@@ -14,16 +16,15 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.internal.managers.FragmentComponentManager
 
 class BottomSheetDialog(
-    private val context: Context
+    private val context: Context,
+    hasDim: Boolean = true,
 ) {
 
     private var dismissAfterClick = true
     private var btmDlg: BottomSheetDialog
-    var customView: View? = null
+    private var customView: View? = null
 
-    var style: Int = R.style.PatataBottomSheetStyle
-
-    var hasHandle: Boolean = true
+    var style: Int = if (hasDim) R.style.PatataBottomSheetDimStyle else R.style.PatataBottomSheetStyle
 
     init {
         btmDlg = BottomSheetDialog(context, style).apply {
@@ -52,9 +53,24 @@ class BottomSheetDialog(
         this.btmDlg.dismiss()
     }
 
+    fun setOutSideTouchable(activity: Activity): BottomSheetDialog {
+        return this.btmDlg.apply {
+            val outside = findViewById<View>(com.google.android.material.R.id.touch_outside)
+            outside?.setOnTouchListener { v, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_DOWN -> {
+                        activity.dispatchTouchEvent(event)
+                    }
+                }
+                false
+            }
+        }
+    }
+
     fun <T : ViewBinding> bindBuilder(
         binding: T,
-        callback: T.(BottomSheetDialog) -> Unit
+        hasHandle: Boolean = true,
+        callback: T.(BottomSheetDialog) -> Unit,
     ): com.cmc.design.component.BottomSheetDialog {
         this.customView = binding.root
         if (hasHandle) {

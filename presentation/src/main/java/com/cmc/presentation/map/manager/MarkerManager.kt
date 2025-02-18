@@ -9,7 +9,10 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 
-class MarkerManager(private val naverMap: NaverMap) {
+class MarkerManager(
+    private val naverMap: NaverMap,
+    private val onMarkerClickListener: ((SpotWithMapUiModel) -> Unit)? = null,
+) {
     private val markerMap: MutableMap<SpotWithMapUiModel, Marker> = mutableMapOf()
 
     fun updateMarkersWithData(newDataList: List<SpotWithMapUiModel>?) {
@@ -25,6 +28,10 @@ class MarkerManager(private val naverMap: NaverMap) {
                         .getMarkerIcon()
                 )
                 map = naverMap
+                setOnClickListener {
+                    onMarkerClickListener?.invoke(data)
+                    true
+                }
             }
         }
     }

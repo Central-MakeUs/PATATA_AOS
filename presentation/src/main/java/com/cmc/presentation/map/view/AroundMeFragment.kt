@@ -7,6 +7,9 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
+import android.view.LayoutInflater
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity.RESULT_CANCELED
@@ -14,18 +17,23 @@ import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import com.bumptech.glide.Glide
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.constants.NavigationKeys
+import com.cmc.common.util.DistanceFormatter
+import com.cmc.design.component.BottomSheetDialog
 import com.cmc.design.component.PatataAlert
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
+import com.cmc.presentation.databinding.ContentSheetMapSpotBinding
 import com.cmc.presentation.databinding.FragmentAroundMeBinding
 import com.cmc.presentation.map.manager.MarkerManager
+import com.cmc.presentation.map.model.MapScreenLocation
+import com.cmc.presentation.map.model.SpotWithMapUiModel
 import com.cmc.presentation.map.viewmodel.AroundMeViewModel
 import com.cmc.presentation.map.viewmodel.AroundMeViewModel.AroundMeSideEffect
 import com.cmc.presentation.model.SpotCategoryItem
-import com.cmc.presentation.map.model.MapScreenLocation
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapView
@@ -55,7 +63,9 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
             }
         }
     }
+
     override fun initView() {
+
         setAppBar()
         setMap()
         setCategory()
@@ -80,6 +90,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
             is AroundMeSideEffect.NavigateAddLocation -> { navigateAddLocation(effect.location) }
             is AroundMeSideEffect.NavigateSearch -> { navigateSearch(effect.location) }
             is AroundMeSideEffect.UpdateCurrentLocation -> { moveCameraPosition(effect.location) }
+            is AroundMeSideEffect.ShowSpotBottomSheet -> { showSpotBottomSheet(effect.spot) }
         }
     }
 
@@ -122,7 +133,10 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
         naverMap = map
 
         with(naverMap) {
-            markerManager = MarkerManager(this@with)
+            markerManager = MarkerManager(this@with) { spot ->
+                Log.d("testLog","marker Click")
+                viewModel.onClickMarker(spot)
+            }
 
             uiSettings.apply {
                 isZoomControlEnabled = false
@@ -130,6 +144,10 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
                 isLogoClickEnabled = false
             }
 
+            setOnMapClickListener { _, _ ->
+
+                Log.d("testLog", "mapClick")
+            }
             addOnCameraChangeListener { reason, _ ->
                 if (reason == CameraUpdate.REASON_GESTURE) { viewModel.movedCameraPosition() }
             }
@@ -174,6 +192,37 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
                     Toast.makeText(requireContext(), "위치 권한이 꼭 필요합니다.", Toast.LENGTH_SHORT).show()
                 }
             }.show()
+    }
+    private fun showSpotBottomSheet(spot: SpotWithMapUiModel) {
+        val contentSheetMapSpot = ContentSheetMapSpotBinding.inflate(LayoutInflater.from(requireContext()))
+
+        BottomSheetDialog(requireContext(), false)
+            .bindBuilder(contentSheetMapSpot, false) { dialog ->
+                with(dialog) {
+                    val category = SpotCategoryItem(SpotCategory.fromId(spot.categoryId))
+                    tvRecommendLabel.isVisible = SpotCategory.isRecommended(spot.categoryId)
+                    tvSpotTitle.text = spot.spotName
+                    tvCategory.text = getString(category.getName())
+                    category.getIcon()?.let { ivCategory.setImageResource(it) }
+                    ivSpotArchive.isSelected = spot.isScraped
+                    tvDistance.text = DistanceFormatter.formatDistance(spot.distance)
+                    "${spot.address} ${spot.addressDetail}".also { tvSpotLocation.text = it }
+
+                    layoutTagContainer.removeAllViews()
+                    spot.tags.forEach { tag ->
+                        val tagView = LayoutInflater.from(context).inflate(com.cmc.design.R.layout.view_tag_blue, layoutTagContainer, false)
+                        tagView.findViewById<TextView>(com.cmc.design.R.id.tv_tag).text = tag
+                        layoutTagContainer.addView(tagView)
+                    }
+
+                    Glide.with(this@bindBuilder.root)
+                        .load("")
+                        .placeholder(com.cmc.design.R.drawable.img_sample)
+                        .into(ivSpotImage)
+
+                    show()
+                }
+            }.setOutSideTouchable(requireActivity())
     }
 
     private fun navigateAddLocation(location: Location) {
