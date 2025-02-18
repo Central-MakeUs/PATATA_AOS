@@ -299,8 +299,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
         }
 
         Glide.with(this.root)
-            .load("")
-            .placeholder(com.cmc.design.R.drawable.img_sample)
+            .load(spot.images.first())
             .into(ivSpotImage)
         ivSpotArchive.setOnClickListener {
             viewModel.onClickSpotScrapButton(spot.spotId)

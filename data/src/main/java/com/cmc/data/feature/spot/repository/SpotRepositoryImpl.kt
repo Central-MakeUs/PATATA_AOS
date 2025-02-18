@@ -19,6 +19,7 @@ import com.cmc.domain.base.exception.AppInternalException
 import com.cmc.domain.feature.spot.base.PaginatedResponse
 import com.cmc.domain.feature.spot.model.Review
 import com.cmc.domain.feature.spot.model.SpotDetail
+import com.cmc.domain.feature.spot.model.SpotScrapResponse
 import com.cmc.domain.feature.spot.model.SpotWithDistance
 import com.cmc.domain.feature.spot.model.SpotWithMap
 import com.cmc.domain.feature.spot.model.SpotWithStatus
@@ -190,10 +191,10 @@ class SpotRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun toggleSpotScrap(spotIds: List<Int>): Result<Unit> {
+    override suspend fun toggleSpotScrap(spotIds: List<Int>): Result<List<SpotScrapResponse>> {
         return apiRequestCatching(
             apiCall = { spotApiService.toggleSpotScrap(spotIds) },
-            transform = { Unit },
+            transform = { it.toListDomain() },
         )
     }
 

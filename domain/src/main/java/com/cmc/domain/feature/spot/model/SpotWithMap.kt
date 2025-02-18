@@ -8,7 +8,7 @@ data class SpotWithMap(
     val latitude: Double,
     val longitude: Double,
     val categoryId: Int,
-//    val images: List<String>,
+    val images: List<String>,
     val tags: List<String>,
     val isScraped: Boolean,
     val distance: Double,

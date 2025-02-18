@@ -3,6 +3,7 @@ package com.cmc.domain.feature.spot.repository
 import com.cmc.domain.feature.spot.base.PaginatedResponse
 import com.cmc.domain.feature.spot.model.Review
 import com.cmc.domain.feature.spot.model.SpotDetail
+import com.cmc.domain.feature.spot.model.SpotScrapResponse
 import com.cmc.domain.feature.spot.model.SpotWithDistance
 import com.cmc.domain.feature.spot.model.SpotWithMap
 import com.cmc.domain.feature.spot.model.SpotWithStatus
@@ -70,7 +71,7 @@ interface SpotRepository {
 
     suspend fun deleteSpot(spotId: Int): Result<Unit>
 
-    suspend fun toggleSpotScrap(spotIds: List<Int>): Result<Unit>
+    suspend fun toggleSpotScrap(spotIds: List<Int>): Result<List<SpotScrapResponse>>
 
     suspend fun createReview(spotId: Int, reviewText: String): Result<Review>
 

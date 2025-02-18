@@ -18,9 +18,8 @@ data class SpotWithMapResponseDto(
     val longitude: Double,
     @SerializedName("categoryId")
     val categoryId: Int,
-    // TODO: 업데이트 되면 반영
-//    @SerializedName("images")
-//    val images: List<String>,
+    @SerializedName("images")
+    val images: List<String>,
     @SerializedName("tags")
     val tags: List<String>,
     @SerializedName("isScraped")
@@ -38,7 +37,7 @@ fun SpotWithMapResponseDto.toDomain(): SpotWithMap {
         latitude = latitude,
         longitude = longitude,
         categoryId = categoryId,
-//        images = images,
+        images = images,
         tags = tags,
         isScraped = isScraped,
         distance = distance,

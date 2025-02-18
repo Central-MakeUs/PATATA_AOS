@@ -16,6 +16,7 @@ import com.cmc.presentation.map.model.MapScreenLocation
 import com.cmc.presentation.map.model.SpotWithMapUiModel
 import com.cmc.presentation.map.model.toListUiModel
 import com.cmc.presentation.map.model.toUiModel
+import com.cmc.presentation.spot.model.toListUiModel
 import com.cmc.presentation.util.toLocation
 import com.naver.maps.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -223,6 +224,16 @@ class SearchResultMapViewModel @Inject constructor(
     fun onClickSpotScrapButton(spotId: Int) {
         viewModelScope.launch {
             toggleSpotScrapUseCase.invoke(listOf(spotId))
+                .onSuccess { _ ->
+                    _state.update {
+                        it.copy(
+                            spots = it.spots?.map { spot ->
+                                spot.copy(
+                                    isScraped = if (spot.spotId == spotId) spot.isScraped.not() else spot.isScraped
+                                )
+                        })
+                    }
+                }
         }
     }
 
