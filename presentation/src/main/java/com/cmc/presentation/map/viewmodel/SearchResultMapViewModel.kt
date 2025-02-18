@@ -120,8 +120,10 @@ class SearchResultMapViewModel @Inject constructor(
             userLongitude = userLocation.longitude,
         ).onSuccess { spotWithMap ->
             val spot = spotWithMap.toUiModel()
+            _state.update { it.copy(selectedTabPosition = null) }
             _state.update {
                 it.copy(
+                    selectedTabPosition = SpotCategory.ALL.id,
                     searchSpot = spot,
                     spots = listOf(spot),
                     nearBySpotFetchEnabled = true,

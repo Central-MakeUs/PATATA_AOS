@@ -90,6 +90,8 @@ class CustomTabLayout @JvmOverloads constructor(
                                 onTabSelectedListener?.invoke(tab.position)
                                 setTextAppearance(selectedTextAppearance)
                                 setTextColor(selectedTextColor)
+                            } else {
+                                onTabSelectedListener?.invoke(tab.position)
                             }
                         }
                     }

@@ -81,6 +81,9 @@ class AroundMeViewModel @Inject constructor(
     }
     fun onClickExploreThisArea() {
         _state.update {
+            it.copy(selectedTabPosition = null)
+        }
+        _state.update {
             it.copy(selectedTabPosition = SpotCategory.ALL.id)
         }
     }
