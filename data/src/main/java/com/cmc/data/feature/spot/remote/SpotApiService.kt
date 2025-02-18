@@ -7,6 +7,7 @@ import com.cmc.data.feature.spot.model.CreateSpotResponseDto
 import com.cmc.data.feature.spot.model.ReviewResponseDto
 import com.cmc.data.feature.spot.model.SearchSpotsResponseDto
 import com.cmc.data.feature.spot.model.SpotDetailResponseDto
+import com.cmc.data.feature.spot.model.SpotScrapResponseDto
 import com.cmc.data.feature.spot.model.SpotWithMapResponseDto
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -87,10 +88,10 @@ interface SpotApiService {
         @Path("spotId") spotId: Int
     ): ApiResponse<Unit>
 
-    @PATCH("scrap/{spotId}")
+    @PATCH("scrap/toggle")
     suspend fun toggleSpotScrap(
-        @Path("spotId") spotId: Int
-    ): ApiResponse<Unit>
+        @Body spotIds: List<Int>
+    ): ApiResponse<List<SpotScrapResponseDto>>
 
     @POST("review/create")
     suspend fun createReview(

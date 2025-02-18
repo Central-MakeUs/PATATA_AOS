@@ -190,10 +190,10 @@ class SpotRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun toggleSpotScrap(spotId: Int): Result<Unit> {
+    override suspend fun toggleSpotScrap(spotIds: List<Int>): Result<Unit> {
         return apiRequestCatching(
-            apiCall = { spotApiService.toggleSpotScrap(spotId) },
-            transform = {}
+            apiCall = { spotApiService.toggleSpotScrap(spotIds) },
+            transform = { Unit },
         )
     }
 

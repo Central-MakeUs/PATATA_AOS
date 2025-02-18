@@ -1,5 +1,6 @@
 package com.cmc.presentation.home.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LATITUDE
@@ -63,7 +64,7 @@ class HomeViewModel @Inject constructor(
     }
     fun onClickSpotScrapButton(spotId: Int) {
         viewModelScope.launch {
-            toggleSpotScrapUseCase.invoke(spotId)
+            toggleSpotScrapUseCase.invoke(listOf(spotId))
                 .onSuccess {
                     val newPagingData = state.value.categorySpots.map { spot ->
                         if (spot.spot.spotId == spotId) {

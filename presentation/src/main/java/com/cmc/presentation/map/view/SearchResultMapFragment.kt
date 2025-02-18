@@ -75,7 +75,6 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
     }
     private var previousState: SearchResultMapState? = null
     private fun updateUI(state: SearchResultMapState) {
-        Log.d("testLog", "state : ${state.spots}")
         if (previousState?.spots != state.spots && ::markerManager.isInitialized) {
             markerManager.updateMarkersWithData(state.spots)
         }

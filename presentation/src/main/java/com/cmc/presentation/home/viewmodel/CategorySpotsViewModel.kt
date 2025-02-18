@@ -51,7 +51,7 @@ class CategorySpotsViewModel @Inject constructor(
 
     fun onClickSpotScrapButton(spotId: Int) {
         viewModelScope.launch {
-            toggleSpotScrapUseCase.invoke(spotId)
+            toggleSpotScrapUseCase.invoke(listOf(spotId))
                 .onSuccess {
                     val newPagingData = state.value.categorySpots.map { spot ->
                         if (spot.spot.spotId == spotId) {

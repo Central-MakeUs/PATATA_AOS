@@ -7,6 +7,7 @@ import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LONGITUDE
 import com.cmc.domain.feature.location.GetCurrentLocationUseCase
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.feature.spot.usecase.GetCategorySpotsWithMapUseCase
+import com.cmc.domain.feature.spot.usecase.ToggleSpotScrapUseCase
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.map.model.MapScreenLocation
 import com.cmc.presentation.map.model.SpotWithMapUiModel
@@ -31,6 +32,7 @@ import javax.inject.Inject
 class AroundMeViewModel @Inject constructor(
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
     private val getCategorySpotsWithMapUseCase: GetCategorySpotsWithMapUseCase,
+    private val toggleSpotScrapUseCase: ToggleSpotScrapUseCase,
 ): ViewModel() {
 
     private val _state = MutableStateFlow(AroundMeState())
@@ -87,6 +89,11 @@ class AroundMeViewModel @Inject constructor(
     }
     fun onClickMarker(spot: SpotWithMapUiModel) {
         sendSideEffect(AroundMeSideEffect.ShowSpotBottomSheet(spot))
+    }
+    fun onClickSpotScrapButton(spotId: Int) {
+        viewModelScope.launch {
+            toggleSpotScrapUseCase.invoke(listOf(spotId))
+        }
     }
 
 
@@ -145,6 +152,7 @@ class AroundMeViewModel @Inject constructor(
         val selectedTabPosition: Int? = null,
         val mapScreenLocation: MapScreenLocation = MapScreenLocation.getDefault(),
         val exploreVisible: Boolean = false,
+        val bottomSheetSpot: SpotWithMapUiModel? = null,
         val errorMessage: String? = null,
         val isLoading: Boolean = false
     )

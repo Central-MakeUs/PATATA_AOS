@@ -134,7 +134,6 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
 
         with(naverMap) {
             markerManager = MarkerManager(this@with) { spot ->
-                Log.d("testLog","marker Click")
                 viewModel.onClickMarker(spot)
             }
 
@@ -144,10 +143,6 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
                 isLogoClickEnabled = false
             }
 
-            setOnMapClickListener { _, _ ->
-
-                Log.d("testLog", "mapClick")
-            }
             addOnCameraChangeListener { reason, _ ->
                 if (reason == CameraUpdate.REASON_GESTURE) { viewModel.movedCameraPosition() }
             }
@@ -219,7 +214,10 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
                         .load("")
                         .placeholder(com.cmc.design.R.drawable.img_sample)
                         .into(ivSpotImage)
-
+                    ivSpotArchive.setOnClickListener {
+                        viewModel.onClickSpotScrapButton(spot.spotId)
+                        ivSpotArchive.isSelected = ivSpotArchive.isSelected.not()
+                    }
                     show()
                 }
             }.setOutSideTouchable(requireActivity())

@@ -53,7 +53,7 @@ class SpotDetailViewModel @Inject constructor(
     }
     fun onClickScrapButton() {
         viewModelScope.launch {
-            toggleSpotScrapUseCase.invoke(_state.value.spotDetail.spotId)
+            toggleSpotScrapUseCase.invoke(listOf(state.value.spotDetail.spotId))
                 .onSuccess {
                     _state.update {
                         it.copy(

@@ -70,7 +70,7 @@ interface SpotRepository {
 
     suspend fun deleteSpot(spotId: Int): Result<Unit>
 
-    suspend fun toggleSpotScrap(spotId: Int): Result<Unit>
+    suspend fun toggleSpotScrap(spotIds: List<Int>): Result<Unit>
 
     suspend fun createReview(spotId: Int, reviewText: String): Result<Review>
 
