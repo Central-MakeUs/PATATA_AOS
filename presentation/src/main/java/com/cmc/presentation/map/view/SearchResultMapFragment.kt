@@ -184,8 +184,8 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
         val navigationTop = binding.viewMap.bottom
         val positionY = if (bottomSheetTop >= navigationTop || isDismiss) navigationTop else bottomSheetTop
 
-        val addLocationY = positionY - binding.ivAddLocation.measuredHeight - binding.ivAddLocation.marginBottom
-        val currentLocationY = addLocationY - binding.ivCurrentLocation.measuredHeight - binding.ivCurrentLocation.marginBottom
+        val currentLocationY = positionY - binding.ivCurrentLocation.measuredHeight - binding.ivCurrentLocation.marginBottom
+        val addLocationY = currentLocationY - binding.ivAddLocation.measuredHeight - binding.ivAddLocation.marginBottom
         val exploreThisAreaY = positionY - binding.layoutExploreThisArea.measuredHeight - binding.layoutExploreThisArea.marginBottom
 
         binding.ivAddLocation.y = addLocationY.toFloat()
