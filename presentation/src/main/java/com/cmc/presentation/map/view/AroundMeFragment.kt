@@ -6,13 +6,9 @@ import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,11 +20,11 @@ import androidx.core.view.marginBottom
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.cmc.common.base.BaseFragment
+import com.cmc.common.base.GlobalNavigation
 import com.cmc.common.constants.NavigationKeys
 import com.cmc.common.util.DistanceFormatter
 import com.cmc.design.component.BottomSheetDialog
 import com.cmc.design.component.PatataAlert
-import com.cmc.design.util.Util.dp
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
@@ -99,6 +95,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
             is AroundMeSideEffect.RequestLocationPermission -> { checkLocationRequest() }
             is AroundMeSideEffect.NavigateAddLocation -> { navigateAddLocation(effect.location) }
             is AroundMeSideEffect.NavigateSearch -> { navigateSearch(effect.location) }
+            is AroundMeSideEffect.NavigateSpotDetail -> { navigateSpotDetail(effect.spotId)}
             is AroundMeSideEffect.UpdateCurrentLocation -> { moveCameraPosition(effect.location) }
             is AroundMeSideEffect.ShowSpotBottomSheet -> { showSpotBottomSheet(effect.spot) }
         }
@@ -264,6 +261,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
             putDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE, location.longitude)
         })
     }
+    private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
 
     private fun checkLocationRequest() {
         val permissions = arrayOf(
@@ -313,10 +311,12 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
         Glide.with(this.root)
             .load(spot.images.first())
             .into(ivSpotImage)
+
         ivSpotArchive.setOnClickListener {
             viewModel.onClickSpotScrapButton(spot.spotId)
             ivSpotArchive.isSelected = ivSpotArchive.isSelected.not()
         }
+        ivSpotImage.setOnClickListener { viewModel.onClickBottomSheetImage(spot.spotId) }
     }
 
     override fun onStop() {

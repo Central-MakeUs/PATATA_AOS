@@ -237,6 +237,9 @@ class SearchResultMapViewModel @Inject constructor(
                 }
         }
     }
+    fun onClickBottomSheetImage(spotId: Int) {
+        sendSideEffect(SearchResultMapSideEffect.NavigateSpotDetail(spotId))
+    }
 
     private fun observeStateChanges() {
         viewModelScope.launch {
@@ -286,6 +289,7 @@ class SearchResultMapViewModel @Inject constructor(
         data class ShowNoResultAlert(val message: String): SearchResultMapSideEffect()
         data class NavigateAddLocation(val location: Location): SearchResultMapSideEffect()
         data class NavigateSearch(val location: Location): SearchResultMapSideEffect()
+        data class NavigateSpotDetail(val spotId: Int): SearchResultMapSideEffect()
         data class ShowSpotBottomSheet(val spot: SpotWithMapUiModel): SearchResultMapSideEffect()
     }
 }

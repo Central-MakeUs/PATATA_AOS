@@ -98,7 +98,9 @@ class AroundMeViewModel @Inject constructor(
             toggleSpotScrapUseCase.invoke(listOf(spotId))
         }
     }
-
+    fun onClickBottomSheetImage(spotId: Int) {
+        sendSideEffect(AroundMeSideEffect.NavigateSpotDetail(spotId))
+    }
 
     private fun observeStateChanges() {
         viewModelScope.launch {
@@ -164,6 +166,7 @@ class AroundMeViewModel @Inject constructor(
         data object RequestLocationPermission : AroundMeSideEffect()
         data class NavigateAddLocation(val location: Location): AroundMeSideEffect()
         data class NavigateSearch(val location: Location): AroundMeSideEffect()
+        data class NavigateSpotDetail(val spotId: Int): AroundMeSideEffect()
         data class UpdateCurrentLocation(val location: Location): AroundMeSideEffect()
         data class ShowSpotBottomSheet(val spot: SpotWithMapUiModel): AroundMeSideEffect()
     }

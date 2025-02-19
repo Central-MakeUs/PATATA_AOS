@@ -22,6 +22,7 @@ import androidx.core.view.marginBottom
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.cmc.common.base.BaseFragment
+import com.cmc.common.base.GlobalNavigation
 import com.cmc.common.constants.NavigationKeys
 import com.cmc.common.util.DistanceFormatter
 import com.cmc.design.component.BottomSheetDialog
@@ -107,6 +108,7 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
             is SearchResultMapSideEffect.UpdateCurrentLocation -> { moveCameraPosition(effect.location) }
             is SearchResultMapSideEffect.ShowNoResultAlert -> { showSnackBar(effect.message) }
             is SearchResultMapSideEffect.NavigateAroundMe -> { navigateAroundMe() }
+            is SearchResultMapSideEffect.NavigateSpotDetail -> { navigateSpotDetail(effect.spotId) }
             is SearchResultMapSideEffect.ShowSpotBottomSheet -> { showSpotBottomSheet(effect.spot) }
         }
     }
@@ -276,6 +278,7 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
         })
     }
     private fun navigateAroundMe() { navigate(R.id.navigate_search_result_map_to_around_me) }
+    private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
 
     private fun checkLocationRequest() {
         val permissions = arrayOf(
@@ -344,6 +347,7 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
             viewModel.onClickSpotScrapButton(spot.spotId)
             ivSpotArchive.isSelected = ivSpotArchive.isSelected.not()
         }
+        ivSpotImage.setOnClickListener { viewModel.onClickBottomSheetImage(spot.spotId) }
     }
 
     override fun onStop() {
