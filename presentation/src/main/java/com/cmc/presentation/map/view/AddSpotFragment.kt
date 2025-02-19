@@ -122,6 +122,9 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
             tvInputAddress.text = state.address
             groupSpotDesc.isVisible = state.description.isEmpty()
 
+            binding.tvPictureError.isVisible = state.errorMessage.isNullOrEmpty().not()
+            state.errorMessage?.let { binding.tvPictureError.setText(it) }
+
             // 카테고리 선택 UI 업데이트
             tvChooseCategory.apply {
                 text = state.selectedCategory?.let { getString(SpotCategoryItem(it).getName()) } ?: getString(R.string.hint_choose_category)

@@ -2,11 +2,14 @@ package com.cmc.presentation.map.viewmodel
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.domain.constants.ImageUploadPolicy
 import com.cmc.domain.feature.spot.usecase.CreateSpotUseCase
 import com.cmc.domain.model.ImageMetadata
 import com.cmc.domain.model.SpotCategory
+import com.cmc.presentation.R
 import com.cmc.presentation.util.toImageMetaDataList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -112,32 +115,51 @@ class AddSpotViewModel @Inject constructor(
         }
     }
     fun updateSelectedImages(images: List<Uri>) {
+        var imageCountErrorMessage: String? = null
+        var imageSizeErrorMessage: String? = null
+
         // 이미지 ImageMetaData로 변환
         val imageResults = images.toImageMetaDataList(context)
         val successfulImages = imageResults.mapNotNull { it.getOrNull() }
         val failedImages = imageResults.filter { it.isFailure }
+        failedImages.forEach { it.onFailure { e -> e.stackTrace } }
 
         // 이미지 갯수 검사
         val oldImages = _state.value.selectedImages
         val newImages = successfulImages.filterNot { newImage -> newImage.uri in _state.value.selectedImages.map { it.uri } }
-
-        val checkedImageCountNewImages = if (oldImages.size + newImages.size > MAX_IMAGE_COUNT) {
-            viewModelScope.launch {
-                _sideEffect.emit(AddSpotSideEffect.ShowSnackbar("이미지는 최대 ${MAX_IMAGE_COUNT}장까지 업로드가 가능합니다."))
-            }
-            oldImages + newImages.subList(0, MAX_IMAGE_COUNT - oldImages.size)
+        val checkedImageCountNewImages = if (oldImages.size + newImages.size > ImageUploadPolicy.MAX_IMAGE_COUNT) {
+            imageCountErrorMessage = context.getString(R.string.error_image_count, ImageUploadPolicy.MAX_IMAGE_COUNT)
+            oldImages + newImages.subList(0, ImageUploadPolicy.MAX_IMAGE_COUNT - oldImages.size)
         } else {
             oldImages + newImages
         }
 
-        // 이미지 용량 검사
-        // TODO: 이미지 용량 관련 정책 확정 시 구현
-//        val maxSize = 5 * 1024 * 1024 // 5MB (바이트 단위)
-//         장 당 5MB, 최대 10MB
+        // 장 당 용량 검사
+        val checkedSingleImageSizeNewImages = checkedImageCountNewImages.filter {
+            val validateResult =  ImageUploadPolicy.isSingleImageSizeValid(it.fileSize)
+            if (validateResult.not())
+                imageSizeErrorMessage = context.getString(R.string.error_image_size, ImageUploadPolicy.MAX_IMAGE_SIZE_MB)
+            validateResult
+        }
+        // 전체 용량 검사사
+        var totalSize: Long = 0L
+        val checkedTotalImageSizeNewImages = checkedSingleImageSizeNewImages.filter {
+            totalSize += it.fileSize
+            val validateResult =  ImageUploadPolicy.isTotalImageSizeValid(totalSize)
+            if (validateResult.not()) {
+                totalSize -= it.fileSize
+                if (imageSizeErrorMessage.isNullOrEmpty())
+                    imageSizeErrorMessage = context.getString(R.string.error_total_image_size, ImageUploadPolicy.MAX_TOTAL_IMAGE_SIZE_MB)
+            }
+            validateResult
+        }
 
         if (successfulImages.isNotEmpty()) {
             _state.update {
-                it.copy(selectedImages = checkedImageCountNewImages)
+                it.copy(
+                    selectedImages = checkedTotalImageSizeNewImages,
+                    errorMessage = if (imageSizeErrorMessage.isNullOrEmpty()) imageCountErrorMessage else imageSizeErrorMessage
+                )
             }
         }
     }
@@ -211,6 +233,5 @@ class AddSpotViewModel @Inject constructor(
 
     companion object {
         const val MAX_TAG_COUNT = 2
-        const val MAX_IMAGE_COUNT = 3
     }
 }

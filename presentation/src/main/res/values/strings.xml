@@ -69,4 +69,9 @@
     <string name="title_spot_added_success">스팟이 등록되었어요!</string>
     <string name="desc_signup_success">파타타 회원이 되신 것을 환영해요.\n타타와 함께 최고의 스팟을 찾아봐요!</string>
     <string name="desc_spot_added_success">스팟이 정상적으로 등록되었습니다.\n다른 스팟들을 둘러보러 가볼까요?</string>
+    <string name="info_picture_upload">이미지는 최대 3장까지 업로드 가능하며, 스팟 등록 이후 수정이 불가합니다.</string>
+
+    <string name="error_image_count">이미지 최대 업로드 장 수는 %d장 입니다.</string>
+    <string name="error_image_size">이미지 장 당 최대 용량은 %dMB 입니다. 용량을 확인해주세요!</string>
+    <string name="error_total_image_size">이미지 총 용량은 %dMB 를 넘지 않도록 해주세요.</string>
 </resources>

@@ -20,7 +20,16 @@ class PatataEditTextHelperView@JvmOverloads constructor(
         ViewPatataEditTextHelperBinding.inflate(LayoutInflater.from(context), this)
 
     init {
+        initAttributes(context, attrs)
         initText()
+    }
+
+    private fun initAttributes(context: Context, attrs: AttributeSet?) {
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.PatataEditTextHelperView)
+
+        typedArray.getString(R.styleable.PatataEditTextHelperView_android_text)?.let { setText(it) }
+
+        typedArray.recycle()
     }
 
     private fun initText() {
