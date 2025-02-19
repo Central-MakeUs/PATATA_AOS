@@ -68,6 +68,7 @@ class CustomTabLayout @JvmOverloads constructor(
                             if (isInitialSelection.not() || tab.position != 0) {
                                 selectedTabPosition = tab.position
                                 onTabSelectedListener?.invoke(tab.position)
+                                isInitialSelection = false
                                 setTextAppearance(selectedTextAppearance)
                                 setTextColor(selectedTextColor)
                             }
@@ -86,13 +87,13 @@ class CustomTabLayout @JvmOverloads constructor(
                             if (isInitialSelection && tab.position == 0) {
                                 tab.customView?.isSelected = true
                                 selectedTabPosition = tab.position
-                                isInitialSelection = false
                                 onTabSelectedListener?.invoke(tab.position)
                                 setTextAppearance(selectedTextAppearance)
                                 setTextColor(selectedTextColor)
                             } else {
                                 onTabSelectedListener?.invoke(tab.position)
                             }
+                            isInitialSelection = false
                         }
                     }
                 })
