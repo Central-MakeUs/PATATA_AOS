@@ -170,24 +170,26 @@ class SpotRepositoryImpl @Inject constructor(
         tags: List<String>?,
         images: List<ImageMetadata>
     ): Result<Unit> {
-        return runCatching {
-            val imageParts = createImageMultipart(images)
-            val textParts = createSpotRequestToMultipart(
-                spotName, spotDesc, spotAddress, spotAddressDetail, latitude, longitude, categoryId, tags
-            )
+        return apiRequestCatching(
+            apiCall = {
+                val imageParts = createImageMultipart(images)
+                val textParts = createSpotRequestToMultipart(
+                    spotName, spotDesc, spotAddress, spotAddressDetail, latitude, longitude, categoryId, tags
+                )
 
-            spotApiService.createSpot(
-                spotName = textParts["spotName"]!!,
-                spotDesc = textParts["spotDesc"],
-                spotAddress = textParts["spotAddress"]!!,
-                spotAddressDetail = textParts["spotAddressDetail"],
-                latitude = textParts["latitude"]!!,
-                longitude = textParts["longitude"]!!,
-                categoryId = textParts["categoryId"]!!,
-                tags = textParts["tags"],
-                images = imageParts
-            )
-        }
+                spotApiService.createSpot(
+                    spotName = textParts["spotName"]!!,
+                    spotDesc = textParts["spotDesc"],
+                    spotAddress = textParts["spotAddress"]!!,
+                    spotAddressDetail = textParts["spotAddressDetail"],
+                    latitude = textParts["latitude"]!!,
+                    longitude = textParts["longitude"]!!,
+                    categoryId = textParts["categoryId"]!!,
+                    tags = textParts["tags"],
+                    images = imageParts
+                )
+            }, transform = { Unit }
+        )
     }
 
     override suspend fun deleteSpot(spotId: Int): Result<Unit> {

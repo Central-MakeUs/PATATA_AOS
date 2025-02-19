@@ -175,11 +175,9 @@ class AddSpotViewModel @Inject constructor(
     // 필수 입력 필드 검사
     private fun checkFormValid(state: AddSpotState): Boolean {
         return state.spotName.isNotBlank() &&
-                state.addressDetail.isNotBlank() &&
                 state.description.isNotBlank() &&
                 state.selectedCategory != null &&
-                state.selectedImages.isNotEmpty() &&
-                state.tags.isNotEmpty()
+                state.selectedImages.isNotEmpty()
     }
 
     private fun sendSideEffect(effect: AddSpotSideEffect) {
@@ -207,7 +205,6 @@ class AddSpotViewModel @Inject constructor(
         data object ShowCategoryPicker : AddSpotSideEffect()
         data object ShowPhotoPicker : AddSpotSideEffect()
         data object NavigateToAroundMe : AddSpotSideEffect()
-        data object NavigateToSpotAddedSuccess : AddSpotSideEffect()
         data object NavigateToCreateSpotSuccess : AddSpotSideEffect()
         data class ShowSnackbar(val message: String) : AddSpotSideEffect()
     }

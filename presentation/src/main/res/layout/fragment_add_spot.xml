@@ -28,6 +28,16 @@
 
                 <!-- Title -->
                 <TextView
+                    android:id="@+id/tv_required_title"
+                    style="@style/caption_small"
+                    android:textColor="@color/blue_100"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/required"
+                    app:layout_constraintTop_toTopOf="@+id/tv_input_title"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_input_title"/>
+                <TextView
                     android:id="@+id/tv_input_title"
                     style="@style/subtitle_medium"
                     android:textColor="#17191D"
@@ -35,8 +45,9 @@
                     android:layout_height="wrap_content"
                     android:text="@string/title_input"
                     android:layout_marginTop="24dp"
+                    android:layout_marginStart="4dp"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"/>
+                    app:layout_constraintStart_toEndOf="@+id/tv_required_title"/>
 
                 <com.cmc.design.component.PatataEditText
                     android:id="@+id/et_input_title"
@@ -110,6 +121,16 @@
 
                 <!-- Content Description -->
                 <TextView
+                    android:id="@+id/tv_required_content_desc"
+                    style="@style/caption_small"
+                    android:textColor="@color/blue_100"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/required"
+                    app:layout_constraintTop_toTopOf="@+id/tv_content_desc_title"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_content_desc_title"/>
+                <TextView
                     android:id="@+id/tv_content_desc_title"
                     style="@style/subtitle_medium"
                     android:textColor="#17191D"
@@ -117,8 +138,9 @@
                     android:layout_height="wrap_content"
                     android:text="@string/title_input_content_desc"
                     android:layout_marginTop="24dp"
+                    android:layout_marginStart="4dp"
                     app:layout_constraintTop_toBottomOf="@+id/et_input_address_detail"
-                    app:layout_constraintStart_toStartOf="parent"/>
+                    app:layout_constraintStart_toEndOf="@+id/tv_required_content_desc"/>
 
                 <com.cmc.design.component.PatataEditText
                     android:id="@+id/et_content_desc"
@@ -165,6 +187,16 @@
 
                 <!-- Category -->
                 <TextView
+                    android:id="@+id/tv_required_category"
+                    style="@style/caption_small"
+                    android:textColor="@color/blue_100"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/required"
+                    app:layout_constraintTop_toTopOf="@+id/tv_choose_category_title"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_choose_category_title"/>
+                <TextView
                     android:id="@+id/tv_choose_category_title"
                     style="@style/subtitle_medium"
                     android:textColor="#17191D"
@@ -172,8 +204,9 @@
                     android:layout_height="wrap_content"
                     android:text="@string/title_choose_category"
                     android:layout_marginTop="24dp"
+                    android:layout_marginStart="4dp"
                     app:layout_constraintTop_toBottomOf="@+id/et_content_desc"
-                    app:layout_constraintStart_toStartOf="parent"/>
+                    app:layout_constraintStart_toEndOf="@+id/tv_required_category"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layout_choose_category_title"
@@ -215,6 +248,16 @@
 
                 <!-- Picture -->
                 <TextView
+                    android:id="@+id/tv_required_picture"
+                    style="@style/caption_small"
+                    android:textColor="@color/blue_100"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/required"
+                    app:layout_constraintTop_toTopOf="@+id/tv_choose_picture"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_choose_picture"/>
+                <TextView
                     android:id="@+id/tv_choose_picture"
                     style="@style/subtitle_medium"
                     android:textColor="#17191D"
@@ -222,8 +265,9 @@
                     android:layout_height="wrap_content"
                     android:text="@string/title_choose_picture"
                     android:layout_marginTop="24dp"
+                    android:layout_marginStart="4dp"
                     app:layout_constraintTop_toBottomOf="@+id/layout_choose_category_title"
-                    app:layout_constraintStart_toStartOf="parent"/>
+                    app:layout_constraintStart_toEndOf="@+id/tv_required_picture"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layout_choose_picture_button"
