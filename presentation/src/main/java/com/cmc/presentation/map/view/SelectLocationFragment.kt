@@ -5,9 +5,11 @@ import androidx.fragment.app.viewModels
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.constants.NavigationKeys
 import com.cmc.domain.feature.location.Location
+import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentSelectLocationBinding
 import com.cmc.presentation.map.manager.MarkerManager
+import com.cmc.presentation.map.model.SpotWithMapUiModel
 import com.cmc.presentation.map.viewmodel.SelectLocationViewModel
 import com.cmc.presentation.map.viewmodel.SelectLocationViewModel.SelectLocationSideEffect
 import com.cmc.presentation.map.viewmodel.SelectLocationViewModel.SelectLocationState
@@ -60,9 +62,23 @@ class SelectLocationFragment: BaseFragment<FragmentSelectLocationBinding>(R.layo
             viewModel.onClickSelectionCompleteButton()
         }
     }
-
+    private var previousState: SelectLocationState? = null
     private fun updateUI(state: SelectLocationState) {
         binding.etSelectionToShare.setHint(state.currentTargetAddress)
+        if (previousState?.nearBySpots != state.nearBySpots && ::markerManager.isInitialized) {
+            val nearBySpotWithMapList = state.nearBySpots.map { SpotWithMapUiModel.getDefault().copy(
+                latitude = it.latitude,
+                longitude = it.longitude,
+                categoryId = SpotCategory.getLastItem().id + 1
+            ) }
+            markerManager.updateMarkersWithData(nearBySpotWithMapList)
+            if (state.nearBySpots.isNotEmpty()) {
+                markerManager.showRegistrationLimitArea(state.currentTargetLatLng.toLatLng())
+            } else {
+                markerManager.clearRegistrationLimitArea()
+            }
+        }
+        previousState = state
     }
     private fun handleEffect(effect: SelectLocationSideEffect) {
         when (effect) {
@@ -91,7 +107,7 @@ class SelectLocationFragment: BaseFragment<FragmentSelectLocationBinding>(R.layo
 
     override fun onMapReady(map: NaverMap) {
         naverMap = map
-        markerManager = MarkerManager(naverMap)
+        markerManager = MarkerManager(requireContext(), naverMap)
 
         viewModel.initCameraPosition()
 

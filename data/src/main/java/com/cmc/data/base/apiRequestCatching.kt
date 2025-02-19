@@ -1,10 +1,10 @@
 package com.cmc.data.base
 
 
-import android.util.Log
 import com.cmc.domain.base.exception.ApiException
 import com.cmc.domain.base.exception.AppInternalException
 import com.cmc.domain.base.exception.NetworkException
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -26,7 +26,7 @@ suspend fun <T : Any, R> apiRequestCatching(
             successCallBack(Unit as T)
             Result.success(Unit as R)
         } else {
-            val createException = mapErrorCodeToException(response.code, response.message)
+            val createException = createResultException(response)
             Result.failure(createException)
         }
     }.getOrElse { exception ->
@@ -40,21 +40,32 @@ suspend fun <T : Any, R> apiRequestCatching(
     }
 }
 
-private fun createException(errorBody: String?): Exception {
-    val errorResponse = GsonProvider.gson.fromJson(errorBody, ErrorResponse::class.java)
-    val createException = mapErrorCodeToException(errorResponse.code, errorResponse.message)
-    return createException
+private fun <T> createResultException(response: ApiResponse<T>): ApiException {
+    val errorCode = response.code
+    val errorMessage = response.message
+    val errorResult = response.result
+
+    return when (errorCode) {
+        ApiCode.Spot.SPOT_TOO_MANY_REGISTERED -> ApiException.RegistrationLimitExceeded(errorMessage, errorResult)
+        else -> ApiException.ServerError("알 수 없는 오류 발생")
+    }
 }
 
-private fun mapErrorCodeToException(errorCode: String, message: String): ApiException {
-    return errorCodeMap[errorCode]?.invoke(message) ?: ApiException.ServerError(message)
+private fun createException(errorBody: String?): Exception {
+    val errorResponse = GsonProvider.gson.fromJson(errorBody, ErrorResponse::class.java)
+    return mapErrorCodeToException(errorResponse.code, errorResponse.message)
+}
+
+private fun mapErrorCodeToException(errorCode: String, message: String, result: Any? = null): ApiException {
+    return errorCodeMap[errorCode]?.invoke(message, result) ?: ApiException.ServerError(message)
 }
 
 private val errorCodeMap = mapOf(
-    ApiCode.Auth.INVALID_GOOGLE_ID_TOKEN to { msg: String -> ApiException.NotFound(msg) },
-    ApiCode.Auth.GOOGLE_ID_TOKEN_VERIFICATION_FAILED to { msg: String -> ApiException.Unauthorized(msg) },
-    ApiCode.Common.GENERIC_ERROR to { msg: String -> ApiException.BadRequest(msg) },
-    ApiCode.Spot.SPOT_SEARCH_NO_RESULT to { msg: String -> ApiException.NotFound(msg) },
+    ApiCode.Auth.INVALID_GOOGLE_ID_TOKEN to { msg: String, _: Any? ->  ApiException.NotFound(msg) },
+    ApiCode.Auth.GOOGLE_ID_TOKEN_VERIFICATION_FAILED to { msg: String, _: Any? ->  ApiException.Unauthorized(msg) },
+    ApiCode.Common.GENERIC_ERROR to { msg: String, _: Any? ->  ApiException.BadRequest(msg) },
+    ApiCode.Spot.SPOT_SEARCH_NO_RESULT to { msg: String, _: Any? ->  ApiException.NotFound(msg) },
+    ApiCode.Spot.SPOT_TOO_MANY_REGISTERED to { msg: String, data: Any? ->  ApiException.RegistrationLimitExceeded(msg, data) },
 )
 
 fun <R> Result<R>.asFlow(): Flow<Result<R>> {

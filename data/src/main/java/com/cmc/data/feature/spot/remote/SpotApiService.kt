@@ -64,6 +64,13 @@ interface SpotApiService {
         @Query("userLongitude") userLongitude: Double,
     ): ApiResponse<SpotWithMapResponseDto>
 
+    @GET("map/density")
+    suspend fun checkSpotRegistration(
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+    ): ApiResponse<Any>
+
+
     @GET("spot/{spotId}")
     suspend fun getSpotDetail(
         @Path("spotId") spotId: Int

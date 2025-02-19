@@ -153,7 +153,9 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
         viewModel.searchSpotByKeyword()
 
         with(naverMap) {
-            markerManager = MarkerManager(this@with) { spot -> viewModel.onClickMarker(spot) }
+            markerManager = MarkerManager(requireContext(), this@with) {
+                spot -> viewModel.onClickMarker(spot)
+            }
 
             uiSettings.apply {
                 isZoomControlEnabled = false

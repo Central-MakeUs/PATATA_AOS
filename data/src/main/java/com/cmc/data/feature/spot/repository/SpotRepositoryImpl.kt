@@ -146,6 +146,12 @@ class SpotRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun checkSpotRegistration(latitude: Double, longitude: Double): Result<String> {
+        return apiRequestCatching(
+            apiCall = { spotApiService.checkSpotRegistration(latitude, longitude) },
+        )
+    }
+
     override suspend fun getSpotDetail(spotId: Int): Result<SpotDetail> {
         return apiRequestCatching(
             apiCall = { spotApiService.getSpotDetail(spotId) },

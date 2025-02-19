@@ -55,6 +55,8 @@ interface SpotRepository {
         userLongitude: Double,
     ): Result<SpotWithMap>
 
+    suspend fun checkSpotRegistration(latitude: Double, longitude: Double): Result<String>
+
     suspend fun getSpotDetail(spotId: Int): Result<SpotDetail>
 
     suspend fun createSpot(

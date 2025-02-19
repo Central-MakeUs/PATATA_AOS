@@ -144,7 +144,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
         naverMap = map
 
         with(naverMap) {
-            markerManager = MarkerManager(this@with) { spot ->
+            markerManager = MarkerManager(requireContext(), this@with) { spot ->
                 viewModel.onClickMarker(spot)
             }
 

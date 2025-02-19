@@ -14,7 +14,25 @@ data class SpotWithMapUiModel(
     val tags: List<String>,
     val isScraped: Boolean,
     val distance: Double,
-)
+) {
+    companion object {
+        fun getDefault(): SpotWithMapUiModel {
+            return SpotWithMapUiModel(
+                spotId = 0,
+                spotName = "",
+                address = "",
+                addressDetail= null,
+                latitude = 0.0,
+                longitude = 0.0,
+                categoryId = 0,
+                images = emptyList(),
+                tags = emptyList(),
+                isScraped = false,
+                distance = 0.0,
+            )
+        }
+    }
+}
 
 fun SpotWithMap.toUiModel(): SpotWithMapUiModel {
     return SpotWithMapUiModel(

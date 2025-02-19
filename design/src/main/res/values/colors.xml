@@ -23,6 +23,7 @@
     <color name="blue_20">#B7E4FB</color>
     <color name="blue_50">#6FC9F6</color>
     <color name="blue_100">#20ACF2</color>
+    <color name="blue_20_trans_50">#80B7E4FB</color>
 
     <color name="navy_20">#405493</color>
     <color name="navy_50">#172A5D</color>
