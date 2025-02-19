@@ -123,6 +123,10 @@ fun resizeImage(context: Context, uri: Uri, maxSize: Int, quality: Int): File {
     val originalBitmap = BitmapFactory.decodeStream(inputStream)
     inputStream.close()
 
+    if (originalBitmap == null) {
+        throw IllegalArgumentException("Failed to decode bitmap from URI: $uri")
+    }
+
     val resizedBitmap = scaleBitmap(originalBitmap, maxSize)
 
     val resizedFile = File(context.cacheDir, "resized_${UUID.randomUUID()}.jpg")
