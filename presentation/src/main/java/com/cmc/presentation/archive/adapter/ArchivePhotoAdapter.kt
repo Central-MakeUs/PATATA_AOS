@@ -8,20 +8,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.ViewArchivePhotoBinding
+import com.cmc.presentation.spot.model.ScrapSpotUiModel
 
 class ArchivePhotoAdapter(
     private val isSelectionMode: () -> Boolean,
-    private val isSelected: (Int) -> Boolean,
-    private val onImageClick: (Int) -> Unit,
+    private val onImageClick: (ScrapSpotUiModel) -> Unit,
 ) : RecyclerView.Adapter<ArchivePhotoAdapter.ArchivePhotoViewHolder>() {
 
-    private var items: List<Pair<Int, String>> = emptyList()
+    private var items: List<ScrapSpotUiModel> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArchivePhotoViewHolder {
         val binding = ViewArchivePhotoBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
-        return ArchivePhotoViewHolder(binding, isSelectionMode, isSelected, onImageClick)
+        return ArchivePhotoViewHolder(binding, isSelectionMode, onImageClick)
     }
 
     override fun onBindViewHolder(holder: ArchivePhotoViewHolder, position: Int) {
@@ -30,7 +30,7 @@ class ArchivePhotoAdapter(
 
     override fun getItemCount(): Int = items.size
 
-    fun setItems(newItems: List<Pair<Int, String>>) {
+    fun setItems(newItems: List<ScrapSpotUiModel>) {
         val diffCallback = DiffCallback(items, newItems)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         items = newItems
@@ -40,19 +40,17 @@ class ArchivePhotoAdapter(
     class ArchivePhotoViewHolder(
         private val binding: ViewArchivePhotoBinding,
         private val isSelectionMode: () -> Boolean,
-        private val isSelected: (Int) -> Boolean,
-        private val onImageClick: (Int) -> Unit
+        private val onImageClick: (ScrapSpotUiModel) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Pair<Int, String>) {
+        fun bind(item: ScrapSpotUiModel) {
             Glide.with(binding.root)
-                .load(item.second)
-                .placeholder(com.cmc.design.R.drawable.img_sample)
+                .load(item.representativeImageUrl)
                 .into(binding.ivPhoto)
 
             // UI 업데이트
             val selectionMode = isSelectionMode()
-            val selected = isSelected(item.first)
+            val selected = item.isSelected
 
             binding.ivCheck.isVisible = selectionMode
             binding.ivCheck.setImageResource(
@@ -60,21 +58,21 @@ class ArchivePhotoAdapter(
             )
 
             binding.root.setOnClickListener {
-                onImageClick.invoke(item.first)
+                onImageClick.invoke(item)
             }
         }
     }
 
     // DiffUtil 콜백
     class DiffCallback(
-        private val oldList: List<Pair<Int, String>>,
-        private val newList: List<Pair<Int, String>>
+        private val oldList: List<ScrapSpotUiModel>,
+        private val newList: List<ScrapSpotUiModel>
     ) : DiffUtil.Callback() {
         override fun getOldListSize() = oldList.size
         override fun getNewListSize() = newList.size
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].first == newList[newItemPosition].first
+            return oldList[oldItemPosition].spotId == newList[newItemPosition].spotId
         }
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {

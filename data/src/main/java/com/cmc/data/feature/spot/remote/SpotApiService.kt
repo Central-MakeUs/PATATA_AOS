@@ -5,6 +5,7 @@ import com.cmc.data.feature.spot.model.CategorySpotsResponseDto
 import com.cmc.data.feature.spot.model.CreateReviewRequest
 import com.cmc.data.feature.spot.model.CreateSpotResponseDto
 import com.cmc.data.feature.spot.model.ReviewResponseDto
+import com.cmc.data.feature.spot.model.ScrapSpotResponseDto
 import com.cmc.data.feature.spot.model.SearchSpotsResponseDto
 import com.cmc.data.feature.spot.model.SpotDetailResponseDto
 import com.cmc.data.feature.spot.model.SpotScrapResponseDto
@@ -110,4 +111,8 @@ interface SpotApiService {
         @Path("reviewId") reviewId: Int
     ): ApiResponse<Unit>
 
+
+    @GET("scrap")
+    suspend fun getScrapSpots(
+    ): ApiResponse<List<ScrapSpotResponseDto>>
 }

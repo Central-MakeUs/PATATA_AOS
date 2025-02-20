@@ -8,16 +8,17 @@ import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
 import com.cmc.design.component.PatataAlert
 import com.cmc.design.component.PatataAppBar
+import com.cmc.design.component.PatataAppBar.FooterType
+import com.cmc.design.util.SnackBarUtil
 import com.cmc.presentation.R
+import com.cmc.presentation.archive.adapter.ArchivePhotoAdapter
+import com.cmc.presentation.archive.viewmodel.ArchiveViewModel
+import com.cmc.presentation.archive.viewmodel.ArchiveViewModel.ArchiveSideEffect
+import com.cmc.presentation.archive.viewmodel.ArchiveViewModel.ArchiveState
 import com.cmc.presentation.databinding.FragmentArchiveBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import com.cmc.presentation.archive.viewmodel.ArchiveViewModel.ArchiveState
-import com.cmc.presentation.archive.viewmodel.ArchiveViewModel.ArchiveSideEffect
-import com.cmc.design.component.PatataAppBar.FooterType
-import com.cmc.presentation.archive.adapter.ArchivePhotoAdapter
-import com.cmc.presentation.archive.viewmodel.ArchiveViewModel
 
 @AndroidEntryPoint
 class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_archive) {
@@ -28,15 +29,8 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
 
     override fun initObserving() {
         repeatWhenUiStarted {
-            launch {
-                viewModel.state.collectLatest { state ->
-                    updateUI(state)
-                }
-            }
-            launch {
-                viewModel.sideEffect.collect { effect ->
-                    handleSideEffect(effect)
-                }
+            launch { viewModel.state.collectLatest { state -> updateUI(state) } }
+            launch { viewModel.sideEffect.collect { effect -> handleSideEffect(effect) }
             }
         }
     }
@@ -50,14 +44,13 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
         binding.layoutArchiveNoResult.isVisible = state.images.isEmpty()
 
         binding.archiveAppbar.setFooterType(state.footerType)
-        // Adapter에 데이터 변경을 알림 (선택 모드가 바뀌었으므로 모든 아이템 갱신)
         archiveAdapter.setItems(state.images)
         archiveAdapter.notifyDataSetChanged()
     }
     private fun handleSideEffect(effect: ArchiveSideEffect) {
         when (effect) {
-            is ArchiveSideEffect.ShowDeleteImageDialog -> { showDeleteImageDialog(effect.selectedImages) }
-            is ArchiveSideEffect.ShowSnackbar -> {}
+            is ArchiveSideEffect.ShowDeleteImageDialog -> { showDeleteImageDialog(effect.count) }
+            is ArchiveSideEffect.ShowSnackbar -> { showSnackBar(effect.message) }
             is ArchiveSideEffect.NavigateSpotDetail -> { navigateSpotDetail(effect.spotId) }
             is ArchiveSideEffect.NavigateToCategorySpots -> { navigateCategorySpot(effect.categoryId) }
         }
@@ -70,7 +63,7 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
                 onFootButtonClick = { type ->
                     when (type) {
                         PatataAppBar.FooterType.SELECT -> { viewModel.onClickSelectButton() }
-                        else -> { viewModel.onClickDeleteButton() }
+                        else -> { viewModel.onClickAppBarDeleteButton() }
                     }
                 },
             )
@@ -79,18 +72,17 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
     private fun setRecyclerView() {
         archiveAdapter = ArchivePhotoAdapter(
             isSelectionMode = { viewModel.state.value.footerType == FooterType.DELETE },
-            isSelected = { imageId -> viewModel.state.value.selectedImages.contains(imageId) },
-            onImageClick = { spotId ->
+            onImageClick = { spot ->
                 if (viewModel.state.value.footerType == FooterType.DELETE) {
-                    viewModel.togglePhotoSelection(spotId)
+                    viewModel.togglePhotoSelection(spot)
                 } else {
-                    viewModel.onClickSpotImage(spotId)
+                    viewModel.onClickSpotImage(spot.spotId)
                 }
             }
         )
 
         binding.rvArchive.apply {
-            layoutManager = GridLayoutManager(requireContext(), SPAN_COUNT) // 2열 그리드
+            layoutManager = GridLayoutManager(requireContext(), SPAN_COUNT)
             adapter = archiveAdapter
             addItemDecoration(GridSpaceItemDecoration(SPAN_COUNT, GRID_SPACE))
         }
@@ -101,17 +93,15 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
         }
     }
 
-    private fun showDeleteImageDialog(images: List<Int>) {
+    private fun showDeleteImageDialog(count: Int) {
         PatataAlert(requireContext())
-            .title(getString(R.string.title_dialog_archive_images_delete, images.size))
+            .title(getString(R.string.title_dialog_archive_images_delete, count))
             .multiButton {
                 leftButton(getString(R.string.cancel)) { }
-                rightButton(getString(R.string.delete)) {
-                    // TODO: 이미지 삭제 API
-                    viewModel.tempDeleteImages(images)
-                }
+                rightButton(getString(R.string.delete)) { viewModel.onClickDeleteButton() }
             }.show()
     }
+    private fun showSnackBar(message: String) { SnackBarUtil.show(binding.root, message) }
 
     private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
     private fun navigateCategorySpot(categoryId: Int) {

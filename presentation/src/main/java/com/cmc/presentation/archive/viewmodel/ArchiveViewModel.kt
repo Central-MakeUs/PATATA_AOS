@@ -1,9 +1,18 @@
 package com.cmc.presentation.archive.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc.design.component.PatataAppBar
+import com.cmc.design.component.PatataAppBar.FooterType
+import com.cmc.domain.feature.spot.usecase.GetScrapSpotsUseCase
+import com.cmc.domain.feature.spot.usecase.ToggleSpotScrapUseCase
+import com.cmc.domain.model.SpotCategory
+import com.cmc.presentation.R
+import com.cmc.presentation.spot.model.ScrapSpotUiModel
+import com.cmc.presentation.spot.model.toListUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,25 +21,47 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.cmc.design.component.PatataAppBar.FooterType
-import com.cmc.domain.model.SpotCategory
 
 @HiltViewModel
-class ArchiveViewModel @Inject constructor() : ViewModel() {
+class ArchiveViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val getScrapSpotsUseCase: GetScrapSpotsUseCase,
+    private val toggleSpotScrapUseCase: ToggleSpotScrapUseCase,
+) : ViewModel() {
 
+    init {
+        fetchScrapSpots()
+    }
     private val _state = MutableStateFlow(ArchiveState())
     val state: StateFlow<ArchiveState> = _state.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<ArchiveSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
+    private fun fetchScrapSpots() {
+        viewModelScope.launch {
+            getScrapSpotsUseCase.invoke()
+                .onSuccess { images ->
+                    _state.update {
+                        it.copy(images = images.toListUiModel())
+                    }
+                }.onFailure {
 
-    fun togglePhotoSelection(imageId: Int) {
+                }
+        }
+    }
+
+    fun togglePhotoSelection(spot: ScrapSpotUiModel) {
         _state.update {
-            val updatedSelection = it.selectedImages.toMutableSet().apply {
-                if (contains(imageId)) remove(imageId) else add(imageId)
-            }
-            it.copy(selectedImages = updatedSelection)
+            it.copy(
+                images = it.images.map { image ->
+                    image.copy(
+                        isSelected =
+                            if(image == spot) image.isSelected.not()
+                            else image.isSelected
+                    )
+                }
+            )
         }
     }
 
@@ -40,9 +71,12 @@ class ArchiveViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun onClickDeleteButton() {
-        viewModelScope.launch {
-            _sideEffect.emit(ArchiveSideEffect.ShowDeleteImageDialog(state.value.selectedImages.toList()))
+    fun onClickAppBarDeleteButton() {
+        val selectedImages = state.value.images.filter { it.isSelected }.map { it.spotId }
+        if (selectedImages.isEmpty()) {
+            onDeleteCancelled()
+        } else {
+            sendSideEffect(ArchiveSideEffect.ShowDeleteImageDialog(selectedImages.size))
         }
     }
     fun onClickSpotImage(spotId: Int) {
@@ -52,25 +86,45 @@ class ArchiveViewModel @Inject constructor() : ViewModel() {
         sendSideEffect(ArchiveSideEffect.NavigateToCategorySpots(SpotCategory.ALL.id))
     }
 
-    fun tempDeleteImages(selectedImages: List<Int>) {
+    fun onClickDeleteButton() {
+        viewModelScope.launch {
+            val selectedSpotIds= state.value.images.filter { it.isSelected }.map { it.spotId }
+            toggleSpotScrapUseCase.invoke(selectedSpotIds)
+                .onSuccess { spots ->
+                    val deletedSpotIds = spots.map { it.spotId }
+                    _state.update {
+                        val newImages = it.images.filter { image ->
+                            image.spotId !in deletedSpotIds
+                        }.map { image ->
+                            image.copy(isSelected = false)
+                        }
+
+                        it.copy(
+                            footerType = if (newImages.isEmpty()) FooterType.NONE else FooterType.SELECT,
+                            images = newImages
+                        )
+                    }
+
+                    sendSideEffect(ArchiveSideEffect.ShowSnackbar(
+                        context.getString(R.string.archive_images_deleted, deletedSpotIds.size)
+                    ))
+                }.onFailure { e ->
+                    e.printStackTrace()
+                }
+        }
+    }
+
+    private fun onDeleteCancelled() {
         _state.update {
-            val newImages = it.images.filter { v -> selectedImages.contains(v.first).not() }
             it.copy(
-                footerType = if (newImages.isEmpty()) FooterType.NONE else FooterType.SELECT,
-                selectedImages = emptySet(),
-                images = newImages
+                footerType = FooterType.SELECT,
+                images = it.images.map {  image ->
+                    image.copy(isSelected = false)
+                }
             )
         }
     }
 
-    fun onDeleteCancelled() {
-        _state.update {
-            it.copy(
-                footerType = FooterType.SELECT,
-                selectedImages = emptySet(),
-            )
-        }
-    }
 
     private fun sendSideEffect(effect: ArchiveSideEffect) {
         viewModelScope.launch {
@@ -78,15 +132,13 @@ class ArchiveViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-
     data class ArchiveState(
-        val footerType: PatataAppBar.FooterType = PatataAppBar.FooterType.SELECT,
-        val selectedImages: Set<Int> = emptySet(),
-        val images: List<Pair<Int, String>> = emptyList()
+        val footerType: FooterType = PatataAppBar.FooterType.SELECT,
+        val images: List<ScrapSpotUiModel> = emptyList()
     )
 
     sealed class ArchiveSideEffect {
-        data class ShowDeleteImageDialog(val selectedImages: List<Int>) : ArchiveSideEffect()
+        data class ShowDeleteImageDialog(val count: Int) : ArchiveSideEffect()
         data class ShowSnackbar(val message: String) : ArchiveSideEffect()
         data class NavigateSpotDetail(val spotId: Int) : ArchiveSideEffect()
         data class NavigateToCategorySpots(val categoryId: Int) : ArchiveSideEffect()

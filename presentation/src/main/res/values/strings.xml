@@ -24,6 +24,7 @@
     <string name="title_choose_picture">사진을 추가해주세요 (최소 1개)</string>
     <string name="title_input_hashtag">해쉬태그를 입력해주세요 (최대 2개)</string>
     <string name="title_dialog_archive_images_delete">%d개의 항목을 목록에서\n삭제하시겠습니까?</string>
+    <string name="archive_images_deleted">%d개의 항목이 삭제되었습니다!</string>
     <string name="select_location_to_share">공유하고 싶은 장소를 선택해주세요!</string>
     <string name="explore_this_area">이 지역에서 탐색</string>
 

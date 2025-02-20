@@ -18,6 +18,7 @@ import com.cmc.data.feature.spot.remote.SpotApiService
 import com.cmc.domain.base.exception.AppInternalException
 import com.cmc.domain.feature.spot.base.PaginatedResponse
 import com.cmc.domain.feature.spot.model.Review
+import com.cmc.domain.feature.spot.model.ScrapSpot
 import com.cmc.domain.feature.spot.model.SpotDetail
 import com.cmc.domain.feature.spot.model.SpotScrapResponse
 import com.cmc.domain.feature.spot.model.SpotWithDistance
@@ -219,6 +220,13 @@ class SpotRepositoryImpl @Inject constructor(
         return apiRequestCatching(
             apiCall = { spotApiService.deleteReview(reviewId) },
             responseClass = Unit::class
+        )
+    }
+
+    override suspend fun getScrapSpots(): Result<List<ScrapSpot>> {
+        return apiRequestCatching(
+            apiCall = { spotApiService.getScrapSpots() },
+            transform = { it.toListDomain() }
         )
     }
 
