@@ -18,7 +18,7 @@ import com.cmc.data.feature.spot.remote.SpotApiService
 import com.cmc.domain.base.exception.AppInternalException
 import com.cmc.domain.feature.spot.base.PaginatedResponse
 import com.cmc.domain.feature.spot.model.Review
-import com.cmc.domain.feature.spot.model.ScrapSpot
+import com.cmc.domain.feature.spot.model.SpotPreview
 import com.cmc.domain.feature.spot.model.SpotDetail
 import com.cmc.domain.feature.spot.model.SpotScrapResponse
 import com.cmc.domain.feature.spot.model.SpotWithDistance
@@ -40,6 +40,12 @@ class SpotRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val spotApiService: SpotApiService,
 ): SpotRepository {
+    override suspend fun getMySpots(): Result<List<SpotPreview>> {
+        return apiRequestCatching(
+            apiCall = { spotApiService.getMySpots() },
+            transform = { it.spots.toListDomain() }
+        )
+    }
 
     override suspend fun getPaginatedCategorySpots(
         categoryId: Int,
@@ -223,7 +229,7 @@ class SpotRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getScrapSpots(): Result<List<ScrapSpot>> {
+    override suspend fun getScrapSpots(): Result<List<SpotPreview>> {
         return apiRequestCatching(
             apiCall = { spotApiService.getScrapSpots() },
             transform = { it.toListDomain() }

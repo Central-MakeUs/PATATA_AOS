@@ -25,16 +25,8 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
 
     override fun initObserving() {
         repeatWhenUiStarted {
-            launch {
-                viewModel.state.collectLatest { state ->
-                    updateUI(state)
-                }
-            }
-            launch {
-                viewModel.sideEffect.collect { effect ->
-                    handleSideEffect(effect)
-                }
-            }
+            launch { viewModel.state.collectLatest { state -> updateUI(state) }}
+            launch { viewModel.sideEffect.collect { effect -> handleSideEffect(effect) }}
         }
     }
     override fun initView() {
@@ -44,9 +36,9 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
     }
 
     private fun updateUI(state: MyState) {
-        myRegisteredSpotAdapter.setItems(state.images)
-        binding.layoutRegisteredSpotNoResult.isVisible = state.images.isEmpty()
-        binding.tvMyRegisteredSpotsCount.text = state.images.size.toString() ?: getString(R.string.zero)
+        myRegisteredSpotAdapter.setItems(state.spots)
+        binding.layoutRegisteredSpotNoResult.isVisible = state.spots.isEmpty()
+        binding.tvMyRegisteredSpotsCount.text = state.spots.size.toString() ?: getString(R.string.zero)
     }
     private fun handleSideEffect(effect: MySideEffect) {
         when (effect) {
@@ -54,6 +46,7 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
                 // TODO: 설정 화면으로 이동
             }
             is MySideEffect.NavigateToCategorySpots -> { navigateCategorySpot(effect.categoryId) }
+            is MySideEffect.NavigateSpotDetail -> { navigateSpotDetail(effect.spotId) }
             is MySideEffect.ShowToast -> {}
         }
     }
@@ -67,9 +60,7 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
         }
     }
     private fun setRecyclerView() {
-        myRegisteredSpotAdapter = MyRegisteredSpotAdapter(
-            onPhotoClick = {}
-        )
+        myRegisteredSpotAdapter = MyRegisteredSpotAdapter(onImageClick = { viewModel.onClickSpotImage(it) })
         binding.rvSetting.apply {
             layoutManager = GridLayoutManager(requireContext(), SPAN_COUNT)
             adapter = myRegisteredSpotAdapter
@@ -82,6 +73,7 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
         }
     }
 
+    private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
     private fun navigateCategorySpot(categoryId: Int) {
         (activity as GlobalNavigation).navigateCategorySpots(categoryId)
     }

@@ -1,9 +1,9 @@
 package com.cmc.data.feature.spot.model
 
-import com.cmc.domain.feature.spot.model.ScrapSpot
+import com.cmc.domain.feature.spot.model.SpotPreview
 import com.google.gson.annotations.SerializedName
 
-data class ScrapSpotResponseDto(
+data class SpotPreviewResponseDto(
     @SerializedName("spotId")
     val spotId : Int,
     @SerializedName("spotName")
@@ -12,14 +12,14 @@ data class ScrapSpotResponseDto(
     val representativeImageUrl: String
 )
 
-fun ScrapSpotResponseDto.toDomain(): ScrapSpot {
-    return ScrapSpot(
+fun SpotPreviewResponseDto.toDomain(): SpotPreview {
+    return SpotPreview(
         spotId = spotId,
         spotName = spotName,
         representativeImageUrl = representativeImageUrl,
     )
 }
 
-fun List<ScrapSpotResponseDto>.toListDomain(): List<ScrapSpot> {
+fun List<SpotPreviewResponseDto>.toListDomain(): List<SpotPreview> {
     return this.map { it.toDomain() }
 }

@@ -4,8 +4,9 @@ import com.cmc.data.base.ApiResponse
 import com.cmc.data.feature.spot.model.CategorySpotsResponseDto
 import com.cmc.data.feature.spot.model.CreateReviewRequest
 import com.cmc.data.feature.spot.model.CreateSpotResponseDto
+import com.cmc.data.feature.spot.model.MySpotsResponseDto
 import com.cmc.data.feature.spot.model.ReviewResponseDto
-import com.cmc.data.feature.spot.model.ScrapSpotResponseDto
+import com.cmc.data.feature.spot.model.SpotPreviewResponseDto
 import com.cmc.data.feature.spot.model.SearchSpotsResponseDto
 import com.cmc.data.feature.spot.model.SpotDetailResponseDto
 import com.cmc.data.feature.spot.model.SpotScrapResponseDto
@@ -23,6 +24,10 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface SpotApiService {
+
+    @GET("spot/my-spots")
+    suspend fun getMySpots(
+    ): ApiResponse<MySpotsResponseDto>
 
     @GET("spot/category")
     suspend fun getCategorySpots(
@@ -114,5 +119,5 @@ interface SpotApiService {
 
     @GET("scrap")
     suspend fun getScrapSpots(
-    ): ApiResponse<List<ScrapSpotResponseDto>>
+    ): ApiResponse<List<SpotPreviewResponseDto>>
 }

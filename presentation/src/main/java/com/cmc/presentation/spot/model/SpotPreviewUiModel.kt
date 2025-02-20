@@ -1,22 +1,22 @@
 package com.cmc.presentation.spot.model
 
-import com.cmc.domain.feature.spot.model.ScrapSpot
+import com.cmc.domain.feature.spot.model.SpotPreview
 
-data class ScrapSpotUiModel(
+data class SpotPreviewUiModel(
     val spotId : Int,
     val spotName: String,
     val representativeImageUrl: String,
     val isSelected: Boolean = false,
 )
 
-fun ScrapSpot.toUiModel(): ScrapSpotUiModel {
-    return ScrapSpotUiModel(
+fun SpotPreview.toUiModel(): SpotPreviewUiModel {
+    return SpotPreviewUiModel(
         spotId = spotId,
         spotName = spotName,
         representativeImageUrl = representativeImageUrl,
     )
 }
 
-fun List<ScrapSpot>.toListUiModel(): List<ScrapSpotUiModel> {
+fun List<SpotPreview>.toListUiModel(): List<SpotPreviewUiModel> {
     return this.map { it.toUiModel() }
 }

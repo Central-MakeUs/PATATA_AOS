@@ -9,7 +9,7 @@ import com.cmc.domain.feature.spot.usecase.GetScrapSpotsUseCase
 import com.cmc.domain.feature.spot.usecase.ToggleSpotScrapUseCase
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
-import com.cmc.presentation.spot.model.ScrapSpotUiModel
+import com.cmc.presentation.spot.model.SpotPreviewUiModel
 import com.cmc.presentation.spot.model.toListUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -51,7 +51,7 @@ class ArchiveViewModel @Inject constructor(
         }
     }
 
-    fun togglePhotoSelection(spot: ScrapSpotUiModel) {
+    fun togglePhotoSelection(spot: SpotPreviewUiModel) {
         _state.update {
             it.copy(
                 images = it.images.map { image ->
@@ -134,7 +134,7 @@ class ArchiveViewModel @Inject constructor(
 
     data class ArchiveState(
         val footerType: FooterType = PatataAppBar.FooterType.SELECT,
-        val images: List<ScrapSpotUiModel> = emptyList()
+        val images: List<SpotPreviewUiModel> = emptyList()
     )
 
     sealed class ArchiveSideEffect {

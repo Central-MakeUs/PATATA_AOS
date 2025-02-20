@@ -8,14 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.ViewArchivePhotoBinding
-import com.cmc.presentation.spot.model.ScrapSpotUiModel
+import com.cmc.presentation.spot.model.SpotPreviewUiModel
 
 class ArchivePhotoAdapter(
     private val isSelectionMode: () -> Boolean,
-    private val onImageClick: (ScrapSpotUiModel) -> Unit,
+    private val onImageClick: (SpotPreviewUiModel) -> Unit,
 ) : RecyclerView.Adapter<ArchivePhotoAdapter.ArchivePhotoViewHolder>() {
 
-    private var items: List<ScrapSpotUiModel> = emptyList()
+    private var items: List<SpotPreviewUiModel> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArchivePhotoViewHolder {
         val binding = ViewArchivePhotoBinding.inflate(
@@ -30,7 +30,7 @@ class ArchivePhotoAdapter(
 
     override fun getItemCount(): Int = items.size
 
-    fun setItems(newItems: List<ScrapSpotUiModel>) {
+    fun setItems(newItems: List<SpotPreviewUiModel>) {
         val diffCallback = DiffCallback(items, newItems)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         items = newItems
@@ -40,10 +40,10 @@ class ArchivePhotoAdapter(
     class ArchivePhotoViewHolder(
         private val binding: ViewArchivePhotoBinding,
         private val isSelectionMode: () -> Boolean,
-        private val onImageClick: (ScrapSpotUiModel) -> Unit
+        private val onImageClick: (SpotPreviewUiModel) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: ScrapSpotUiModel) {
+        fun bind(item: SpotPreviewUiModel) {
             Glide.with(binding.root)
                 .load(item.representativeImageUrl)
                 .into(binding.ivPhoto)
@@ -65,8 +65,8 @@ class ArchivePhotoAdapter(
 
     // DiffUtil 콜백
     class DiffCallback(
-        private val oldList: List<ScrapSpotUiModel>,
-        private val newList: List<ScrapSpotUiModel>
+        private val oldList: List<SpotPreviewUiModel>,
+        private val newList: List<SpotPreviewUiModel>
     ) : DiffUtil.Callback() {
         override fun getOldListSize() = oldList.size
         override fun getNewListSize() = newList.size
