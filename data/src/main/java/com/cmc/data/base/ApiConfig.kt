@@ -28,6 +28,7 @@ internal object ApiCode {
         const val SPOT_INVALID_SORT_PARAMETER = "SPOT4003"
         const val SPOT_TOO_MANY_REGISTERED = "SPOT4004"
         const val SPOT_SEARCH_NO_RESULT = "SPOT4005"
+        const val SPOT_UPLOAD_FAIL = "SPOT4007"
     }
 
     object Scrap {
@@ -44,5 +45,9 @@ internal object ApiCode {
     object Review {
         const val REVIEW_NOT_FOUND = "REVIEW4000"
         const val REVIEW_NOT_AUTHOR = "REVIEW4001"
+    }
+
+    object Image {
+        const val IMAGE_NOT_ATTACHED = "IMAGE4000"
     }
 }

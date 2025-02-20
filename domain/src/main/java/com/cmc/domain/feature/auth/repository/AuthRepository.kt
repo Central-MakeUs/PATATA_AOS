@@ -2,6 +2,7 @@ package com.cmc.domain.feature.auth.repository
 
 import com.cmc.domain.feature.auth.model.AuthResponse
 import com.cmc.domain.feature.auth.model.Member
+import com.cmc.domain.model.ImageMetadata
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
@@ -27,6 +28,8 @@ interface AuthRepository {
     suspend fun getUserId(): String?
 
     suspend fun updateNickName(nickName: String): Result<Unit>
+
+    suspend fun updateProfileImage(profileImage: ImageMetadata): Result<String>
 
     suspend fun getMyProfile(): Result<Member>
 

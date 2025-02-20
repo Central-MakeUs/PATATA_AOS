@@ -1,6 +1,7 @@
 package com.cmc.presentation.my.view
 
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.cmc.common.base.BaseFragment
@@ -31,14 +32,13 @@ class ProfileSettingFragment: BaseFragment<FragmentProfileSettingBinding>(R.layo
         initProfile(arguments)
         setAppbar()
         setEditText()
-        setProfileImage()
         setButtonListener()
     }
 
     private fun updateUI(state: ProfileSettingState) {
-        binding.etEditTextInput.setErrorState(state.isError)
+        binding.etEditTextInput.setErrorState(state.isNickNameError)
         Glide.with(binding.root)
-            .load(state.uploadImage)
+            .load(state.uploadImage.uri)
             .circleCrop()
             .into(binding.ivProfileImage)
 
@@ -46,6 +46,7 @@ class ProfileSettingFragment: BaseFragment<FragmentProfileSettingBinding>(R.layo
     }
     private fun handleSideEffect(effect: ProfileSettingSideEffect) {
         when (effect) {
+            is ProfileSettingSideEffect.ShowPhotoPicker -> { pickImageLauncher.launch("image/*")}
             is ProfileSettingSideEffect.NavigateMyPage -> { navigateMyPage() }
             is ProfileSettingSideEffect.NavigateHome -> { navigateHome() }
         }
@@ -76,13 +77,18 @@ class ProfileSettingFragment: BaseFragment<FragmentProfileSettingBinding>(R.layo
         }
     }
 
-    private fun setProfileImage() {
-        // TODO: 프로필 이미지 반영
-    }
-
     private fun setButtonListener() {
         binding.layoutCompleteButton.setOnClickListener {
             viewModel.onClickCompleteButton()
+        }
+        binding.ivEditProfileImage.setOnClickListener {
+            viewModel.onClickEditProfileImageButton()
+        }
+    }
+
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            viewModel.setImage(it)
         }
     }
 

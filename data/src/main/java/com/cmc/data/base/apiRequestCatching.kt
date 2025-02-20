@@ -53,8 +53,14 @@ private fun <T> createResultException(response: ApiResponse<T>): ApiException {
 }
 
 private fun createException(errorBody: String?): Exception {
-    val errorResponse = GsonProvider.gson.fromJson(errorBody, ErrorResponse::class.java)
-    return mapErrorCodeToException(errorResponse.code, errorResponse.message)
+    val exception = try {
+        val errorResponse = GsonProvider.gson.fromJson(errorBody, ErrorResponse::class.java)
+        mapErrorCodeToException(errorResponse.code, errorResponse.message)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        AppInternalException.IOException(e.message ?: "CreateException GsonProvider Error")
+    }
+    return exception
 }
 
 private fun mapErrorCodeToException(errorCode: String, message: String, result: Any? = null): ApiException {

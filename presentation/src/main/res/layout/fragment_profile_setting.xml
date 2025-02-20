@@ -37,6 +37,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
+        <ImageView
+            android:id="@+id/iv_edit_profile_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_circle"
+            android:padding="6dp"
+            android:src="@drawable/ic_edit"
+            app:layout_constraintEnd_toEndOf="@+id/iv_profile_image"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_profile_image"/>
+
         <TextView
             android:id="@+id/title_profile_nickname"
             style="@style/subtitle_medium"
