@@ -58,7 +58,7 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
     private fun handleSideEffect(effect: LoginSideEffect) {
         when (effect) {
             is LoginSideEffect.NavigateToHome -> { (activity as GlobalNavigation).navigateHome() }
-            is LoginSideEffect.NavigateToProfileSetting -> { navigate(R.id.navigate_profile_setting)}
+            is LoginSideEffect.NavigateToProfileSetting -> { navigate(R.id.navigate_profile_input)}
         }
     }
 

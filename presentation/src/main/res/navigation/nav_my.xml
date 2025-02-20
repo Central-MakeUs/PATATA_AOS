@@ -9,6 +9,15 @@
         android:id="@+id/MyFragment"
         android:name="com.cmc.presentation.my.view.MyFragment"
         tools:layout="@layout/fragment_my">
+        <action
+            android:id="@+id/navigate_profile_setting"
+            app:destination="@id/ProfileSettingFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/ProfileSettingFragment"
+        android:name="com.cmc.presentation.my.view.ProfileSettingFragment"
+        tools:layout="@layout/fragment_profile_setting">
     </fragment>
 
 </navigation>

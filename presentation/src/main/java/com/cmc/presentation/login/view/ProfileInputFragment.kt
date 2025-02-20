@@ -4,19 +4,18 @@ import androidx.fragment.app.viewModels
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
 import com.cmc.presentation.R
-import com.cmc.presentation.databinding.FragmentProfileSettingBinding
-import com.cmc.presentation.login.viewmodel.ProfileSettingViewModel
+import com.cmc.presentation.databinding.FragmentProfileInputBinding
+import com.cmc.presentation.login.viewmodel.ProfileInputViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
-import com.cmc.presentation.login.viewmodel.ProfileSettingViewModel.ProfileSettingState
-import com.cmc.presentation.login.viewmodel.ProfileSettingViewModel.ProfileSettingSideEffect
+import com.cmc.presentation.login.viewmodel.ProfileInputViewModel.ProfileInputState
+import com.cmc.presentation.login.viewmodel.ProfileInputViewModel.ProfileInputSideEffect
 import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
-class ProfileSettingFragment: BaseFragment<FragmentProfileSettingBinding>(R.layout.fragment_profile_setting) {
+class ProfileInputFragment: BaseFragment<FragmentProfileInputBinding>(R.layout.fragment_profile_input) {
 
-    private val viewModel: ProfileSettingViewModel by viewModels()
+    private val viewModel: ProfileInputViewModel by viewModels()
 
     override fun initObserving() {
         repeatWhenUiStarted {
@@ -32,13 +31,13 @@ class ProfileSettingFragment: BaseFragment<FragmentProfileSettingBinding>(R.layo
         setButtonListener()
     }
 
-    private fun updateUI(state: ProfileSettingState) {
+    private fun updateUI(state: ProfileInputState) {
         binding.etEditTextInput.setErrorState(state.isError)
     }
-    private fun handleSideEffect(effect: ProfileSettingSideEffect) {
+    private fun handleSideEffect(effect: ProfileInputSideEffect) {
         when (effect) {
-            is ProfileSettingSideEffect.NavigateSignUpSuccess -> { navigateSignUpSuccess() }
-            is ProfileSettingSideEffect.NavigateHome -> { navigateHome() }
+            is ProfileInputSideEffect.NavigateSignUpSuccess -> { navigateSignUpSuccess() }
+            is ProfileInputSideEffect.NavigateHome -> { navigateHome() }
         }
     }
 

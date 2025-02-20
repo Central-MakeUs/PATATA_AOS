@@ -10,14 +10,14 @@
         android:name="com.cmc.presentation.login.view.LoginFragment"
         tools:layout="@layout/fragment_login">
         <action
-            android:id="@+id/navigate_profile_setting"
-            app:destination="@id/ProfileSettingFragment"/>
+            android:id="@+id/navigate_profile_input"
+            app:destination="@id/ProfileInputFragment"/>
     </fragment>
 
     <fragment
-        android:id="@+id/ProfileSettingFragment"
-        android:name="com.cmc.presentation.login.view.ProfileSettingFragment"
-        tools:layout="@layout/fragment_profile_setting">
+        android:id="@+id/ProfileInputFragment"
+        android:name="com.cmc.presentation.login.view.ProfileInputFragment"
+        tools:layout="@layout/fragment_profile_input">
         <action
             android:id="@+id/navigate_signup_success"
             app:destination="@id/SignUpSuccessFragment"/>

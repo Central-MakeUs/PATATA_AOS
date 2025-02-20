@@ -14,6 +14,7 @@
     <string name="title_edit_post">게시글 수정하기</string>
     <string name="title_delete">삭제하기</string>
     <string name="title_profile_setting">프로필 설정</string>
+    <string name="title_profile_edit">프로필 수정</string>
     <string name="title_add_a_spot">스팟 추가하기</string>
     <string name="title_changeable_profile">프로필을 바꿀 수 있어요.</string>
     <string name="title_choose_category">카테고리를 선택해주세요</string>
@@ -75,4 +76,5 @@
     <string name="error_image_count">이미지 최대 업로드 장 수는 %d장 입니다.</string>
     <string name="error_image_size">이미지 장 당 최대 용량은 %dMB 입니다. 용량을 확인해주세요!</string>
     <string name="error_total_image_size">이미지 총 용량은 %dMB 를 넘지 않도록 해주세요.</string>
+    <string name="error_duplicate_nickname">이미 사용 중인 닉네임입니다.</string>
 </resources>

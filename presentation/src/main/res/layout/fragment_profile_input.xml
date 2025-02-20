@@ -31,8 +31,6 @@
             android:layout_height="100dp"
             android:background="@drawable/bg_circle_gray_30"
             android:layout_marginTop="72dp"
-            android:scaleType="centerCrop"
-            android:clipToOutline="true"
             app:layout_constraintTop_toBottomOf="@+id/appbar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

@@ -1,5 +1,6 @@
 package com.cmc.presentation.my.view
 
+import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
@@ -7,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.cmc.common.adapter.GridSpaceItemDecoration
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
+import com.cmc.common.constants.NavigationKeys
 import com.cmc.design.util.SnackBarUtil
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentMyBinding
@@ -48,7 +50,7 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
             }
             is MySideEffect.NavigateToCategorySpots -> { navigateCategorySpot(effect.categoryId) }
             is MySideEffect.NavigateSpotDetail -> { navigateSpotDetail(effect.spotId) }
-            is MySideEffect.NavigateSettingProfile -> {}
+            is MySideEffect.NavigateSettingProfile -> { navigateSettingProfile(effect.nickName, effect.profileImage) }
             is MySideEffect.ShowSnackBar -> { showSnackBar(effect.message) }
         }
     }
@@ -87,9 +89,21 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
         binding.tvChangeButton.setOnClickListener { viewModel.onClickChangeProfileButton() }
     }
 
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshMyPageScreen()
+    }
+
     private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
     private fun navigateCategorySpot(categoryId: Int) {
         (activity as GlobalNavigation).navigateCategorySpots(categoryId)
+    }
+    private fun navigateSettingProfile(nickName: String, profileImage: String) {
+        navigate(R.id.navigate_profile_setting, Bundle().apply {
+            putString(NavigationKeys.Setting.ARGUMENT_PROFILE_NICKNAME, nickName)
+            putString(NavigationKeys.Setting.ARGUMENT_PROFILE_IMAGE, profileImage)
+        })
     }
     private fun showSnackBar(message: String) { SnackBarUtil.show(binding.root, message) }
 

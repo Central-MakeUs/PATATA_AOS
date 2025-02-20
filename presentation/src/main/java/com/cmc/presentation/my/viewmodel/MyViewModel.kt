@@ -31,33 +31,32 @@ class MyViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<MySideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
-    init {
-        fetchMyProfile()
-        fetchMySpots()
+
+    fun refreshMyPageScreen() {
+        viewModelScope.launch {
+            fetchMyProfile()
+            fetchMySpots()
+        }
     }
 
-    private fun fetchMyProfile() {
-        viewModelScope.launch {
-            getMyProfileUseCase.invoke()
-                .onSuccess {  member ->
-                    _state.update {
-                        it.copy(profile = member.toUiModel())
-                    }
-                }.onFailure {  e ->
-                    e.printStackTrace()
+    private suspend fun fetchMyProfile() {
+        getMyProfileUseCase.invoke()
+            .onSuccess {  member ->
+                _state.update {
+                    it.copy(profile = member.toUiModel())
                 }
-        }
+            }.onFailure {  e ->
+                e.printStackTrace()
+            }
     }
-    private fun fetchMySpots() {
-        viewModelScope.launch {
-            getMySpotsUseCase.invoke()
-                .onSuccess { spots ->
-                    _state.update {
-                        it.copy(spots = spots.toListUiModel())
-                    }
+    private suspend fun fetchMySpots() {
+        getMySpotsUseCase.invoke()
+            .onSuccess { spots ->
+                _state.update {
+                    it.copy(spots = spots.toListUiModel())
                 }
-                .onFailure {  }
-        }
+            }
+            .onFailure {  }
     }
 
     fun onClickSettingButton() {

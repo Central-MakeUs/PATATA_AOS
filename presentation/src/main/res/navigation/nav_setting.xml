@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/ProfileSettingFragment"
-        android:name="com.cmc.presentation.login.view.ProfileSettingFragment"
-        tools:layout="@layout/fragment_profile_setting"/>
+        android:name="com.cmc.presentation.login.view.ProfileInputFragment"
+        tools:layout="@layout/fragment_profile_input"/>
 
 </navigation>
