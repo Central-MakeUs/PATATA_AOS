@@ -3,9 +3,11 @@ package com.cmc.presentation.my.view
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import com.bumptech.glide.Glide
 import com.cmc.common.adapter.GridSpaceItemDecoration
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
+import com.cmc.design.util.SnackBarUtil
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentMyBinding
 import com.cmc.presentation.my.adapter.MyRegisteredSpotAdapter
@@ -36,9 +38,8 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
     }
 
     private fun updateUI(state: MyState) {
-        myRegisteredSpotAdapter.setItems(state.spots)
-        binding.layoutRegisteredSpotNoResult.isVisible = state.spots.isEmpty()
-        binding.tvMyRegisteredSpotsCount.text = state.spots.size.toString() ?: getString(R.string.zero)
+        setProfile(state)
+        setRegisteredSpotViewModel(state)
     }
     private fun handleSideEffect(effect: MySideEffect) {
         when (effect) {
@@ -47,8 +48,22 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
             }
             is MySideEffect.NavigateToCategorySpots -> { navigateCategorySpot(effect.categoryId) }
             is MySideEffect.NavigateSpotDetail -> { navigateSpotDetail(effect.spotId) }
-            is MySideEffect.ShowToast -> {}
+            is MySideEffect.NavigateSettingProfile -> {}
+            is MySideEffect.ShowSnackBar -> { showSnackBar(effect.message) }
         }
+    }
+
+    private fun setProfile(state: MyState) {
+        state.profile.let {
+            binding.tvNickname.text = it.nickName
+            binding.tvEmail.text = it.email
+            Glide.with(binding.root).load(it.profileImage).circleCrop().into(binding.ivProfileImage)
+        }
+    }
+    private fun setRegisteredSpotViewModel(state: MyState) {
+        myRegisteredSpotAdapter.setItems(state.spots)
+        binding.layoutRegisteredSpotNoResult.isVisible = state.spots.isEmpty()
+        binding.tvMyRegisteredSpotsCount.text = state.spots.size.toString() ?: getString(R.string.zero)
     }
 
     private fun setAppBar() {
@@ -68,15 +83,15 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
         }
     }
     private fun setButton() {
-        binding.layoutExploreSpotButton.setOnClickListener {
-            viewModel.onClickExploreSpotButton()
-        }
+        binding.layoutExploreSpotButton.setOnClickListener { viewModel.onClickExploreSpotButton() }
+        binding.tvChangeButton.setOnClickListener { viewModel.onClickChangeProfileButton() }
     }
 
     private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
     private fun navigateCategorySpot(categoryId: Int) {
         (activity as GlobalNavigation).navigateCategorySpots(categoryId)
     }
+    private fun showSnackBar(message: String) { SnackBarUtil.show(binding.root, message) }
 
     companion object {
         private const val SPAN_COUNT = 2

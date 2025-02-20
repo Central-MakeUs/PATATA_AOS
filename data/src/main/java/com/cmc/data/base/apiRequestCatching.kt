@@ -30,6 +30,7 @@ suspend fun <T : Any, R> apiRequestCatching(
             Result.failure(createException)
         }
     }.getOrElse { exception ->
+        exception.printStackTrace()
         when (exception) {
             is IOException -> Result.failure(NetworkException.NoInternetConnection)
             is HttpException ->  {

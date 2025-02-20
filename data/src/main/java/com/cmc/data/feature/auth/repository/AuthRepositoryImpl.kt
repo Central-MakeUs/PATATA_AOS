@@ -11,6 +11,7 @@ import com.cmc.data.preferences.TokenPreferences
 import com.cmc.data.preferences.UserPreferences
 import com.cmc.domain.base.exception.ApiException
 import com.cmc.domain.feature.auth.model.AuthResponse
+import com.cmc.domain.feature.auth.model.Member
 import com.cmc.domain.feature.auth.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -95,6 +96,13 @@ internal class AuthRepositoryImpl @Inject constructor(
                 NickNameRequest(nickName)
             )},
             responseClass = Unit::class,
+        )
+    }
+
+    override suspend fun getMyProfile(): Result<Member> {
+        return apiRequestCatching(
+            apiCall = { authApiService.getMyProfile() },
+            transform = { it.toDomain() }
         )
     }
 }

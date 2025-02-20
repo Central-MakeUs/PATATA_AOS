@@ -2,8 +2,11 @@ package com.cmc.presentation.my.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.domain.feature.auth.usecase.GetMyProfileUseCase
 import com.cmc.domain.feature.spot.usecase.GetMySpotsUseCase
 import com.cmc.domain.model.SpotCategory
+import com.cmc.presentation.login.model.MemberUiModel
+import com.cmc.presentation.login.model.toUiModel
 import com.cmc.presentation.spot.model.SpotPreviewUiModel
 import com.cmc.presentation.spot.model.toListUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MyViewModel @Inject constructor(
     private val getMySpotsUseCase: GetMySpotsUseCase,
+    private val getMyProfileUseCase: GetMyProfileUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MyState())
@@ -28,9 +32,22 @@ class MyViewModel @Inject constructor(
     val sideEffect = _sideEffect.asSharedFlow()
 
     init {
+        fetchMyProfile()
         fetchMySpots()
     }
 
+    private fun fetchMyProfile() {
+        viewModelScope.launch {
+            getMyProfileUseCase.invoke()
+                .onSuccess {  member ->
+                    _state.update {
+                        it.copy(profile = member.toUiModel())
+                    }
+                }.onFailure {  e ->
+                    e.printStackTrace()
+                }
+        }
+    }
     private fun fetchMySpots() {
         viewModelScope.launch {
             getMySpotsUseCase.invoke()
@@ -54,6 +71,10 @@ class MyViewModel @Inject constructor(
     fun onClickSpotImage(spotId: Int) {
         sendSideEffect(MySideEffect.NavigateSpotDetail(spotId))
     }
+    fun onClickChangeProfileButton() {
+        val profile = state.value.profile
+        sendSideEffect(MySideEffect.NavigateSettingProfile(profile.nickName, profile.profileImage))
+    }
 
     private fun sendSideEffect(effect: MySideEffect) {
         viewModelScope.launch {
@@ -62,13 +83,15 @@ class MyViewModel @Inject constructor(
     }
 
     data class MyState(
-        val spots: List<SpotPreviewUiModel> = emptyList()
+        val spots: List<SpotPreviewUiModel> = emptyList(),
+        val profile: MemberUiModel = MemberUiModel.getDefault(),
     )
 
     sealed class MySideEffect {
         data object NavigateToSetting : MySideEffect()
         data class NavigateToCategorySpots(val categoryId: Int) : MySideEffect()
         data class NavigateSpotDetail(val spotId: Int) : MySideEffect()
-        data class ShowToast(val message: String) : MySideEffect()
+        data class NavigateSettingProfile(val nickName: String, val profileImage: String) : MySideEffect()
+        data class ShowSnackBar(val message: String) : MySideEffect()
     }
 }
