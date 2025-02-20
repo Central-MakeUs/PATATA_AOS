@@ -7,8 +7,6 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
@@ -27,6 +25,7 @@ import com.cmc.common.constants.NavigationKeys
 import com.cmc.common.util.DistanceFormatter
 import com.cmc.design.component.BottomSheetDialog
 import com.cmc.design.component.PatataAlert
+import com.cmc.design.util.SnackBarUtil
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
@@ -40,7 +39,6 @@ import com.cmc.presentation.map.viewmodel.SearchResultMapViewModel.SearchResultM
 import com.cmc.presentation.map.viewmodel.SearchResultMapViewModel.SearchResultMapState
 import com.cmc.presentation.model.SpotCategoryItem
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.snackbar.Snackbar
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapView
@@ -309,19 +307,7 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
         }
     }
 
-    private fun showSnackBar(message: String) {
-        val snackbar = Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).apply {
-            setBackgroundTint(ContextCompat.getColor(requireContext(), com.cmc.design.R.color.gray_100))
-            setTextColor(ContextCompat.getColor(requireContext(), com.cmc.design.R.color.blue_20))
-        }
-
-        // 텍스트 중앙 정렬
-        val textView = snackbar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-        textView.textAlignment = View.TEXT_ALIGNMENT_CENTER
-        textView.gravity = Gravity.CENTER
-
-        snackbar.show()
-    }
+    private fun showSnackBar(message: String) { SnackBarUtil.show(binding.root, message) }
 
     private fun ContentSheetMapSpotBinding.setBottomSheetViewBind(spot: SpotWithMapUiModel) {
         val category = SpotCategoryItem(SpotCategory.fromId(spot.categoryId))

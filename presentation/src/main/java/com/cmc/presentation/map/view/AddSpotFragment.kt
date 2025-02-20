@@ -1,9 +1,7 @@
 package com.cmc.presentation.map.view
 
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -15,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.constants.NavigationKeys
 import com.cmc.design.component.BottomSheetDialog
+import com.cmc.design.util.SnackBarUtil
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.ContentSheetAddSpotCategoryFilterBinding
@@ -22,12 +21,11 @@ import com.cmc.presentation.databinding.FragmentAddSpotBinding
 import com.cmc.presentation.map.adapter.SelectedImageAdapter
 import com.cmc.presentation.map.viewmodel.AddSpotViewModel
 import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.NavigateToAroundMe
+import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.NavigateToCreateSpotSuccess
 import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.ShowCategoryPicker
 import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.ShowPhotoPicker
-import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.NavigateToCreateSpotSuccess
 import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.ShowSnackbar
 import com.cmc.presentation.model.SpotCategoryItem
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -240,19 +238,7 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
         override fun isLongPressDragEnabled(): Boolean = true
     }
 
-    private fun showSnackBar(message: String) {
-        val snackbar = Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).apply {
-            setBackgroundTint(ContextCompat.getColor(requireContext(), com.cmc.design.R.color.gray_100))
-            setTextColor(ContextCompat.getColor(requireContext(), com.cmc.design.R.color.blue_20))
-        }
-
-        // 텍스트 중앙 정렬
-        val textView = snackbar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-        textView.textAlignment = View.TEXT_ALIGNMENT_CENTER
-        textView.gravity = Gravity.CENTER
-
-        snackbar.show()
-    }
+    private fun showSnackBar(message: String) { SnackBarUtil.show(binding.root, message) }
     private fun navigateAroundMe(){ navigate(R.id.navigate_add_spot_to_around_me) }
     private fun navigateCreateSpotSuccess() { navigate(R.id.navigate_spot_added_success) }
 }
