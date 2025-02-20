@@ -45,9 +45,7 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
     }
     private fun handleSideEffect(effect: MySideEffect) {
         when (effect) {
-            is MySideEffect.NavigateToSetting -> {
-                // TODO: 설정 화면으로 이동
-            }
+            is MySideEffect.NavigateToSetting -> { navigateSetting() }
             is MySideEffect.NavigateToCategorySpots -> { navigateCategorySpot(effect.categoryId) }
             is MySideEffect.NavigateSpotDetail -> { navigateSpotDetail(effect.spotId) }
             is MySideEffect.NavigateSettingProfile -> { navigateSettingProfile(effect.nickName, effect.profileImage) }
@@ -69,7 +67,7 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
     }
 
     private fun setAppBar() {
-        binding.settingAppbar.apply {
+        binding.myAppbar.apply {
             setupAppBar(
                 title = getString(R.string.title_my_profile),
                 onFootButtonClick = { viewModel.onClickSettingButton() },
@@ -105,6 +103,7 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
             putString(NavigationKeys.Setting.ARGUMENT_PROFILE_IMAGE, profileImage)
         })
     }
+    private fun navigateSetting() { navigate(R.id.navigate_setting) }
     private fun showSnackBar(message: String) { SnackBarUtil.show(binding.root, message) }
 
     companion object {

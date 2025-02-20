@@ -6,11 +6,12 @@
         android:layout_height="match_parent">
 
         <com.cmc.design.component.PatataAppBar
-            android:id="@+id/setting_appbar"
+            android:id="@+id/my_appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:bodyType="title"
             app:appBarBackgroundStyle="white"
+            app:footButtonType="setting"
             app:layout_constraintTop_toTopOf="parent"/>
 
         <ImageView
@@ -21,7 +22,7 @@
             android:layout_marginTop="30dp"
             android:scaleType="centerCrop"
             android:clipToOutline="true"
-            app:layout_constraintTop_toBottomOf="@+id/setting_appbar"
+            app:layout_constraintTop_toBottomOf="@+id/my_appbar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 

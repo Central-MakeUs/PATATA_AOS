@@ -12,12 +12,21 @@
         <action
             android:id="@+id/navigate_profile_setting"
             app:destination="@id/ProfileSettingFragment"/>
+        <action
+            android:id="@+id/navigate_setting"
+            app:destination="@id/SettingFragment"/>
     </fragment>
 
     <fragment
         android:id="@+id/ProfileSettingFragment"
         android:name="com.cmc.presentation.my.view.ProfileSettingFragment"
         tools:layout="@layout/fragment_profile_setting">
+    </fragment>
+
+    <fragment
+        android:id="@+id/SettingFragment"
+        android:name="com.cmc.presentation.my.view.SettingFragment"
+        tools:layout="@layout/fragment_setting">
     </fragment>
 
 </navigation>
