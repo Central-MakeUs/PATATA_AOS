@@ -8,6 +8,7 @@ data class SpotDetail(
     val address: String,
     val addressDetail: String?,
     val categoryId: Int,
+    val memberId: Int,
     val authorName: String,
     val images: List<String>,
     val tags: List<String>,
