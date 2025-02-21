@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.fragment.app.viewModels
 import com.cmc.common.base.BaseFragment
+import com.cmc.common.base.GlobalNavigation
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentSettingBinding
 import com.cmc.presentation.my.viewmodel.SettingViewModel
@@ -27,16 +28,8 @@ class SettingFragment: BaseFragment<FragmentSettingBinding>(R.layout.fragment_se
     }
 
     override fun initView() {
-        with(binding) {
-            tvSettingVersion.text = getAppVersion()
-
-            layoutTerms.setOnClickListener { viewModel.onClickFAQ() }
-            layoutPrivacyPolicy.setOnClickListener { viewModel.onClickFAQ() }
-            layoutOpenSourceLicense.setOnClickListener { viewModel.onClickFAQ() }
-            layoutSettingNotice.setOnClickListener { viewModel.onClickFAQ() }
-            layoutSettingFaq.setOnClickListener { viewModel.onClickFAQ() }
-            layoutSettingContact.setOnClickListener { viewModel.onClickFAQ() }
-        }
+        initCode()
+        setButton()
     }
 
     private fun updateUI(state: SettingState) {
@@ -45,11 +38,27 @@ class SettingFragment: BaseFragment<FragmentSettingBinding>(R.layout.fragment_se
     private fun handleSideEffect(effect: SettingSideEffect) {
         when (effect) {
             is SettingSideEffect.NavigateSignOut -> {}
+            is SettingSideEffect.NavigateLogin -> { navigateLogin() }
             is SettingSideEffect.ShowDialog -> {}
             is SettingSideEffect.OpenNotionPage -> { openNotionPage(effect.url) }
         }
     }
 
+    private fun initCode() {
+        binding.tvSettingVersion.text = getAppVersion()
+    }
+    private fun setButton() {
+        with(binding) {
+            layoutTerms.setOnClickListener { viewModel.onClickFAQ() }
+            layoutPrivacyPolicy.setOnClickListener { viewModel.onClickFAQ() }
+            layoutOpenSourceLicense.setOnClickListener { viewModel.onClickFAQ() }
+            layoutSettingNotice.setOnClickListener { viewModel.onClickFAQ() }
+            layoutSettingFaq.setOnClickListener { viewModel.onClickFAQ() }
+            layoutSettingContact.setOnClickListener { viewModel.onClickFAQ() }
+
+            tvLogout.setOnClickListener { viewModel.onClickLogoutButton() }
+        }
+    }
     private fun getAppVersion(): String {
         return try {
             val packageInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
@@ -63,4 +72,5 @@ class SettingFragment: BaseFragment<FragmentSettingBinding>(R.layout.fragment_se
         requireContext().startActivity(intent)
     }
 
+    private fun navigateLogin() { (activity as GlobalNavigation).navigateLogin() }
 }

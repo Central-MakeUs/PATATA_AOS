@@ -2,6 +2,7 @@ package com.cmc.presentation.my.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.domain.feature.auth.usecase.ClearTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingViewModel @Inject constructor(): ViewModel() {
+class SettingViewModel @Inject constructor(
+    private val clearTokenUseCase: ClearTokenUseCase,
+): ViewModel() {
 
     private val _state: MutableStateFlow<SettingState> = MutableStateFlow(SettingState())
     val state: StateFlow<SettingState> = _state.asStateFlow()
@@ -24,7 +27,12 @@ class SettingViewModel @Inject constructor(): ViewModel() {
     fun onClickFAQ() {
         sendSideEffect(SettingSideEffect.OpenNotionPage("https://www.notion.so/dogdduddy/FAQ-1a00ee442b80809094d4cc3414bc589b?pvs="))
     }
-
+    fun onClickLogoutButton() {
+        viewModelScope.launch {
+            clearTokenUseCase.invoke()
+            sendSideEffect(SettingSideEffect.NavigateLogin)
+        }
+    }
     private fun sendSideEffect(effect: SettingSideEffect) {
         viewModelScope.launch {
             _sideEffect.emit(effect)
@@ -36,6 +44,7 @@ class SettingViewModel @Inject constructor(): ViewModel() {
     )
     sealed class SettingSideEffect {
         data object NavigateSignOut: SettingSideEffect()
+        data object NavigateLogin :SettingSideEffect()
         data object ShowDialog: SettingSideEffect()
         data class OpenNotionPage(val url: String): SettingSideEffect()
     }

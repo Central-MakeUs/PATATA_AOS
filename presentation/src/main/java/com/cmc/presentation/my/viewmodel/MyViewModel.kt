@@ -2,6 +2,7 @@ package com.cmc.presentation.my.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.domain.feature.auth.usecase.ClearTokenUseCase
 import com.cmc.domain.feature.auth.usecase.GetMyProfileUseCase
 import com.cmc.domain.feature.spot.usecase.GetMySpotsUseCase
 import com.cmc.domain.model.SpotCategory
