@@ -8,11 +8,17 @@ import com.cmc.domain.feature.spot.model.SpotScrapResponse
 import com.cmc.domain.feature.spot.model.SpotWithDistance
 import com.cmc.domain.feature.spot.model.SpotWithMap
 import com.cmc.domain.feature.spot.model.SpotWithStatus
+import com.cmc.domain.feature.spot.model.TodayRecommendedSpot
 import com.cmc.domain.model.ImageMetadata
 
 interface SpotRepository {
 
     suspend fun getMySpots(): Result<List<SpotPreview>>
+
+    suspend fun getTodayRecommendedSpots(
+        latitude: Double,
+        longitude: Double,
+    ): Result<List<TodayRecommendedSpot>>
 
     suspend fun getPaginatedCategorySpots(
         categoryId: Int,

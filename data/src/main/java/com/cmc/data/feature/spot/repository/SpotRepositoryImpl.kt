@@ -20,6 +20,7 @@ import com.cmc.domain.feature.spot.model.SpotScrapResponse
 import com.cmc.domain.feature.spot.model.SpotWithDistance
 import com.cmc.domain.feature.spot.model.SpotWithMap
 import com.cmc.domain.feature.spot.model.SpotWithStatus
+import com.cmc.domain.feature.spot.model.TodayRecommendedSpot
 import com.cmc.domain.feature.spot.repository.SpotRepository
 import com.cmc.domain.model.ImageMetadata
 import com.cmc.domain.model.SpotCategory
@@ -38,6 +39,16 @@ class SpotRepositoryImpl @Inject constructor(
         return apiRequestCatching(
             apiCall = { spotApiService.getMySpots() },
             transform = { it.spots.toListDomain() }
+        )
+    }
+
+    override suspend fun getTodayRecommendedSpots(
+        latitude: Double,
+        longitude: Double,
+    ): Result<List<TodayRecommendedSpot>> {
+        return apiRequestCatching(
+            apiCall = { spotApiService.getTodayRecommendedSpots(latitude, longitude) },
+            transform = { it.toListDomain() }
         )
     }
 

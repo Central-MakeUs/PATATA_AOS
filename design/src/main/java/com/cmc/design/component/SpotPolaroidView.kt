@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.cmc.design.R
 import com.cmc.design.databinding.ViewSpotPolaroidBinding
 
@@ -37,7 +38,7 @@ class SpotPolaroidView @JvmOverloads constructor(
     fun setSpotPolaroidView(
         title: String,
         location: String,
-        imageResId: Int,
+        imageUrl: String,
         tags: List<String>? = null,
         isArchived: Boolean = false,
         isBadgeVisible: Boolean = false,
@@ -47,12 +48,14 @@ class SpotPolaroidView @JvmOverloads constructor(
         with(binding) {
             tvSpotTitle.text = title
             tvSpotLocation.text = location
-            ivSpotImage.setImageResource(imageResId)
             viewSpotBadge.root.visibility = if (isBadgeVisible) View.VISIBLE else View.GONE
             ivSpotArchive.isSelected = isArchived
             updateTags(tags)
             onArchiveClickListener = archiveClick
             onImageClickListener = imageClick
+            Glide.with(this.root)
+                .load(imageUrl)
+                .into(ivSpotImage)
         }
 
     }
