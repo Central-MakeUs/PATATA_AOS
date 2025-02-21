@@ -322,7 +322,7 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
         layoutTagContainer.removeAllViews()
         spot.tags.forEach { tag ->
             val tagView = LayoutInflater.from(context).inflate(com.cmc.design.R.layout.view_tag_blue, layoutTagContainer, false)
-            tagView.findViewById<TextView>(com.cmc.design.R.id.tv_tag).text = tag
+            "#$tag".also { tagView.findViewById<TextView>(com.cmc.design.R.id.tv_tag).text = it }
             layoutTagContainer.addView(tagView)
         }
 
