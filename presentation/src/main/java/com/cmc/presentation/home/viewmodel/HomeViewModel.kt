@@ -110,19 +110,9 @@ class HomeViewModel @Inject constructor(
                         }
                     }
 
-                    val newRecommendedData = state.value.recommendedSpots.map { spot ->
-                        if (spot.spotId == spotId) {
-                            val isScraped = spot.isScraped.not()
-                            spot.copy(isScraped = isScraped)
-                        } else {
-                            spot
-                        }
-                    }
-
                     _state.update {
                         it.copy(
                             categorySpots = newPagingData,
-                            recommendedSpots = newRecommendedData,
                         )
                     }
                 }

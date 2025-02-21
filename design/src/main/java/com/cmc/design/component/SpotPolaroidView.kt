@@ -27,8 +27,11 @@ class SpotPolaroidView @JvmOverloads constructor(
     }
 
     private fun initListeners() {
-        binding.ivSpotArchive.setOnClickListener {
-            onArchiveClickListener?.invoke()
+        binding.ivSpotArchive.apply {
+            setOnClickListener {
+                isSelected = isSelected.not()
+                onArchiveClickListener?.invoke()
+            }
         }
         binding.ivSpotImage.setOnClickListener {
             onImageClickListener?.invoke()
