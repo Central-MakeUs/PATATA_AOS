@@ -118,9 +118,9 @@ interface SpotApiService {
         @Body request: CreateReviewRequest
     ): ApiResponse<ReviewResponseDto>
 
-    @DELETE("review/{reviewId")
+    @DELETE("review/delete/{review_id}")
     suspend fun deleteReview(
-        @Path("reviewId") reviewId: Int
+        @Path("review_id") reviewId: Int
     ): ApiResponse<Unit>
 
 

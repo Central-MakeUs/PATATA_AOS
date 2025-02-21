@@ -2,12 +2,15 @@ package com.cmc.presentation.spot.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.cmc.presentation.databinding.ViewCommentBinding
 import com.cmc.presentation.spot.model.ReviewUiModel
 import com.example.common.util.DateTimeFormatterUtil.formatUtcToLocal
 
-class SpotReviewAdapter : RecyclerView.Adapter<SpotReviewAdapter.SpotCommentViewHolder>() {
+class SpotReviewAdapter(
+    private val onDeleteClick: (Int) -> Unit,
+) : RecyclerView.Adapter<SpotReviewAdapter.SpotCommentViewHolder>() {
 
     private var items: List<ReviewUiModel> = emptyList()
 
@@ -20,7 +23,7 @@ class SpotReviewAdapter : RecyclerView.Adapter<SpotReviewAdapter.SpotCommentView
 
     override fun onBindViewHolder(holder: SpotCommentViewHolder, position: Int) {
         val comment = items[position]
-        holder.bind(comment)
+        holder.bind(comment, onDeleteClick)
     }
 
     override fun getItemCount(): Int = items.size
@@ -32,12 +35,13 @@ class SpotReviewAdapter : RecyclerView.Adapter<SpotReviewAdapter.SpotCommentView
 
     class SpotCommentViewHolder(private val binding: ViewCommentBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: ReviewUiModel) {
+        fun bind(item: ReviewUiModel, onDeleteClick: (Int) -> Unit) {
             with(binding) {
                 tvCommentPoster.text = item.memberName
                 tvCommentDesc.text = item.reviewText
-//                tvCommentDate.text = formatUtcToLocal(item.created)
-                tvCommentDate.text = formatUtcToLocal("2024-02-03T14:30:00Z")
+                tvCommentDate.text = formatUtcToLocal(item.reviewDate)
+                tvCommentDelete.isVisible = item.isAuthor
+                tvCommentDelete.setOnClickListener { onDeleteClick.invoke(item.reviewId) }
             }
         }
     }

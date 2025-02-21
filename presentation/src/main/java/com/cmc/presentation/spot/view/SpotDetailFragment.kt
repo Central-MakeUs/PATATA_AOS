@@ -74,7 +74,11 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
         }
     }
     private fun handleSideEffect(effect: SpotDetailSideEffect) {
-
+        when (effect) {
+            is SpotDetailSideEffect.Finish -> { finish() }
+            is SpotDetailSideEffect.ShowBottomSheet -> {}
+            is SpotDetailSideEffect.ShowSnackBar -> {}
+        }
     }
 
     private fun initData(bundle: Bundle?) {
@@ -111,8 +115,7 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
 
         tags?.forEach { tag ->
             val tagView = LayoutInflater.from(context).inflate(com.cmc.design.R.layout.view_tag_blue, binding.layoutTag, false)
-            val tagTextView = tagView.findViewById<TextView>(com.cmc.design.R.id.tv_tag)
-            tagTextView.text = tag
+            "#$tag".also { tagView.findViewById<TextView>(com.cmc.design.R.id.tv_tag).text = it }
 
             binding.layoutTag.addView(tagView)
         }
@@ -150,7 +153,7 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
         }
     }
     private fun setReviewRecyclerView() {
-        spotReviewAdapter = SpotReviewAdapter()
+        spotReviewAdapter = SpotReviewAdapter { reviewId -> viewModel.onClickReviewDelete(reviewId) }
         binding.rvReview.apply {
             layoutManager = LinearLayoutManager(context)
             this.adapter = spotReviewAdapter

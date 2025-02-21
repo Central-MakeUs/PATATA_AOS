@@ -3,6 +3,7 @@ package com.cmc.presentation.spot.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc.domain.feature.spot.usecase.CreateReviewUseCase
+import com.cmc.domain.feature.spot.usecase.DeleteReviewUseCase
 import com.cmc.domain.feature.spot.usecase.GetSpotDetailUseCase
 import com.cmc.domain.feature.spot.usecase.ToggleSpotScrapUseCase
 import com.cmc.presentation.spot.model.SpotDetailUiModel
@@ -23,6 +24,7 @@ class SpotDetailViewModel @Inject constructor(
     private val getSpotDetailUseCase: GetSpotDetailUseCase,
     private val toggleSpotScrapUseCase: ToggleSpotScrapUseCase,
     private val createReviewUseCase: CreateReviewUseCase,
+    private val deleteReviewUseCase: DeleteReviewUseCase,
 ): ViewModel() {
 
     private val _state = MutableStateFlow(SpotDetailState())
@@ -40,9 +42,8 @@ class SpotDetailViewModel @Inject constructor(
                         it.copy(spotDetail = result.toUiModel())
                     }
                 }
-                .onFailure { 
-                    // TODO: 없을 때, 액션 추가
-                        // ex) Alert 띄우기, 뒤로가기
+                .onFailure {
+                    sendSideEffect(SpotDetailSideEffect.Finish)
                 }
         }
     }
@@ -62,6 +63,23 @@ class SpotDetailViewModel @Inject constructor(
                             )
                         )
                     }
+                }
+        }
+    }
+    fun onClickReviewDelete(reviewId: Int) {
+        viewModelScope.launch {
+            deleteReviewUseCase.invoke(reviewId)
+                .onSuccess {
+                    _state.update {
+                        it.copy(
+                            spotDetail = it.spotDetail.copy(
+                                reviewCount = it.spotDetail.reviewCount - 1,
+                                reviews = it.spotDetail.reviews.filter { review -> review.reviewId != reviewId }
+                            )
+                        )
+                    }
+                }.onFailure {
+
                 }
         }
     }
@@ -95,7 +113,8 @@ class SpotDetailViewModel @Inject constructor(
     )
 
     sealed class SpotDetailSideEffect {
-        data class ShowToast(val message: String) : SpotDetailSideEffect()
+        data class ShowSnackBar(val message: String) : SpotDetailSideEffect()
         data class ShowBottomSheet(val spotIsMine: Boolean): SpotDetailSideEffect()
+        data object Finish: SpotDetailSideEffect()
     }
 }
