@@ -1,15 +1,19 @@
 package com.cmc.presentation.spot.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc.domain.feature.spot.usecase.CreateReviewUseCase
 import com.cmc.domain.feature.spot.usecase.DeleteReviewUseCase
+import com.cmc.domain.feature.spot.usecase.DeleteSpotUseCase
 import com.cmc.domain.feature.spot.usecase.GetSpotDetailUseCase
 import com.cmc.domain.feature.spot.usecase.ToggleSpotScrapUseCase
 import com.cmc.domain.model.ReportType
+import com.cmc.presentation.R
 import com.cmc.presentation.spot.model.SpotDetailUiModel
 import com.cmc.presentation.spot.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -22,10 +26,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SpotDetailViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val getSpotDetailUseCase: GetSpotDetailUseCase,
     private val toggleSpotScrapUseCase: ToggleSpotScrapUseCase,
     private val createReviewUseCase: CreateReviewUseCase,
     private val deleteReviewUseCase: DeleteReviewUseCase,
+    private val deleteSpotUseCase: DeleteSpotUseCase,
 ): ViewModel() {
 
     private val _state = MutableStateFlow(SpotDetailState())
@@ -98,6 +104,23 @@ class SpotDetailViewModel @Inject constructor(
             )
         )
     }
+    fun onClickSpotDelete() {
+        viewModelScope.launch {
+            deleteSpotUseCase.invoke(state.value.spotDetail.spotId)
+                .onSuccess {
+                    sendSideEffect(
+                        SpotDetailSideEffect.ShowSnackBar(
+                            context.getString(R.string.snackbar_post_delete_complete)
+                        )
+                    )
+                    sendSideEffect(
+                        SpotDetailSideEffect.Finish
+                    )
+                }.onFailure { e ->
+                    e.printStackTrace()
+                }
+        }
+    }
 
     fun submitReviewEditor(text: String) {
         viewModelScope.launch {
@@ -128,9 +151,10 @@ class SpotDetailViewModel @Inject constructor(
     )
 
     sealed class SpotDetailSideEffect {
+        data object Finish: SpotDetailSideEffect()
+        data object ShowAlert : SpotDetailSideEffect()
         data class ShowSnackBar(val message: String) : SpotDetailSideEffect()
         data class ShowBottomSheet(val spotIsMine: Boolean): SpotDetailSideEffect()
-        data object Finish: SpotDetailSideEffect()
         data class NavigateReport(val reportType: Int, val targetId: Int): SpotDetailSideEffect()
     }
 }

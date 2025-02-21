@@ -21,7 +21,7 @@ data class SpotDetailResponseDto(
     @SerializedName("memberId")
     val memberId: Int,
     @SerializedName("memberName")
-    val authorName: String,
+    val authorName: String?,
     @SerializedName("images")
     val images: List<String>,
     @SerializedName("tags")
@@ -45,7 +45,7 @@ fun SpotDetailResponseDto.toDomain(): SpotDetail {
         addressDetail = addressDetail,
         categoryId = categoryId,
         memberId = memberId,
-        authorName = authorName,
+        authorName = authorName ?: "Test",
         images = images,
         tags = tags,
         reviewCount = reviewCount,

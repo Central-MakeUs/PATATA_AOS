@@ -77,6 +77,10 @@
     <string name="desc_spot_added_success">스팟이 정상적으로 등록되었습니다.\n다른 스팟들을 둘러보러 가볼까요?</string>
     <string name="info_picture_upload">이미지는 최대 3장까지 업로드 가능하며, 스팟 등록 이후 수정이 불가합니다.</string>
 
+    <string name="snackbar_post_delete_complete">게시글이 정상적으로 삭제되었습니다.</string>
+    <string name="dialog_post_delete_title">게시물을 삭제하시겠습니까?</string>
+    <string name="dialog_post_delete_description">한 번 삭제된 게시물은 복원할 수 없습니다.</string>
+
     <string name="error_image_count">이미지 최대 업로드 장 수는 %d장 입니다.</string>
     <string name="error_image_size">이미지 장 당 최대 용량은 %dMB 입니다. 용량을 확인해주세요!</string>
     <string name="error_total_image_size">이미지 총 용량은 %dMB 를 넘지 않도록 해주세요.</string>

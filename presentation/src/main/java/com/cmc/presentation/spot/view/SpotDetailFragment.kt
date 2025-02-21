@@ -11,6 +11,9 @@ import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
 import com.cmc.common.constants.NavigationKeys
 import com.cmc.design.component.BottomSheetDialog
+import com.cmc.design.component.PatataAlert
+import com.cmc.design.util.SnackBarUtil
+import com.cmc.domain.model.Spot
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.ContentSheetSpotDetailComplaintBinding
@@ -33,6 +36,8 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
 
     private lateinit var imageSliderAdapter: ImageSliderAdapter
     private lateinit var spotReviewAdapter: SpotReviewAdapter
+
+    private var dialog: BottomSheetDialog? = null
 
     override fun initObserving() {
         repeatWhenUiStarted {
@@ -77,8 +82,9 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
     private fun handleSideEffect(effect: SpotDetailSideEffect) {
         when (effect) {
             is SpotDetailSideEffect.Finish -> { finish() }
+            is SpotDetailSideEffect.ShowAlert -> { showAlert() }
             is SpotDetailSideEffect.ShowBottomSheet -> { setFooterBottomSheetDialog(effect.spotIsMine) }
-            is SpotDetailSideEffect.ShowSnackBar -> {}
+            is SpotDetailSideEffect.ShowSnackBar -> { showSnackBar(effect.message) }
             is SpotDetailSideEffect.NavigateReport -> { navigateReport(effect.reportType, effect.targetId) }
         }
     }
@@ -132,13 +138,17 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
         binding.tvReviewCount.text = reviewCount.toString() ?: getString(R.string.zero)
     }
     private fun setFooterBottomSheetDialog(postIsMine: Boolean) {
-        if (postIsMine) {
+        dialog = if (postIsMine) {
             BottomSheetDialog(requireContext())
                 .bindBuilder(
                     ContentSheetSpotDetailMoreBinding.inflate(LayoutInflater.from(requireContext()))
                 ) { dialog ->
                     with(dialog) {
-                        // TODO: 게시글 수정/삭제 동작 구현
+                        tvEditPost.setOnClickListener {  }
+                        tvDelete.setOnClickListener {
+                            hide()
+                            viewModel.onClickSpotDelete()
+                        }
                         show()
                     }
                 }
@@ -175,7 +185,27 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
         }
     }
 
+    private fun showAlert() {
+        PatataAlert(requireContext())
+            .title(getString(R.string.dialog_post_delete_title))
+            .content(getString(R.string.dialog_post_delete_description))
+            .multiButton {
+                leftButton(getString(R.string.cancel))
+                rightButton(getString(R.string.delete)) {
+                    viewModel.onClickSpotDelete()
+                }
+            }
+    }
+    private fun showSnackBar(message: String) {
+        SnackBarUtil.show(binding.root, message)
+    }
+
     private fun navigateReport(reportType: Int, targetId: Int) {
         (activity as GlobalNavigation).navigateReport(reportType, targetId)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        dialog?.dismiss()
     }
 }
