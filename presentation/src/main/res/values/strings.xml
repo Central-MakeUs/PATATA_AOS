@@ -26,6 +26,8 @@
     <string name="title_input_hashtag">해쉬태그를 입력해주세요 (최대 2개)</string>
     <string name="title_dialog_archive_images_delete">%d개의 항목을 목록에서\n삭제하시겠습니까?</string>
     <string name="archive_images_deleted">%d개의 항목이 삭제되었습니다!</string>
+    <string name="title_spot_report">게시글 신고하기</string>
+    <string name="title_user_report">사용자 신고하기</string>
     <string name="select_location_to_share">공유하고 싶은 장소를 선택해주세요!</string>
     <string name="explore_this_area">이 지역에서 탐색</string>
 
@@ -36,6 +38,7 @@
     <string name="hint_input_spot_desc">장소에 대한 간단한 설명을 입력하세요 (300자 이내)</string>
     <string name="hint_input_spot_desc_waring">부적절한 사진(폭력, 혐오, 선정성 등)은 등록이 금지되며,\n위반 시 경고 또는 이용 제한이 부과될 수 있습니다.</string>
     <string name="hint_input_hashtag">#해쉬태그를 입력해주세요</string>
+    <string name="hint_input_report_reason">신고 내용을 입력해주세요. (최대 300자)</string>
 
     <string name="category_all">전체</string>
     <string name="category_recommend">작가 추천</string>
@@ -60,6 +63,7 @@
     <string name="delete">삭제</string>
     <string name="change">변경</string>
     <string name="required">필수</string>
+    <string name="report_submit">신고하기</string>
     <string name="selection_complete">선택 완료</string>
     <string name="zero">0</string>
 

@@ -7,4 +7,5 @@ interface GlobalNavigation {
     fun navigateSearch()
     fun navigateSpotDetail(spotId: Int)
     fun navigateCategorySpots(categoryId: Int)
+    fun navigateReport(reportType: Int, targetId: Int)
 }

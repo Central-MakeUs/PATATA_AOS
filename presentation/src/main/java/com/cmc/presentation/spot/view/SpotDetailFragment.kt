@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmc.common.base.BaseFragment
+import com.cmc.common.base.GlobalNavigation
 import com.cmc.common.constants.NavigationKeys
 import com.cmc.design.component.BottomSheetDialog
 import com.cmc.domain.model.SpotCategory
@@ -76,8 +77,9 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
     private fun handleSideEffect(effect: SpotDetailSideEffect) {
         when (effect) {
             is SpotDetailSideEffect.Finish -> { finish() }
-            is SpotDetailSideEffect.ShowBottomSheet -> {}
+            is SpotDetailSideEffect.ShowBottomSheet -> { setFooterBottomSheetDialog(effect.spotIsMine) }
             is SpotDetailSideEffect.ShowSnackBar -> {}
+            is SpotDetailSideEffect.NavigateReport -> { navigateReport(effect.reportType, effect.targetId) }
         }
     }
 
@@ -133,20 +135,27 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
         if (postIsMine) {
             BottomSheetDialog(requireContext())
                 .bindBuilder(
-                    ContentSheetSpotDetailComplaintBinding.inflate(LayoutInflater.from(requireContext()))
+                    ContentSheetSpotDetailMoreBinding.inflate(LayoutInflater.from(requireContext()))
                 ) { dialog ->
                     with(dialog) {
-                        // TODO: 게시글 신고, 유저 신고 동작 구현
+                        // TODO: 게시글 수정/삭제 동작 구현
                         show()
                     }
                 }
         } else {
             BottomSheetDialog(requireContext())
                 .bindBuilder(
-                    ContentSheetSpotDetailMoreBinding.inflate(LayoutInflater.from(requireContext()))
+                    ContentSheetSpotDetailComplaintBinding.inflate(LayoutInflater.from(requireContext()))
                 ) { dialog ->
                     with(dialog) {
-                        // TODO: 게시글 수정/삭제 동작 구현
+                        tvComplaintPost.setOnClickListener {
+                            hide()
+                            viewModel.onClickPostReport()
+                        }
+                        tvComplaintUser.setOnClickListener {
+                            hide()
+                            viewModel.onClickUserReport()
+                        }
                         show()
                     }
                 }
@@ -164,5 +173,9 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
         binding.editorInput.setOnSubmitListener { text ->
             viewModel.submitReviewEditor(text)
         }
+    }
+
+    private fun navigateReport(reportType: Int, targetId: Int) {
+        (activity as GlobalNavigation).navigateReport(reportType, targetId)
     }
 }

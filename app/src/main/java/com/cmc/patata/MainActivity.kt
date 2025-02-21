@@ -75,9 +75,16 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         navigate(R.id.nav_spot_detail, Bundle().apply { putInt(NavigationKeys.SpotDetail.ARGUMENT_SPOT_ID, spotId) })
     }
     override fun navigateCategorySpots(categoryId: Int) {
-        navigate(R.id.nav_category_spots, Bundle().apply { putInt(NavigationKeys.Category.ARGUMENT_CATEGORY_ID, categoryId) })
+        navigate(
+            R.id.nav_category_spots,
+            Bundle().apply { putInt(NavigationKeys.Category.ARGUMENT_CATEGORY_ID, categoryId) })
     }
-
+    override fun navigateReport(reportType: Int, targetId: Int) {
+        navigate(R.id.nav_report, Bundle().apply {
+            putInt(NavigationKeys.Report.ARGUMENT_REPORT_TYPE, reportType)
+            putInt(NavigationKeys.Report.ARGUMENT_REPORT_TARGET_ID, targetId)
+        })
+    }
     private fun navigate(navId: Int, bundle: Bundle? = null) {
         navHostFragment.navController.navigate(navId, bundle)
     }

@@ -10,6 +10,7 @@ import android.view.Gravity
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
@@ -31,10 +32,12 @@ class PatataEditText @JvmOverloads constructor(
     private var onSubmitListener: ((String) -> Unit)? = null
     private var onTextChangeListener: ((String) -> Unit)? = null
     private var afterTextChangeListener: ((String) -> Unit)? = null
+    private var onFocusChangeListener: ((Boolean) -> Unit)? = null
 
     private var helperView: PatataEditTextHelperView? = null
 
     private var isEnabled: Boolean = true
+    private var isFocusableState: Boolean = false
 
     init {
         applyStyle(false)
@@ -98,6 +101,13 @@ class PatataEditText @JvmOverloads constructor(
         binding.ivCancel.isVisible = isVisible
     }
 
+    fun setBorderColor(colorResId: Int) {
+        val drawable = binding.layoutEditTextRoot.background as? GradientDrawable
+        drawable?.let {
+            it.setStroke(2.dpToFloat.toInt(), ContextCompat.getColor(context, colorResId)) // 🔥 테두리 색 변경
+            binding.layoutEditTextRoot.background = it
+        }
+    }
 
     private fun initListeners() {
         binding.ivCancel.setOnClickListener {
@@ -128,6 +138,10 @@ class PatataEditText @JvmOverloads constructor(
                 afterTextChangeListener?.invoke(s.toString())
             }
         })
+
+        binding.etEditTextInput.setOnFocusChangeListener { v, hasFocus ->
+            onFocusChangeListener?.invoke(hasFocus)
+        }
     }
 
     private fun performSubmit() {
@@ -164,6 +178,10 @@ class PatataEditText @JvmOverloads constructor(
         afterTextChangeListener = listener
     }
 
+    fun setOnFocusChangeListener(listener: ((Boolean) -> Unit)? = null) {
+        onFocusChangeListener = listener
+    }
+
     /**
      * 검색어 초기화
      */
@@ -184,18 +202,14 @@ class PatataEditText @JvmOverloads constructor(
         binding.etEditTextInput.requestFocus()
         showKeyboard()
     }
-
     fun setErrorState(isError: Boolean) {
         helperView?.setVisible(isError)
-        binding.layoutEditTextRoot.setBackgroundResource(
-            if (isError) {
-                R.drawable.bg_rounded_8_stroke_red
-            } else {
-                R.drawable.bg_rounded_8
-            }
-        )
-        binding.layoutEditTextRoot.requestLayout()
+        setBorderColor(if (isError) R.color.red_100 else if (isFocusableState) R.color.blue_100 else R.color.white)
+    }
 
+    fun setFocusState(isCaution: Boolean) {
+        isFocusableState = true
+        setBorderColor(if (isCaution) R.color.blue_100 else R.color.white)
     }
 
     fun connectHelperView(patataEditTextHelperView: PatataEditTextHelperView) {

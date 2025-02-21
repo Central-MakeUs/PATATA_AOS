@@ -9,9 +9,7 @@
         android:layout_width="match_parent"
         style="@style/subtitle_small"
         android:textColor="@color/black"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="15dp"
+        android:layout_height="50dp"
         android:gravity="center"
         android:text="@string/title_edit_post"/>
 

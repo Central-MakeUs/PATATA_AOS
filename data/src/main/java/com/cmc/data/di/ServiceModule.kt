@@ -2,6 +2,7 @@ package com.cmc.data.di
 
 import com.cmc.data.base.TokenApiService
 import com.cmc.data.feature.auth.remote.AuthApiService
+import com.cmc.data.feature.report.remote.ReportApiService
 import com.cmc.data.feature.spot.remote.SpotApiService
 import dagger.Module
 import dagger.Provides
@@ -33,5 +34,11 @@ internal object ServiceModule {
     @Singleton
     fun provideSpotApiService(retrofit: Retrofit): SpotApiService {
         return retrofit.create(SpotApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideReportApiService(retrofit: Retrofit): ReportApiService {
+        return retrofit.create(ReportApiService::class.java)
     }
 }

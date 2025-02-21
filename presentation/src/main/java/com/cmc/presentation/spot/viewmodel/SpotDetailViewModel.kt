@@ -6,6 +6,7 @@ import com.cmc.domain.feature.spot.usecase.CreateReviewUseCase
 import com.cmc.domain.feature.spot.usecase.DeleteReviewUseCase
 import com.cmc.domain.feature.spot.usecase.GetSpotDetailUseCase
 import com.cmc.domain.feature.spot.usecase.ToggleSpotScrapUseCase
+import com.cmc.domain.model.ReportType
 import com.cmc.presentation.spot.model.SpotDetailUiModel
 import com.cmc.presentation.spot.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -83,6 +84,20 @@ class SpotDetailViewModel @Inject constructor(
                 }
         }
     }
+    fun onClickPostReport() {
+        sendSideEffect(
+            SpotDetailSideEffect.NavigateReport(
+                ReportType.POST.type, state.value.spotDetail.spotId
+            )
+        )
+    }
+    fun onClickUserReport() {
+        sendSideEffect(
+            SpotDetailSideEffect.NavigateReport(
+                ReportType.USER.type, state.value.spotDetail.memberId
+            )
+        )
+    }
 
     fun submitReviewEditor(text: String) {
         viewModelScope.launch {
@@ -116,5 +131,6 @@ class SpotDetailViewModel @Inject constructor(
         data class ShowSnackBar(val message: String) : SpotDetailSideEffect()
         data class ShowBottomSheet(val spotIsMine: Boolean): SpotDetailSideEffect()
         data object Finish: SpotDetailSideEffect()
+        data class NavigateReport(val reportType: Int, val targetId: Int): SpotDetailSideEffect()
     }
 }
