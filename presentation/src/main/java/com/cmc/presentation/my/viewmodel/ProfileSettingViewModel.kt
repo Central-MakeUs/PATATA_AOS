@@ -12,6 +12,7 @@ import com.cmc.presentation.login.model.MemberUiModel
 import com.cmc.presentation.util.uriToImageMetadata
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -82,10 +83,13 @@ class ProfileSettingViewModel @Inject constructor(
     fun onClickCompleteButton() {
         viewModelScope.launch {
             val results = coroutineScope {
-                listOf(
-                    async { updateNickName(state.value.changedNickName) },
-                    async { updateProfileImage(state.value.uploadImage) }
-                ).awaitAll()
+                val currentState = state.value
+                mutableListOf<Deferred<Boolean>>().apply {
+                    if (currentState.changedNickName != currentState.profile.nickName)
+                        add(async { updateNickName(currentState.changedNickName) })
+                    if (currentState.uploadImage.uri != currentState.profile.profileImage)
+                        add(async { updateProfileImage(currentState.uploadImage) })
+                }.awaitAll()
             }
 
             if (results.all { it }) {
