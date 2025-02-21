@@ -18,6 +18,7 @@ import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
 import com.cmc.design.component.PatataAlert
 import com.cmc.design.util.EaseOutBounceInterpolator
+import com.cmc.design.util.SnackBarUtil
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentLoginBinding
 import com.cmc.presentation.login.manager.LoginManager
@@ -57,6 +58,7 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
     }
     private fun handleSideEffect(effect: LoginSideEffect) {
         when (effect) {
+            is LoginSideEffect.ShowSnackBar -> { showSnackBar(effect.message) }
             is LoginSideEffect.NavigateToHome -> { (activity as GlobalNavigation).navigateHome() }
             is LoginSideEffect.NavigateToProfileSetting -> { navigate(R.id.navigate_profile_input)}
         }
@@ -163,10 +165,6 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
             start()
         }
     }
-    private fun playTogetherAnimation(a1: ObjectAnimator, a2: ObjectAnimator) {
-        AnimatorSet().apply {
-            playTogether(a1, a2)
-            start()
-        }
-    }
+
+    private fun showSnackBar(message: String) { SnackBarUtil.show(binding.root, message) }
 }

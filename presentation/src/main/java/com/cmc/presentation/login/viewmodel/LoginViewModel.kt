@@ -35,7 +35,9 @@ class LoginViewModel @Inject constructor(
                     _state.emit(LoginState.Success(user.toUiModel()))
                 }.onFailure { error ->
                     when(error) {
-                        is ApiException.NotFound -> { }
+                        is ApiException.NotFound -> {
+                            sendSideEffect(LoginSideEffect.ShowSnackBar(error.message))
+                        }
                         is ApiException.Unauthorized -> { }
                         is ApiException.ServerError -> { }
                     }
@@ -68,4 +70,5 @@ sealed interface LoginState {
 sealed class LoginSideEffect {
     data object NavigateToHome: LoginSideEffect()
     data object NavigateToProfileSetting: LoginSideEffect()
+    data class ShowSnackBar(val message: String): LoginSideEffect()
 }

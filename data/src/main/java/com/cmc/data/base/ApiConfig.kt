@@ -40,6 +40,7 @@ internal object ApiCode {
         const val MEMBER_NICKNAME_ALREADY_IN_USE = "MEMBER4001"
         const val MEMBER_MISMATCH = "MEMBER4002"
         const val MEMBER_DELETION_FAILED = "MEMBER4003"
+        const val MEMBER_DELETED_ACCOUNT = "MEMBER4004"
     }
 
     object Review {

@@ -73,6 +73,11 @@ private val errorCodeMap = mapOf(
     ApiCode.Common.GENERIC_ERROR to { msg: String, _: Any? ->  ApiException.BadRequest(msg) },
     ApiCode.Spot.SPOT_SEARCH_NO_RESULT to { msg: String, _: Any? ->  ApiException.NotFound(msg) },
     ApiCode.Spot.SPOT_TOO_MANY_REGISTERED to { msg: String, data: Any? ->  ApiException.RegistrationLimitExceeded(msg, data) },
+    ApiCode.Member.MEMBER_NOT_FOUND to { msg: String, data: Any? ->  ApiException.NotFound(msg, data) },
+    ApiCode.Member.MEMBER_NICKNAME_ALREADY_IN_USE to { msg: String, data: Any? ->  ApiException.BadRequest(msg, data) },
+    ApiCode.Member.MEMBER_MISMATCH to { msg: String, data: Any? ->  ApiException.BadRequest(msg, data) },
+    ApiCode.Member.MEMBER_DELETION_FAILED to { msg: String, data: Any? ->  ApiException.ServerError(msg, data) },
+    ApiCode.Member.MEMBER_DELETED_ACCOUNT to { msg: String, data: Any? ->  ApiException.NotFound(msg, data) },
 )
 
 fun <R> Result<R>.asFlow(): Flow<Result<R>> {
