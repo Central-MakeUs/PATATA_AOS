@@ -1,31 +1,49 @@
 package com.cmc.presentation.home.view
 
-import android.widget.Toast
+import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmc.common.base.BaseFragment
+import com.cmc.common.base.GlobalNavigation
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentTodaySpotRecommendationBinding
-import com.cmc.presentation.home.adapter.SpotHorizontalPaginatedCardAdapter
+import com.cmc.presentation.home.adapter.SpotHorizontalMultiImageCardAdapter
 import com.cmc.presentation.home.viewmodel.TodaySpotRecommendationViewModel
+import com.cmc.presentation.home.viewmodel.TodaySpotRecommendationViewModel.TodaySpotRecommendationState
+import com.cmc.presentation.home.viewmodel.TodaySpotRecommendationViewModel.TodaySpotRecommendSideEffect
+import com.cmc.presentation.map.model.TodayRecommendedSpotUiModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TodaySpotRecommendationFragment: BaseFragment<FragmentTodaySpotRecommendationBinding>(R.layout.fragment_today_spot_recommendation) {
 
     private val viewModel: TodaySpotRecommendationViewModel by viewModels()
-    private lateinit var categoryRecommendAdapter: SpotHorizontalPaginatedCardAdapter
+    private lateinit var spotRecommendAdapter: SpotHorizontalMultiImageCardAdapter
 
     override fun initObserving() {
-        // TODO: Data Observing
+        repeatWhenUiStarted {
+            launch { viewModel.state.collect { state -> updateUI(state)} }
+            launch { viewModel.sideEffect.collectLatest { effect -> handleSideEffect(effect) } }
+        }
     }
     override fun initView() {
         setAppBar()
-        setRecyclerView()
     }
 
-    private fun updateUI() {
-
+    private fun updateUI(state: TodaySpotRecommendationState) {
+        if (::spotRecommendAdapter.isInitialized && state.recommendedSpots.isNotEmpty()) {
+            spotRecommendAdapter.setItems(state.recommendedSpots)
+            spotRecommendAdapter.notifyDataSetChanged()
+        } else if (state.recommendedSpots.isNotEmpty()){
+            initTodayRecommendedSpotView(state.recommendedSpots)
+        }
+    }
+    private fun handleSideEffect(effect: TodaySpotRecommendSideEffect) {
+        when (effect) {
+            is TodaySpotRecommendSideEffect.NavigateSpotDetail -> { navigateSpotDetail(effect.spotId) }
+        }
     }
 
     private fun setAppBar() {
@@ -35,21 +53,30 @@ class TodaySpotRecommendationFragment: BaseFragment<FragmentTodaySpotRecommendat
         )
     }
 
-    private fun setRecyclerView() {
-        categoryRecommendAdapter = SpotHorizontalPaginatedCardAdapter(
-            onArchiveClick = {
-                Toast.makeText(context, "아카이브 클릭됨", Toast.LENGTH_SHORT).show()
-                true
-            },
-            onImageClick = {
-                Toast.makeText(context, "이미지 클릭됨", Toast.LENGTH_SHORT).show()
-            }
+    private fun initTodayRecommendedSpotView(items: List<TodayRecommendedSpotUiModel>) {
+        spotRecommendAdapter = SpotHorizontalMultiImageCardAdapter(
+            items = items,
+            onImageClick = { viewModel.onClickSpotImage(it) },
+            onArchiveClick = { viewModel.onClickSpotScrapButton(it) }
         )
-
         binding.rvTodaySpotRecommendation.apply {
-            suppressLayout(false)
             layoutManager = LinearLayoutManager(context)
-            this.adapter = categoryRecommendAdapter
+            this.adapter = spotRecommendAdapter
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (::spotRecommendAdapter.isInitialized) {
+            binding.rvTodaySpotRecommendation.apply {
+                layoutManager = LinearLayoutManager(context)
+                this.adapter = spotRecommendAdapter
+            }
+        }
+        viewModel.refreshHomeScreen()
+    }
+
+    private fun navigateSpotDetail(spotId: Int) {
+        (activity as GlobalNavigation).navigateSpotDetail(spotId)
     }
 }
