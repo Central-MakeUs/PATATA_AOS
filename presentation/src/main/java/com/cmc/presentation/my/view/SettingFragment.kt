@@ -27,8 +27,16 @@ class SettingFragment: BaseFragment<FragmentSettingBinding>(R.layout.fragment_se
     }
 
     override fun initView() {
-        binding.tvSettingVersion.text = getAppVersion()
-        binding.layoutSettingFaq.setOnClickListener { viewModel.onClickFAQ() }
+        with(binding) {
+            tvSettingVersion.text = getAppVersion()
+
+            layoutTerms.setOnClickListener { viewModel.onClickFAQ() }
+            layoutPrivacyPolicy.setOnClickListener { viewModel.onClickFAQ() }
+            layoutOpenSourceLicense.setOnClickListener { viewModel.onClickFAQ() }
+            layoutSettingNotice.setOnClickListener { viewModel.onClickFAQ() }
+            layoutSettingFaq.setOnClickListener { viewModel.onClickFAQ() }
+            layoutSettingContact.setOnClickListener { viewModel.onClickFAQ() }
+        }
     }
 
     private fun updateUI(state: SettingState) {
