@@ -37,7 +37,7 @@ class SettingFragment: BaseFragment<FragmentSettingBinding>(R.layout.fragment_se
     }
     private fun handleSideEffect(effect: SettingSideEffect) {
         when (effect) {
-            is SettingSideEffect.NavigateSignOut -> {}
+            is SettingSideEffect.NavigateSignOut -> { navigateSignOut() }
             is SettingSideEffect.NavigateLogin -> { navigateLogin() }
             is SettingSideEffect.ShowDialog -> {}
             is SettingSideEffect.OpenNotionPage -> { openNotionPage(effect.url) }
@@ -57,6 +57,7 @@ class SettingFragment: BaseFragment<FragmentSettingBinding>(R.layout.fragment_se
             layoutSettingContact.setOnClickListener { viewModel.onClickFAQ() }
 
             tvLogout.setOnClickListener { viewModel.onClickLogoutButton() }
+            tvSignout.setOnClickListener { viewModel.onClickSignOutButton() }
         }
     }
     private fun getAppVersion(): String {
@@ -73,4 +74,5 @@ class SettingFragment: BaseFragment<FragmentSettingBinding>(R.layout.fragment_se
     }
 
     private fun navigateLogin() { (activity as GlobalNavigation).navigateLogin() }
+    private fun navigateSignOut() { navigate(R.id.navigate_signout) }
 }

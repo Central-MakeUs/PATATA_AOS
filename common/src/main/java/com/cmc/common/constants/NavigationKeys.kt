@@ -24,5 +24,6 @@ object NavigationKeys {
     object Setting {
         const val ARGUMENT_PROFILE_NICKNAME = "profile_nickname"
         const val ARGUMENT_PROFILE_IMAGE = "profile_image"
+        const val ARGUMENT_PROFILE_EMAIL = "profile_email"
     }
 }

@@ -11,6 +11,7 @@ object DataStoreKeys {
 
     val KEY_ACCESS_TOKEN = stringPreferencesKey(PreferenceKeys.KEY_ACCESS_TOKEN)
     val KEY_REFRESH_TOKEN = stringPreferencesKey(PreferenceKeys.KEY_REFRESH_TOKEN)
+    val KEY_GOOGLE_ACCESS_TOKEN = stringPreferencesKey(PreferenceKeys.KEY_GOOGLE_ACCESS_TOKEN)
 
     val KEY_USER_ID = stringPreferencesKey(PreferenceKeys.KEY_USER_ID)
 

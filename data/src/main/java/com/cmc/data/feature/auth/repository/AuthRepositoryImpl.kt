@@ -19,7 +19,9 @@ import com.cmc.domain.feature.auth.model.Member
 import com.cmc.domain.feature.auth.repository.AuthRepository
 import com.cmc.domain.model.ImageMetadata
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -136,6 +138,16 @@ internal class AuthRepositoryImpl @Inject constructor(
         return apiRequestCatching(
             apiCall = { authApiService.getMyProfile() },
             transform = { it.toDomain() }
+        )
+    }
+
+    override suspend fun signOutGoogle(googleAccessToken: String): Result<String> {
+        withContext(Dispatchers.IO) {
+            tokenPreferences.saveGoogleAccessToken(googleAccessToken)
+        }
+        return apiRequestCatching(
+            apiCall = { authApiService.signOutGoogle() },
+            transform = { it }
         )
     }
 }

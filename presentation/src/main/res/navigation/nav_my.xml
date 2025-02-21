@@ -27,6 +27,15 @@
         android:id="@+id/SettingFragment"
         android:name="com.cmc.presentation.my.view.SettingFragment"
         tools:layout="@layout/fragment_setting">
+        <action
+            android:id="@+id/navigate_signout"
+            app:destination="@id/SignOutFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/SignOutFragment"
+        android:name="com.cmc.presentation.my.view.SignOutFragment"
+        tools:layout="@layout/fragment_signout">
     </fragment>
 
 </navigation>

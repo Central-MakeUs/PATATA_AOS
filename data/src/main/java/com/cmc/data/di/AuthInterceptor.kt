@@ -30,6 +30,20 @@ class AuthInterceptor @Inject constructor (
             return chain.proceed(newRequest)
         }
 
+        // "Google" 헤더가 포함된 요청은 GoogleAccessToken 을 추가 삽입
+        if (request.header("Google") != null) {
+            val accessToken = runBlocking { tokenPreferences.getAccessToken() }
+            val googleAccessToken = runBlocking { tokenPreferences.getGoogleAccessToken() }
+
+            val newRequest = request.newBuilder()
+                .removeHeader("Google")
+                .addHeader("Authorization", "Bearer $accessToken")
+                .addHeader("google-accessToken", "$googleAccessToken")
+                .build()
+            return chain.proceed(newRequest)
+        }
+
+
         // Access Token 삽입
         val accessToken = runBlocking { tokenPreferences.getAccessToken() }
         val authenticatedRequest = request.newBuilder()

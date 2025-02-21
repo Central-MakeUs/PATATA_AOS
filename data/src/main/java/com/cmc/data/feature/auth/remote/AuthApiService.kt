@@ -8,6 +8,7 @@ import com.cmc.data.feature.auth.model.UserResponseDto
 import com.cmc.domain.feature.auth.model.AuthResponse
 import okhttp3.MultipartBody
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Multipart
@@ -41,4 +42,7 @@ interface AuthApiService {
     @GET("member/profile")
     suspend fun getMyProfile(): ApiResponse<MemberResponseDto>
 
+    @DELETE("auth/delete/google")
+    @Headers("Google: true")
+    suspend fun signOutGoogle(): ApiResponse<String>
 }

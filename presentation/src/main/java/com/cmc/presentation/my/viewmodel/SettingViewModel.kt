@@ -33,6 +33,9 @@ class SettingViewModel @Inject constructor(
             sendSideEffect(SettingSideEffect.NavigateLogin)
         }
     }
+    fun onClickSignOutButton() {
+        sendSideEffect(SettingSideEffect.NavigateSignOut)
+    }
     private fun sendSideEffect(effect: SettingSideEffect) {
         viewModelScope.launch {
             _sideEffect.emit(effect)

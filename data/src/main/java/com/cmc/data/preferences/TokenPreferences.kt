@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import com.cmc.data.base.constants.DataStoreKeys.TOKEN_PREFERENCES
 import com.cmc.data.base.constants.DataStoreKeys.KEY_ACCESS_TOKEN
+import com.cmc.data.base.constants.DataStoreKeys.KEY_GOOGLE_ACCESS_TOKEN
 import com.cmc.data.base.constants.DataStoreKeys.KEY_REFRESH_TOKEN
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
@@ -31,6 +32,12 @@ class TokenPreferences @Inject constructor(
         }
     }
 
+    suspend fun saveGoogleAccessToken(googleAccessToken: String) {
+        context.tokenPreferences.edit { preferences ->
+            preferences[KEY_GOOGLE_ACCESS_TOKEN] = googleAccessToken
+        }
+    }
+
     suspend fun getAccessToken(): String? {
         return context.tokenPreferences.data
             .map { preferences -> preferences[KEY_ACCESS_TOKEN] }
@@ -43,10 +50,17 @@ class TokenPreferences @Inject constructor(
             .first()
     }
 
+    suspend fun getGoogleAccessToken(): String? {
+        return context.tokenPreferences.data
+            .map { preferences -> preferences[KEY_GOOGLE_ACCESS_TOKEN] }
+            .first()
+    }
+
     suspend fun clearTokens() {
         context.tokenPreferences.edit { preferences ->
             preferences.remove(KEY_ACCESS_TOKEN)
             preferences.remove(KEY_REFRESH_TOKEN)
+            preferences.remove(KEY_GOOGLE_ACCESS_TOKEN)
         }
     }
 }

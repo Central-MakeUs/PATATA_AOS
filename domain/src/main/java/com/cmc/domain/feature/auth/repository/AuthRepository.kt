@@ -33,4 +33,6 @@ interface AuthRepository {
 
     suspend fun getMyProfile(): Result<Member>
 
+    suspend fun signOutGoogle(googleAccessToken: String): Result<String>
+
 }
