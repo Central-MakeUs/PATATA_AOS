@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.domain.base.exception.ApiException
 import com.cmc.domain.constants.ImageUploadPolicy
 import com.cmc.domain.feature.spot.usecase.CreateSpotUseCase
 import com.cmc.domain.model.ImageMetadata
@@ -101,7 +102,12 @@ class AddSpotViewModel @Inject constructor(
                 ).onSuccess {
                     sendSideEffect(AddSpotSideEffect.NavigateToCreateSpotSuccess)
                 }.onFailure { e ->
-                    e.stackTrace
+                    e.printStackTrace()
+                    when (e) {
+                        is ApiException.BadRequest, is ApiException.ServerError -> {
+                            sendSideEffect(AddSpotSideEffect.ShowSnackbar("${e.message}"))
+                        }
+                    }
                 }
             }
         }

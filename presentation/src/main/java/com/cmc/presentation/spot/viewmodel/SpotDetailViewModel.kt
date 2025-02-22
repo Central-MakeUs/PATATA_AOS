@@ -3,6 +3,8 @@ package com.cmc.presentation.spot.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.domain.base.exception.ApiException
+import com.cmc.domain.base.exception.AppInternalException
 import com.cmc.domain.feature.spot.usecase.CreateReviewUseCase
 import com.cmc.domain.feature.spot.usecase.DeleteReviewUseCase
 import com.cmc.domain.feature.spot.usecase.DeleteSpotUseCase
@@ -85,8 +87,22 @@ class SpotDetailViewModel @Inject constructor(
                             )
                         )
                     }
-                }.onFailure {
-
+                }.onFailure { e ->
+                    when (e) {
+                        is ApiException.NotFound -> {
+                            _state.update {
+                                it.copy(
+                                    spotDetail = it.spotDetail.copy(
+                                        reviewCount = it.spotDetail.reviewCount - 1,
+                                        reviews = it.spotDetail.reviews.filter { review -> review.reviewId != reviewId }
+                                    )
+                                )
+                            }
+                        }
+                        is AppInternalException.PermissionDenied -> {
+                            sendSideEffect(SpotDetailSideEffect.ShowSnackBar(e.message))
+                        }
+                    }
                 }
         }
     }
@@ -121,6 +137,11 @@ class SpotDetailViewModel @Inject constructor(
                     )
                 }.onFailure { e ->
                     e.printStackTrace()
+                    when (e) {
+                        is AppInternalException.PermissionDenied -> {
+                            sendSideEffect(SpotDetailSideEffect.Finish)
+                        }
+                    }
                 }
         }
     }
@@ -138,6 +159,11 @@ class SpotDetailViewModel @Inject constructor(
                     }
                 }.onFailure { e ->
                     e.stackTrace
+                    when (e) {
+                        is ApiException.NotFound -> {
+                            sendSideEffect(SpotDetailSideEffect.Finish)
+                        }
+                    }
                 }
         }
     }

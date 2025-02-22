@@ -4,6 +4,8 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.domain.base.exception.ApiException
+import com.cmc.domain.base.exception.AppInternalException
 import com.cmc.domain.constants.ImageUploadPolicy
 import com.cmc.domain.feature.spot.usecase.EditSpotUseCase
 import com.cmc.domain.feature.spot.usecase.GetSpotDetailUseCase
@@ -76,8 +78,14 @@ class EditSpotViewModel @Inject constructor(
                         newState
                     }
                 }
-                .onFailure {
-                    sendSideEffect(EditSpotSideEffect.Finish)
+                .onFailure { e ->
+                    when (e) {
+                        is ApiException.NotFound, is AppInternalException.PermissionDenied -> { sendSideEffect(EditSpotSideEffect.Finish) }
+                        else -> {
+                            sendSideEffect(EditSpotSideEffect.ShowSnackbar(e.message.toString()))
+                        }
+                    }
+
                 }
         }
     }

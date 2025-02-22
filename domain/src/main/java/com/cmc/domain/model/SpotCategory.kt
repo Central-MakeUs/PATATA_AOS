@@ -11,7 +11,7 @@ enum class SpotCategory(val id: Int) {
     NATURE(5);
 
     companion object {
-        fun fromId(id: Int) = entries.first { it.id == id } ?: throw AppInternalException.DatabaseError
+        fun fromId(id: Int) = entries.first { it.id == id } ?: throw AppInternalException.DatabaseError("ID가 존재하지 않습니다.")
         fun isRecommended(id: Int) = id == RECOMMEND.id
         fun getLastItem() = entries.last()
     }

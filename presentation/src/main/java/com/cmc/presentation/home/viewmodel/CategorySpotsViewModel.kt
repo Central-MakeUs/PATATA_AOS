@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.filter
 import androidx.paging.map
 import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LATITUDE
 import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LONGITUDE
+import com.cmc.domain.base.exception.ApiException
 import com.cmc.domain.feature.location.GetCurrentLocationUseCase
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.feature.spot.usecase.GetPaginatedCategorySpotsUseCase
@@ -65,10 +67,15 @@ class CategorySpotsViewModel @Inject constructor(
                         }
                     }
 
-                    _state.update {
-                        it.copy(
-                            categorySpots = newPagingData
-                        )
+                    _state.update { it.copy(categorySpots = newPagingData) }
+                }.onFailure { e ->
+                    when (e) {
+                        is ApiException.NotFound -> {
+                            val newPagingData = state.value.categorySpots.filter { spot ->
+                                spot.spot.spotId != spotId
+                            }
+                            _state.update { it.copy(categorySpots = newPagingData) }
+                        }
                     }
                 }
         }
