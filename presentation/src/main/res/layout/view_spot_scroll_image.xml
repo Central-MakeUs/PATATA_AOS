@@ -3,18 +3,38 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingVertical="20dp"
+    android:paddingBottom="20dp"
+    android:background="@color/white"
     xmlns:tools="http://schemas.android.com/tools">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@color/gray_10"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_head"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintHorizontal_bias="0"
-        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline_start"
         app:layout_constraintEnd_toStartOf="@+id/iv_spot_archive">
         <TextView
             android:id="@+id/tv_recommend_label"
@@ -88,8 +108,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline_start"
         app:layout_constraintTop_toBottomOf="@+id/layout_head"
         tools:text="512m"/>
     <!-- 장소 위치 -->
@@ -111,9 +130,9 @@
         android:id="@+id/iv_spot_archive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
+        android:padding="4dp"
         app:layout_constraintTop_toTopOf="@+id/layout_head"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/guideline_end"
         app:layout_constraintBottom_toBottomOf="@+id/tv_distance"
         android:src="@drawable/selector_archive_outline_non_shadow"/>
 
@@ -125,8 +144,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_goneMarginTop="10dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline_start"
         app:layout_constraintTop_toBottomOf="@+id/tv_distance"
         android:layout_marginTop="8dp">
 

@@ -54,6 +54,7 @@
                 android:textColor="@color/text_disabled"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxLines="3"
                 android:text="@string/search_no_result_text"
                 android:gravity="center"
                 android:layout_marginTop="@dimen/default_spacing"/>

@@ -54,7 +54,7 @@
     <string name="img_desc_category_everyday_life">일상 속 공간 카테고리 이미지</string>
     <string name="img_desc_category_nature">싱그러운 자연 카테고리 이미지</string>
 
-    <string name="show_more_arrow"><![CDATA[더보기 >]]></string>
+    <string name="show_all_arrow"><![CDATA[전체보기 >]]></string>
     <string name="category">카테고리</string>
     <string name="show_more">더보기</string>
     <string name="complete">완료</string>
@@ -65,6 +65,7 @@
     <string name="delete">삭제</string>
     <string name="change">변경</string>
     <string name="required">필수</string>
+    <string name="setting">설정</string>
     <string name="report_submit">신고하기</string>
     <string name="selection_complete">선택 완료</string>
     <string name="zero">0</string>
@@ -87,4 +88,6 @@
     <string name="error_image_size">이미지 장 당 최대 용량은 %dMB 입니다. 용량을 확인해주세요!</string>
     <string name="error_total_image_size">이미지 총 용량은 %dMB 를 넘지 않도록 해주세요.</string>
     <string name="error_duplicate_nickname">이미 사용 중인 닉네임입니다.</string>
+
+    <string name="label_copy_clipboard">주소를 클립보드에 복사했습니다.</string>
 </resources>

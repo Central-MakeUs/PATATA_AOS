@@ -19,7 +19,7 @@
         android:id="@+id/nav_archive"
         android:enabled="true"
         android:title="@string/title_nav_archive"
-        android:icon="@drawable/selector_archive"
+        android:icon="@drawable/selector_archive_bottom"
         app:showAsAction="always" />
 
     <item

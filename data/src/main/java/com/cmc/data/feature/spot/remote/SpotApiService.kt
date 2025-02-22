@@ -3,6 +3,7 @@ package com.cmc.data.feature.spot.remote
 import com.cmc.data.base.ApiResponse
 import com.cmc.data.feature.spot.model.CategorySpotsResponseDto
 import com.cmc.data.feature.spot.model.CreateReviewRequest
+import com.cmc.data.feature.spot.model.CreateReviewResponseDto
 import com.cmc.data.feature.spot.model.CreateSpotResponseDto
 import com.cmc.data.feature.spot.model.EditSpotRequestBody
 import com.cmc.data.feature.spot.model.EditSpotResponseDto
@@ -124,7 +125,7 @@ interface SpotApiService {
     @POST("review/create")
     suspend fun createReview(
         @Body request: CreateReviewRequest
-    ): ApiResponse<ReviewResponseDto>
+    ): ApiResponse<CreateReviewResponseDto>
 
     @DELETE("review/delete/{review_id}")
     suspend fun deleteReview(

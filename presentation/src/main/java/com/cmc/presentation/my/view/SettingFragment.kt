@@ -28,15 +28,22 @@ class SettingFragment: BaseFragment<FragmentSettingBinding>(R.layout.fragment_se
     }
 
     override fun initView() {
+        setAppBar()
         initCode()
         setButton()
     }
-
+    private fun setAppBar() {
+        binding.settingAppbar.setupAppBar(
+            title = getString(R.string.setting),
+            onHeadButtonClick = { viewModel.onClickHeadButton() }
+        )
+    }
     private fun updateUI(state: SettingState) {
 
     }
     private fun handleSideEffect(effect: SettingSideEffect) {
         when (effect) {
+            is SettingSideEffect.Finish -> { finish() }
             is SettingSideEffect.NavigateSignOut -> { navigateSignOut() }
             is SettingSideEffect.NavigateLogin -> { navigateLogin() }
             is SettingSideEffect.ShowDialog -> {}

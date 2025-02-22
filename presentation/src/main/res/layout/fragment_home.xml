@@ -39,7 +39,7 @@
                 app:layout_constraintStart_toStartOf="parent"/>
 
             <TextView
-                android:id="@+id/tv_spot_polaroid_more"
+                android:id="@+id/tv_spot_polaroid_show_all"
                 style="@style/body_small"
                 android:textColor="@color/text_info"
                 android:layout_width="wrap_content"
@@ -48,7 +48,7 @@
                 app:layout_constraintTop_toTopOf="@+id/tv_spot_polaroid_title"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_spot_polaroid_title"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:text="@string/show_more_arrow"/>
+                android:text="@string/show_all_arrow"/>
 
             <com.cmc.design.component.SpotViewPager
                 android:id="@+id/vp_spot_recommend"

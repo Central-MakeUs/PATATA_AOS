@@ -1,6 +1,7 @@
 package com.cmc.domain.feature.spot.repository
 
 import com.cmc.domain.feature.spot.base.PaginatedResponse
+import com.cmc.domain.feature.spot.model.CreateReviewResponse
 import com.cmc.domain.feature.spot.model.Review
 import com.cmc.domain.feature.spot.model.SpotPreview
 import com.cmc.domain.feature.spot.model.SpotDetail
@@ -96,7 +97,7 @@ interface SpotRepository {
 
     suspend fun toggleSpotScrap(spotIds: List<Int>): Result<List<SpotScrapResponse>>
 
-    suspend fun createReview(spotId: Int, reviewText: String): Result<Review>
+    suspend fun createReview(spotId: Int, reviewText: String): Result<CreateReviewResponse>
 
     suspend fun deleteReview(reviewId: Int): Result<Unit>
 

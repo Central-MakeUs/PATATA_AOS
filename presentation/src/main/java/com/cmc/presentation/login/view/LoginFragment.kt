@@ -49,11 +49,8 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
     }
 
     private fun updateUI(state: LoginState) {
-        when (state) {
-            is LoginState.Success -> {
-                viewModel.handleLoginResult(state.user)
-            }
-            else -> {}
+        if (state.loginSuccess) {
+            state.user?.let { viewModel.handleLoginResult(it) }
         }
     }
     private fun handleSideEffect(effect: LoginSideEffect) {
@@ -90,6 +87,7 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
                     }
                 }
             }
+            viewModel.oneTabClientIsHide()
         }
 
 
@@ -97,11 +95,14 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
         binding.layoutGoogleLogin.setOnClickListener {
             repeatWhenUiStarted {
                 try {
-                    val pendingIntent = loginManager.signInIntent(requireActivity())
-                    startForResult.launch(
-                        IntentSenderRequest.Builder(pendingIntent)
-                            .build()
-                    )
+                    if (viewModel.state.value.oneTabClientShowing.not()) {
+                        viewModel.oneTabClientIsShowing()
+                        val pendingIntent = loginManager.signInIntent(requireActivity())
+                        startForResult.launch(
+                            IntentSenderRequest.Builder(pendingIntent)
+                                .build()
+                        )
+                    }
                 } catch (e: com.google.android.gms.common.api.ApiException) {
                     e.stackTrace
                     showGoogleAccountRegistrationPrompt()

@@ -41,11 +41,15 @@ class SettingViewModel @Inject constructor(
             _sideEffect.emit(effect)
         }
     }
+    fun onClickHeadButton() {
+        sendSideEffect(SettingSideEffect.Finish)
+    }
 
     data class SettingState(
         val versionCode: Int = 0,
     )
     sealed class SettingSideEffect {
+        data object Finish: SettingSideEffect()
         data object NavigateSignOut: SettingSideEffect()
         data object NavigateLogin :SettingSideEffect()
         data object ShowDialog: SettingSideEffect()

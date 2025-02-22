@@ -1,20 +1,14 @@
 package com.cmc.presentation.home.view
 
-import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.core.view.forEachIndexed
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
-import com.cmc.common.constants.NavigationKeys
-import com.cmc.design.component.SpotPolaroidView
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentHomeBinding
@@ -47,12 +41,13 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
     }
     override fun initView() {
-        initSearchBar()
+        setButton()
         initSpotCategory()
         initHorizontalCardView()
         initCategoryTab()
     }
 
+    private var previousState: HomeState? = null
     private fun updateUI(state: HomeState) {
         state.selectedCategory?.let { configureSelectedSpotCategory(it) }
 
@@ -60,12 +55,10 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         binding.layoutCategoryTabNoResult.isVisible = state.categorySpots.isEmpty()
 
         categoryRecommendAdapter.setItems(state.categorySpots)
-        if (::spotRecommendAdapter.isInitialized && state.recommendedSpots.isNotEmpty()) {
-            spotRecommendAdapter.setItems(state.recommendedSpots)
-            spotRecommendAdapter.notifyDataSetChanged()
-        } else if (state.recommendedSpots.isNotEmpty()){
+        if (state.recommendedSpots.isNotEmpty() && previousState?.recommendedSpots != state.recommendedSpots){
             initTodayRecommendedSpotView(state.recommendedSpots)
         }
+        previousState = state
     }
     private fun handleSideEffect(effect: HomeSideEffect) {
         when (effect) {
@@ -85,11 +78,14 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         )
 
         binding.vpSpotRecommend.setAdapter(spotRecommendAdapter)
-        binding.tvSpotPolaroidMore.setOnClickListener { viewModel.onClickTodayRecommendedSpotMoreButton() }
     }
-    private fun initSearchBar() {
-        binding.searchbarHome.
-            setOnSearchBarClickListener { viewModel.onClickSearchBar() }
+    private fun setButton() {
+        binding.searchbarHome.setOnSearchBarClickListener { viewModel.onClickSearchBar() }
+
+        binding.tvSpotPolaroidShowAll.setOnClickListener { viewModel.onClickTodayRecommendedSpotMoreButton() }
+        binding.layoutCategoryRecommendMore.setOnClickListener {
+            viewModel.onClickCategoryRecommendMoreButton()
+        }
     }
     private fun initSpotCategory() {
         categoryViews = listOf(
@@ -118,9 +114,6 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             this.adapter = categoryRecommendAdapter
         }
 
-        binding.layoutCategoryRecommendMore.setOnClickListener {
-            viewModel.onClickCategoryRecommendMoreButton()
-        }
     }
     private fun initCategoryTab() {
         // 탭 생성

@@ -13,6 +13,7 @@ import com.cmc.domain.feature.spot.usecase.ToggleSpotScrapUseCase
 import com.cmc.domain.model.ReportType
 import com.cmc.presentation.R
 import com.cmc.presentation.spot.model.SpotDetailUiModel
+import com.cmc.presentation.spot.model.toReviewUiModel
 import com.cmc.presentation.spot.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -145,6 +146,10 @@ class SpotDetailViewModel @Inject constructor(
                 }
         }
     }
+    fun onClickLocationCopyButton() {
+        val copyString = state.value.spotDetail.address
+        sendSideEffect(SpotDetailSideEffect.CopyClipboard(copyString))
+    }
 
     fun submitReviewEditor(text: String) {
         viewModelScope.launch {
@@ -152,8 +157,9 @@ class SpotDetailViewModel @Inject constructor(
                 .onSuccess { review ->
                     _state.update {
                         it.copy(
-                            it.spotDetail.copy(
-                                reviews = it.spotDetail.reviews + review.toUiModel()
+                            spotDetail = it.spotDetail.copy(
+                                reviewCount = it.spotDetail.reviewCount + 1,
+                                reviews = it.spotDetail.reviews + review.toUiModel().toReviewUiModel()
                             )
                         )
                     }
@@ -182,6 +188,7 @@ class SpotDetailViewModel @Inject constructor(
     sealed class SpotDetailSideEffect {
         data object Finish: SpotDetailSideEffect()
         data object ShowAlert : SpotDetailSideEffect()
+        data class CopyClipboard(val text: String): SpotDetailSideEffect()
         data class ShowSnackBar(val message: String) : SpotDetailSideEffect()
         data class ShowBottomSheet(val spotIsMine: Boolean): SpotDetailSideEffect()
         data class NavigateReport(val reportType: Int, val targetId: Int): SpotDetailSideEffect()

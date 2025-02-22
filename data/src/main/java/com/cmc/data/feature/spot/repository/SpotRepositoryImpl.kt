@@ -14,6 +14,7 @@ import com.cmc.data.feature.spot.paging.CategorySpotPagingSource
 import com.cmc.data.feature.spot.paging.SearchSpotPagingSource
 import com.cmc.data.feature.spot.remote.SpotApiService
 import com.cmc.domain.feature.spot.base.PaginatedResponse
+import com.cmc.domain.feature.spot.model.CreateReviewResponse
 import com.cmc.domain.feature.spot.model.Review
 import com.cmc.domain.feature.spot.model.SpotDetail
 import com.cmc.domain.feature.spot.model.SpotPreview
@@ -248,7 +249,7 @@ class SpotRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun createReview(spotId: Int, reviewText: String): Result<Review> {
+    override suspend fun createReview(spotId: Int, reviewText: String): Result<CreateReviewResponse> {
         return apiRequestCatching(
             apiCall = { spotApiService.createReview(
                 CreateReviewRequest(spotId, reviewText)

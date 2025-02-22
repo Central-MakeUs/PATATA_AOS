@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
 import com.cmc.common.constants.NavigationKeys
+import com.cmc.common.util.ClipboardUtil
 import com.cmc.design.component.BottomSheetDialog
 import com.cmc.design.component.PatataAlert
 import com.cmc.design.util.SnackBarUtil
@@ -81,6 +82,7 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
         when (effect) {
             is SpotDetailSideEffect.Finish -> { finish() }
             is SpotDetailSideEffect.ShowAlert -> { showAlert() }
+            is SpotDetailSideEffect.CopyClipboard -> { copyClipboard(effect.text) }
             is SpotDetailSideEffect.ShowBottomSheet -> { setFooterBottomSheetDialog(effect.spotIsMine) }
             is SpotDetailSideEffect.ShowSnackBar -> { showSnackBar(effect.message) }
             is SpotDetailSideEffect.NavigateReport -> { navigateReport(effect.reportType, effect.targetId) }
@@ -130,7 +132,7 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
     private fun setClickListener() {
         binding.ivSpotArchive.setOnClickListener { viewModel.onClickScrapButton() }
         binding.tvSpotLocationCopy.setOnClickListener {
-            // TODO: 주소 클립보드에 복사
+            viewModel.onClickLocationCopyButton()
         }
     }
     private fun setCommentCount(reviewCount: Int) {
@@ -184,6 +186,7 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
     private fun setEditor() {
         binding.editorInput.setOnSubmitListener { text ->
             viewModel.submitReviewEditor(text)
+            binding.editorInput.clearEditor()
         }
     }
 
@@ -200,6 +203,9 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
     }
     private fun showSnackBar(message: String) {
         SnackBarUtil.show(binding.root, message)
+    }
+    private fun copyClipboard(text: String) {
+        ClipboardUtil.copyText(requireContext(), getString(R.string.label_copy_clipboard), text)
     }
 
     private fun navigateReport(reportType: Int, targetId: Int) {
