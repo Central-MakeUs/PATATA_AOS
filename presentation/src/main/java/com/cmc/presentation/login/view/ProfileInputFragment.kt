@@ -1,8 +1,12 @@
 package com.cmc.presentation.login.view
 
+import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
+import com.bumptech.glide.Glide
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
+import com.cmc.common.constants.NavigationKeys.Setting
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentProfileInputBinding
 import com.cmc.presentation.login.viewmodel.ProfileInputViewModel
@@ -27,15 +31,21 @@ class ProfileInputFragment: BaseFragment<FragmentProfileInputBinding>(R.layout.f
     override fun initView() {
         setAppbar()
         setEditText()
-        setProfileImage()
         setButtonListener()
     }
 
     private fun updateUI(state: ProfileInputState) {
-        binding.etEditTextInput.setErrorState(state.isError)
+        binding.etEditTextInput.setErrorState(state.isNickNameError)
+        Glide.with(binding.root)
+            .load(state.uploadImage.uri)
+            .circleCrop()
+            .into(binding.ivProfileImage)
+
+        binding.layoutCompleteButton.isEnabled = state.isCompletedEnabled
     }
     private fun handleSideEffect(effect: ProfileInputSideEffect) {
         when (effect) {
+            is ProfileInputSideEffect.ShowPhotoPicker -> { pickImageLauncher.launch("image/*")}
             is ProfileInputSideEffect.NavigateSignUpSuccess -> { navigateSignUpSuccess() }
             is ProfileInputSideEffect.NavigateHome -> { navigateHome() }
         }
@@ -57,14 +67,18 @@ class ProfileInputFragment: BaseFragment<FragmentProfileInputBinding>(R.layout.f
             }
         }
     }
-
-    private fun setProfileImage() {
-        // TODO: 프로필 이미지 반영
-    }
-
     private fun setButtonListener() {
         binding.layoutCompleteButton.setOnClickListener {
             viewModel.onClickCompleteButton()
+        }
+        binding.ivEditProfileImage.setOnClickListener {
+            viewModel.onClickEditProfileImageButton()
+        }
+    }
+
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            viewModel.setImage(it)
         }
     }
 
