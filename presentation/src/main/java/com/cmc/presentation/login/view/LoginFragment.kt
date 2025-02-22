@@ -25,6 +25,7 @@ import com.cmc.presentation.login.manager.LoginManager
 import com.cmc.presentation.login.viewmodel.LoginSideEffect
 import com.cmc.presentation.login.viewmodel.LoginState
 import com.cmc.presentation.login.viewmodel.LoginViewModel
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -105,8 +106,10 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
                     }
                 } catch (e: com.google.android.gms.common.api.ApiException) {
                     e.stackTrace
+                    FirebaseCrashlytics.getInstance().log("Login ApiException $e")
                     showGoogleAccountRegistrationPrompt()
                 } catch (e: Exception) {
+                    FirebaseCrashlytics.getInstance().recordException(e)
                     e.stackTrace
                 }
             }
