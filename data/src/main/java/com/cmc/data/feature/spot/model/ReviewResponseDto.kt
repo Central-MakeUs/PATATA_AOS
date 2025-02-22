@@ -12,6 +12,8 @@ data class ReviewResponseDto(
     val reviewText: String,
     @SerializedName("reviewDate")
     val reviewDate: String,
+    @SerializedName("isAuthor")
+    val isAuthor: Boolean,
 )
 
 fun ReviewResponseDto.toDomain(): Review {
@@ -20,5 +22,6 @@ fun ReviewResponseDto.toDomain(): Review {
         memberName = memberName,
         reviewText = reviewText,
         reviewDate = reviewDate,
+        isAuthor = isAuthor,
     )
 }

@@ -6,13 +6,13 @@
         android:layout_height="match_parent">
 
         <com.cmc.design.component.PatataAppBar
-            android:id="@+id/setting_appbar"
+            android:id="@+id/my_appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:bodyType="title"
             app:appBarBackgroundStyle="white"
+            app:footButtonType="setting"
             app:layout_constraintTop_toTopOf="parent"/>
-
 
         <ImageView
             android:id="@+id/iv_profile_image"
@@ -20,7 +20,9 @@
             android:layout_height="100dp"
             android:background="@drawable/bg_circle_gray_30"
             android:layout_marginTop="30dp"
-            app:layout_constraintTop_toBottomOf="@+id/setting_appbar"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true"
+            app:layout_constraintTop_toBottomOf="@+id/my_appbar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -37,7 +39,6 @@
             app:layout_constraintEnd_toStartOf="@+id/tv_change_button"
             tools:text="가나다라마바사"/>
 
-        <!--
         <TextView
             android:id="@+id/tv_change_button"
             style="@style/subtitle_extra_small"
@@ -50,7 +51,7 @@
             app:layout_constraintStart_toEndOf="@+id/tv_nickname"
             app:layout_constraintBottom_toBottomOf="@+id/tv_nickname"
             app:layout_constraintEnd_toEndOf="parent"/>
--->
+
         <TextView
             android:id="@+id/tv_email"
             style="@style/caption_medium"

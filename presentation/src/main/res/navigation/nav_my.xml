@@ -9,6 +9,33 @@
         android:id="@+id/MyFragment"
         android:name="com.cmc.presentation.my.view.MyFragment"
         tools:layout="@layout/fragment_my">
+        <action
+            android:id="@+id/navigate_profile_setting"
+            app:destination="@id/ProfileSettingFragment"/>
+        <action
+            android:id="@+id/navigate_setting"
+            app:destination="@id/SettingFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/ProfileSettingFragment"
+        android:name="com.cmc.presentation.my.view.ProfileSettingFragment"
+        tools:layout="@layout/fragment_profile_setting">
+    </fragment>
+
+    <fragment
+        android:id="@+id/SettingFragment"
+        android:name="com.cmc.presentation.my.view.SettingFragment"
+        tools:layout="@layout/fragment_setting">
+        <action
+            android:id="@+id/navigate_signout"
+            app:destination="@id/SignOutFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/SignOutFragment"
+        android:name="com.cmc.presentation.my.view.SignOutFragment"
+        tools:layout="@layout/fragment_signout">
     </fragment>
 
 </navigation>

@@ -9,10 +9,10 @@ class GetSearchSpotsWithMapUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         keyword: String,
-        minLatitude: Double,
-        minLongitude: Double,
-        maxLatitude: Double,
-        maxLongitude: Double,
+        minLatitude: Double?,
+        minLongitude: Double?,
+        maxLatitude: Double?,
+        maxLongitude: Double?,
         userLatitude: Double,
         userLongitude: Double
     ): Result<SpotWithMap> {

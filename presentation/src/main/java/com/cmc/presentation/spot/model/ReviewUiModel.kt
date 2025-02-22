@@ -7,6 +7,7 @@ data class ReviewUiModel(
     val memberName: String,
     val reviewText: String,
     val reviewDate: String,
+    val isAuthor: Boolean,
 )
 
 
@@ -16,5 +17,6 @@ fun Review.toUiModel(): ReviewUiModel {
         memberName = memberName,
         reviewText = reviewText,
         reviewDate = reviewDate,
+        isAuthor = isAuthor,
     )
 }

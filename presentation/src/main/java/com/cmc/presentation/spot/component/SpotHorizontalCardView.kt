@@ -86,7 +86,7 @@ class SpotHorizontalCardView @JvmOverloads constructor(
         binding.layoutTagContainer.removeAllViews()
         tags.forEach { tag ->
             val tagView = LayoutInflater.from(context).inflate(R.layout.view_tag_blue, binding.layoutTagContainer, false)
-            tagView.findViewById<TextView>(R.id.tv_tag).text = tag
+            "#$tag".also { tagView.findViewById<TextView>(R.id.tv_tag).text = it }
             binding.layoutTagContainer.addView(tagView)
         }
     }

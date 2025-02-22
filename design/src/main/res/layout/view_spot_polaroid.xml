@@ -34,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:layout_above="@+id/layout_tag"
+                android:layout_above="@+id/iv_spot_archive"
                 tools:src="@drawable/img_sample"
                 android:clipToOutline="true"
                 android:background="@drawable/bg_rounded_10"/>
@@ -115,6 +115,7 @@
                 android:src="@drawable/selector_archive"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
+                android:layout_marginTop="16dp"
                 android:contentDescription="@string/img_desc_spot_archive"
                 android:clickable="true"
                 android:focusable="true"/>

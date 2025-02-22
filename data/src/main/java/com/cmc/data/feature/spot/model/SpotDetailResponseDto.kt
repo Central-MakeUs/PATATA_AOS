@@ -16,10 +16,16 @@ data class SpotDetailResponseDto(
     val address: String,
     @SerializedName("spotAddressDetail")
     val addressDetail: String?,
+    @SerializedName("latitude")
+    val latitude: Double,
+    @SerializedName("longitude")
+    val longitude: Double,
     @SerializedName("categoryId")
     val categoryId: Int,
+    @SerializedName("memberId")
+    val memberId: Int,
     @SerializedName("memberName")
-    val authorName: String,
+    val authorName: String?,
     @SerializedName("images")
     val images: List<String>,
     @SerializedName("tags")
@@ -41,8 +47,11 @@ fun SpotDetailResponseDto.toDomain(): SpotDetail {
         description = description,
         address = address,
         addressDetail = addressDetail,
+        latitude = latitude,
+        longitude= longitude,
         categoryId = categoryId,
-        authorName = authorName,
+        memberId = memberId,
+        authorName = authorName ?: "Test",
         images = images,
         tags = tags,
         reviewCount = reviewCount,

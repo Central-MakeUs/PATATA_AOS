@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.cmc.design.R
 import com.cmc.design.databinding.ViewSpotPolaroidBinding
 
@@ -26,8 +27,11 @@ class SpotPolaroidView @JvmOverloads constructor(
     }
 
     private fun initListeners() {
-        binding.ivSpotArchive.setOnClickListener {
-            onArchiveClickListener?.invoke()
+        binding.ivSpotArchive.apply {
+            setOnClickListener {
+                isSelected = isSelected.not()
+                onArchiveClickListener?.invoke()
+            }
         }
         binding.ivSpotImage.setOnClickListener {
             onImageClickListener?.invoke()
@@ -37,7 +41,7 @@ class SpotPolaroidView @JvmOverloads constructor(
     fun setSpotPolaroidView(
         title: String,
         location: String,
-        imageResId: Int,
+        imageUrl: String,
         tags: List<String>? = null,
         isArchived: Boolean = false,
         isBadgeVisible: Boolean = false,
@@ -47,12 +51,14 @@ class SpotPolaroidView @JvmOverloads constructor(
         with(binding) {
             tvSpotTitle.text = title
             tvSpotLocation.text = location
-            ivSpotImage.setImageResource(imageResId)
             viewSpotBadge.root.visibility = if (isBadgeVisible) View.VISIBLE else View.GONE
             ivSpotArchive.isSelected = isArchived
             updateTags(tags)
             onArchiveClickListener = archiveClick
             onImageClickListener = imageClick
+            Glide.with(this.root)
+                .load(imageUrl)
+                .into(ivSpotImage)
         }
 
     }
@@ -62,8 +68,7 @@ class SpotPolaroidView @JvmOverloads constructor(
 
         tags?.forEach { tag ->
             val tagView = LayoutInflater.from(context).inflate(R.layout.view_tag_gray, binding.layoutTag, false)
-            val tagTextView = tagView.findViewById<TextView>(R.id.tv_tag)
-            tagTextView.text = tag
+            "#$tag".also { tagView.findViewById<TextView>(R.id.tv_tag).text = it }
 
             binding.layoutTag.addView(tagView)
         }

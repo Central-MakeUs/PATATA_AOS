@@ -14,7 +14,9 @@
     <string name="title_edit_post">게시글 수정하기</string>
     <string name="title_delete">삭제하기</string>
     <string name="title_profile_setting">프로필 설정</string>
+    <string name="title_profile_edit">프로필 수정</string>
     <string name="title_add_a_spot">스팟 추가하기</string>
+    <string name="title_edit_a_spot">스팟 수정하기</string>
     <string name="title_changeable_profile">프로필을 바꿀 수 있어요.</string>
     <string name="title_choose_category">카테고리를 선택해주세요</string>
     <string name="title_choose_nickname">닉네임을 정해주세요!</string>
@@ -24,6 +26,9 @@
     <string name="title_choose_picture">사진을 추가해주세요 (최소 1개)</string>
     <string name="title_input_hashtag">해쉬태그를 입력해주세요 (최대 2개)</string>
     <string name="title_dialog_archive_images_delete">%d개의 항목을 목록에서\n삭제하시겠습니까?</string>
+    <string name="archive_images_deleted">%d개의 항목이 삭제되었습니다!</string>
+    <string name="title_spot_report">게시글 신고하기</string>
+    <string name="title_user_report">사용자 신고하기</string>
     <string name="select_location_to_share">공유하고 싶은 장소를 선택해주세요!</string>
     <string name="explore_this_area">이 지역에서 탐색</string>
 
@@ -34,6 +39,7 @@
     <string name="hint_input_spot_desc">장소에 대한 간단한 설명을 입력하세요 (300자 이내)</string>
     <string name="hint_input_spot_desc_waring">부적절한 사진(폭력, 혐오, 선정성 등)은 등록이 금지되며,\n위반 시 경고 또는 이용 제한이 부과될 수 있습니다.</string>
     <string name="hint_input_hashtag">#해쉬태그를 입력해주세요</string>
+    <string name="hint_input_report_reason">신고 내용을 입력해주세요. (최대 300자)</string>
 
     <string name="category_all">전체</string>
     <string name="category_recommend">작가 추천</string>
@@ -48,15 +54,19 @@
     <string name="img_desc_category_everyday_life">일상 속 공간 카테고리 이미지</string>
     <string name="img_desc_category_nature">싱그러운 자연 카테고리 이미지</string>
 
-    <string name="show_more_arrow"><![CDATA[더보기 >]]></string>
+    <string name="show_all_arrow"><![CDATA[전체보기 >]]></string>
     <string name="category">카테고리</string>
     <string name="show_more">더보기</string>
     <string name="complete">완료</string>
     <string name="confirm">확인</string>
     <string name="register">등록하기</string>
+    <string name="edit">수정하기</string>
     <string name="cancel">취소</string>
     <string name="delete">삭제</string>
     <string name="change">변경</string>
+    <string name="required">필수</string>
+    <string name="setting">설정</string>
+    <string name="report_submit">신고하기</string>
     <string name="selection_complete">선택 완료</string>
     <string name="zero">0</string>
 
@@ -68,4 +78,16 @@
     <string name="title_spot_added_success">스팟이 등록되었어요!</string>
     <string name="desc_signup_success">파타타 회원이 되신 것을 환영해요.\n타타와 함께 최고의 스팟을 찾아봐요!</string>
     <string name="desc_spot_added_success">스팟이 정상적으로 등록되었습니다.\n다른 스팟들을 둘러보러 가볼까요?</string>
+    <string name="info_picture_upload">이미지는 최대 3장까지 업로드 가능하며, 스팟 등록 이후 수정이 불가합니다.</string>
+
+    <string name="snackbar_post_delete_complete">게시글이 정상적으로 삭제되었습니다.</string>
+    <string name="dialog_post_delete_title">게시물을 삭제하시겠습니까?</string>
+    <string name="dialog_post_delete_description">한 번 삭제된 게시물은 복원할 수 없습니다.</string>
+
+    <string name="error_image_count">이미지 최대 업로드 장 수는 %d장 입니다.</string>
+    <string name="error_image_size">이미지 장 당 최대 용량은 %dMB 입니다. 용량을 확인해주세요!</string>
+    <string name="error_total_image_size">이미지 총 용량은 %dMB 를 넘지 않도록 해주세요.</string>
+    <string name="error_duplicate_nickname">이미 사용 중인 닉네임입니다.</string>
+
+    <string name="label_copy_clipboard">주소를 클립보드에 복사했습니다.</string>
 </resources>

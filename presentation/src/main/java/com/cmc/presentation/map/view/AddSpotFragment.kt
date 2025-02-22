@@ -7,12 +7,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.constants.NavigationKeys
 import com.cmc.design.component.BottomSheetDialog
+import com.cmc.design.util.SnackBarUtil
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.ContentSheetAddSpotCategoryFilterBinding
@@ -20,19 +22,22 @@ import com.cmc.presentation.databinding.FragmentAddSpotBinding
 import com.cmc.presentation.map.adapter.SelectedImageAdapter
 import com.cmc.presentation.map.viewmodel.AddSpotViewModel
 import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.NavigateToAroundMe
-import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.NavigateToSpotAddedSuccess
+import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.NavigateToCreateSpotSuccess
 import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.ShowCategoryPicker
 import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.ShowPhotoPicker
+import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.ShowSnackbar
 import com.cmc.presentation.model.SpotCategoryItem
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+
 @AndroidEntryPoint
 class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_add_spot) {
 
-    private val viewModel: AddSpotViewModel by viewModels()
+    private val args: AddSpotFragmentArgs by navArgs()
 
+    private val viewModel: AddSpotViewModel by viewModels()
     private lateinit var imageAdapter: SelectedImageAdapter
 
     override fun initObserving() {
@@ -51,23 +56,18 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
     }
 
     override fun initView() {
-        setArgument(arguments)
+        setArgument(args)
         setAppbar()
         setupRecyclerView()
         setupViewActionListeners()
     }
 
-    private fun setArgument(bundle: Bundle?) {
-        val latitude = bundle?.getDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE)
-        val longitude = bundle?.getDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE)
-        val address = bundle?.getString(NavigationKeys.AddSpot.ARGUMENT_ADDRESS_NAME)
-
-        if (latitude == null || longitude == null || address.isNullOrEmpty()) {
-            // 필수 인자가 없을 때의 처리 (예: 에러 메시지 표시)
-            return
-        }
-
-        viewModel.updateLocationWithAddress(latitude, longitude, address)
+    private fun setArgument(args: AddSpotFragmentArgs) {
+        viewModel.updateLocationWithAddress(
+            args.argumentlatitude.toDouble(),
+            args.argumentlongitude.toDouble(),
+            args.argumentaddressname
+        )
     }
 
     private fun setAppbar() {
@@ -118,6 +118,9 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
             tvInputAddress.text = state.address
             groupSpotDesc.isVisible = state.description.isEmpty()
 
+            binding.tvPictureError.isVisible = state.errorMessage.isNullOrEmpty().not()
+            state.errorMessage?.let { binding.tvPictureError.setText(it) }
+
             // 카테고리 선택 UI 업데이트
             tvChooseCategory.apply {
                 text = state.selectedCategory?.let { getString(SpotCategoryItem(it).getName()) } ?: getString(R.string.hint_choose_category)
@@ -145,10 +148,10 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
     private fun handleSideEffect(effect: AddSpotViewModel.AddSpotSideEffect) {
         when (effect) {
             is ShowCategoryPicker -> showCategoryFilter()
-            is NavigateToAroundMe -> navigate(R.id.navigate_add_spot_to_around_me)
-            is NavigateToSpotAddedSuccess -> navigate(R.id.navigate_spot_added_success)
             is ShowPhotoPicker -> pickImagesLauncher.launch("image/*")
-            else -> {}
+            is NavigateToAroundMe -> { navigateAroundMe() }
+            is NavigateToCreateSpotSuccess -> { navigateCreateSpotSuccess() }
+            is ShowSnackbar -> { showSnackBar(effect.message) }
         }
     }
 
@@ -232,4 +235,8 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
         override fun isLongPressDragEnabled(): Boolean = true
     }
+
+    private fun showSnackBar(message: String) { SnackBarUtil.show(binding.root, message) }
+    private fun navigateAroundMe(){ navigate(R.id.navigate_add_spot_to_around_me) }
+    private fun navigateCreateSpotSuccess() { navigate(R.id.navigate_spot_added_success) }
 }

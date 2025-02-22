@@ -11,10 +11,6 @@
         tools:layout="@layout/fragment_around_me">
 
         <action
-            android:id="@+id/navigate_around_me_to_select_location"
-            app:destination="@id/SelectLocationFragment"/>
-
-        <action
             android:id="@+id/navigate_around_me_to_search_input"
             app:destination="@+id/SearchInputFragment"/>
     </fragment>
@@ -33,9 +29,6 @@
         android:id="@+id/SearchResultMapFragment"
         android:name="com.cmc.presentation.map.view.SearchResultMapFragment"
         tools:layout="@layout/fragment_search_result_map">
-        <action
-            android:id="@+id/navigate_search_result_map_to_select_location"
-            app:destination="@id/SelectLocationFragment"/>
 
         <action
             android:id="@+id/navigate_search_result_map_to_search_input"
@@ -44,14 +37,14 @@
 
         <action
             android:id="@+id/navigate_search_result_map_to_around_me"
-            app:destination="@+id/SearchInputFragment"
-            app:popUpTo="@id/SearchInputFragment"
+            app:destination="@+id/AroundMeFragment"
+            app:popUpTo="@id/AroundMeFragment"
             app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
         android:id="@+id/SelectLocationFragment"
-        android:name="com.cmc.presentation.map.view.SelectLocationFragment"
+        android:name="com.cmc.presentation.selectlocation.view.SelectLocationFragment"
         tools:layout="@layout/fragment_select_location">
         <action
             android:id="@+id/navigate_add_spot"
@@ -62,6 +55,20 @@
         android:id="@+id/AddSpotFragment"
         android:name="com.cmc.presentation.map.view.AddSpotFragment"
         tools:layout="@layout/fragment_add_spot">
+
+        <argument
+            android:name="ARGUMENT_ADDRESS_NAME"
+            app:argType="string" />
+        <argument
+            android:name="ARGUMENT_LATITUDE"
+            app:argType="float" />
+        <argument
+            android:name="ARGUMENT_LONGITUDE"
+            app:argType="float" />
+
+        <deepLink
+            android:id="@+id/deeplink_add_spot"
+            app:uri="patata://add_spot?addressName={ARGUMENT_ADDRESS_NAME}&amp;latitude={ARGUMENT_LATITUDE}&amp;longitude={ARGUMENT_LONGITUDE}" />
 
         <action
             android:id="@+id/navigate_spot_added_success"

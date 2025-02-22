@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 선택된 상태 -->
+    <item android:state_selected="true">
+        <layer-list>
+            <!-- 바깥 원 -->
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="@color/white"/>
+                    <stroke android:width="1dp" android:color="@color/blue_100"/>
+                </shape>
+            </item>
+            <!-- 안쪽 원 -->
+            <item
+                android:width="14dp"
+                android:height="14dp"
+                android:gravity="center">
+                <shape android:shape="oval">
+                    <solid android:color="@color/blue_100"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <!-- 선택되지 않은 상태 -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/white"/>
+            <stroke android:width="1dp" android:color="@color/gray_30"/>
+        </shape>
+    </item>
+
+</selector>

@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,7 +23,7 @@ class LoginViewModel @Inject constructor(
     private val googleLoginUseCase: LoginUseCase,
 ): ViewModel() {
 
-    private val _state = MutableStateFlow<LoginState>(LoginState.Initialize)
+    private val _state = MutableStateFlow<LoginState>(LoginState())
     val state: StateFlow<LoginState> = _state.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<LoginSideEffect>()
@@ -32,10 +33,14 @@ class LoginViewModel @Inject constructor(
         googleLoginUseCase(idToken)
             .collectLatest { result ->
                 result.onSuccess { user ->
-                    _state.emit(LoginState.Success(user.toUiModel()))
+                    _state.update {
+                        it.copy(loginSuccess = true, user = user.toUiModel())
+                    }
                 }.onFailure { error ->
                     when(error) {
-                        is ApiException.NotFound -> { }
+                        is ApiException.NotFound -> {
+                            sendSideEffect(LoginSideEffect.ShowSnackBar(error.message))
+                        }
                         is ApiException.Unauthorized -> { }
                         is ApiException.ServerError -> { }
                     }
@@ -50,6 +55,16 @@ class LoginViewModel @Inject constructor(
             sendSideEffect(LoginSideEffect.NavigateToProfileSetting)
         }
     }
+    fun oneTabClientIsShowing() {
+        _state.update {
+            it.copy(oneTabClientShowing = true)
+        }
+    }
+    fun oneTabClientIsHide() {
+        _state.update {
+            it.copy(oneTabClientShowing = false)
+        }
+    }
 
     private fun sendSideEffect(effect: LoginSideEffect) {
         viewModelScope.launch {
@@ -59,13 +74,14 @@ class LoginViewModel @Inject constructor(
 
 }
 
-sealed interface LoginState {
-    data object Initialize : LoginState
-    class Success(val user: AuthResponseUiModel) : LoginState
-    class Error(val message : String) : LoginState
-}
+data class LoginState(
+    val loginSuccess: Boolean = false,
+    val user: AuthResponseUiModel? = null,
+    val oneTabClientShowing: Boolean = false,
+)
 
 sealed class LoginSideEffect {
     data object NavigateToHome: LoginSideEffect()
     data object NavigateToProfileSetting: LoginSideEffect()
+    data class ShowSnackBar(val message: String): LoginSideEffect()
 }

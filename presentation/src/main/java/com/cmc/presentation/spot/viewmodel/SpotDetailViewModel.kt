@@ -1,13 +1,22 @@
 package com.cmc.presentation.spot.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.domain.base.exception.ApiException
+import com.cmc.domain.base.exception.AppInternalException
 import com.cmc.domain.feature.spot.usecase.CreateReviewUseCase
+import com.cmc.domain.feature.spot.usecase.DeleteReviewUseCase
+import com.cmc.domain.feature.spot.usecase.DeleteSpotUseCase
 import com.cmc.domain.feature.spot.usecase.GetSpotDetailUseCase
 import com.cmc.domain.feature.spot.usecase.ToggleSpotScrapUseCase
+import com.cmc.domain.model.ReportType
+import com.cmc.presentation.R
 import com.cmc.presentation.spot.model.SpotDetailUiModel
+import com.cmc.presentation.spot.model.toReviewUiModel
 import com.cmc.presentation.spot.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -20,9 +29,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SpotDetailViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val getSpotDetailUseCase: GetSpotDetailUseCase,
     private val toggleSpotScrapUseCase: ToggleSpotScrapUseCase,
     private val createReviewUseCase: CreateReviewUseCase,
+    private val deleteReviewUseCase: DeleteReviewUseCase,
+    private val deleteSpotUseCase: DeleteSpotUseCase,
 ): ViewModel() {
 
     private val _state = MutableStateFlow(SpotDetailState())
@@ -40,9 +52,8 @@ class SpotDetailViewModel @Inject constructor(
                         it.copy(spotDetail = result.toUiModel())
                     }
                 }
-                .onFailure { 
-                    // TODO: 없을 때, 액션 추가
-                        // ex) Alert 띄우기, 뒤로가기
+                .onFailure {
+                    sendSideEffect(SpotDetailSideEffect.Finish)
                 }
         }
     }
@@ -53,7 +64,7 @@ class SpotDetailViewModel @Inject constructor(
     }
     fun onClickScrapButton() {
         viewModelScope.launch {
-            toggleSpotScrapUseCase.invoke(_state.value.spotDetail.spotId)
+            toggleSpotScrapUseCase.invoke(listOf(state.value.spotDetail.spotId))
                 .onSuccess {
                     _state.update {
                         it.copy(
@@ -65,6 +76,80 @@ class SpotDetailViewModel @Inject constructor(
                 }
         }
     }
+    fun onClickReviewDelete(reviewId: Int) {
+        viewModelScope.launch {
+            deleteReviewUseCase.invoke(reviewId)
+                .onSuccess {
+                    _state.update {
+                        it.copy(
+                            spotDetail = it.spotDetail.copy(
+                                reviewCount = it.spotDetail.reviewCount - 1,
+                                reviews = it.spotDetail.reviews.filter { review -> review.reviewId != reviewId }
+                            )
+                        )
+                    }
+                }.onFailure { e ->
+                    when (e) {
+                        is ApiException.NotFound -> {
+                            _state.update {
+                                it.copy(
+                                    spotDetail = it.spotDetail.copy(
+                                        reviewCount = it.spotDetail.reviewCount - 1,
+                                        reviews = it.spotDetail.reviews.filter { review -> review.reviewId != reviewId }
+                                    )
+                                )
+                            }
+                        }
+                        is AppInternalException.PermissionDenied -> {
+                            sendSideEffect(SpotDetailSideEffect.ShowSnackBar(e.message))
+                        }
+                    }
+                }
+        }
+    }
+    fun onClickPostReport() {
+        sendSideEffect(
+            SpotDetailSideEffect.NavigateReport(
+                ReportType.POST.type, state.value.spotDetail.spotId
+            )
+        )
+    }
+    fun onClickUserReport() {
+        sendSideEffect(
+            SpotDetailSideEffect.NavigateReport(
+                ReportType.USER.type, state.value.spotDetail.memberId
+            )
+        )
+    }
+    fun onClickEditSpot() {
+        sendSideEffect(SpotDetailSideEffect.NavigateEditSpot(state.value.spotDetail.spotId))
+    }
+    fun onClickDeleteSpot() {
+        viewModelScope.launch {
+            deleteSpotUseCase.invoke(state.value.spotDetail.spotId)
+                .onSuccess {
+                    sendSideEffect(
+                        SpotDetailSideEffect.ShowSnackBar(
+                            context.getString(R.string.snackbar_post_delete_complete)
+                        )
+                    )
+                    sendSideEffect(
+                        SpotDetailSideEffect.Finish
+                    )
+                }.onFailure { e ->
+                    e.printStackTrace()
+                    when (e) {
+                        is AppInternalException.PermissionDenied -> {
+                            sendSideEffect(SpotDetailSideEffect.Finish)
+                        }
+                    }
+                }
+        }
+    }
+    fun onClickLocationCopyButton() {
+        val copyString = state.value.spotDetail.address
+        sendSideEffect(SpotDetailSideEffect.CopyClipboard(copyString))
+    }
 
     fun submitReviewEditor(text: String) {
         viewModelScope.launch {
@@ -72,13 +157,19 @@ class SpotDetailViewModel @Inject constructor(
                 .onSuccess { review ->
                     _state.update {
                         it.copy(
-                            it.spotDetail.copy(
-                                reviews = it.spotDetail.reviews + review.toUiModel()
+                            spotDetail = it.spotDetail.copy(
+                                reviewCount = it.spotDetail.reviewCount + 1,
+                                reviews = it.spotDetail.reviews + review.toUiModel().toReviewUiModel()
                             )
                         )
                     }
                 }.onFailure { e ->
                     e.stackTrace
+                    when (e) {
+                        is ApiException.NotFound -> {
+                            sendSideEffect(SpotDetailSideEffect.Finish)
+                        }
+                    }
                 }
         }
     }
@@ -95,7 +186,12 @@ class SpotDetailViewModel @Inject constructor(
     )
 
     sealed class SpotDetailSideEffect {
-        data class ShowToast(val message: String) : SpotDetailSideEffect()
+        data object Finish: SpotDetailSideEffect()
+        data object ShowAlert : SpotDetailSideEffect()
+        data class CopyClipboard(val text: String): SpotDetailSideEffect()
+        data class ShowSnackBar(val message: String) : SpotDetailSideEffect()
         data class ShowBottomSheet(val spotIsMine: Boolean): SpotDetailSideEffect()
+        data class NavigateReport(val reportType: Int, val targetId: Int): SpotDetailSideEffect()
+        data class NavigateEditSpot(val spotId: Int): SpotDetailSideEffect()
     }
 }

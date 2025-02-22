@@ -107,7 +107,7 @@ class SearchViewModel @Inject constructor(
     }
     fun onClickSpotScrapButton(spotId: Int) {
         viewModelScope.launch {
-            toggleSpotScrapUseCase.invoke(spotId)
+            toggleSpotScrapUseCase.invoke(listOf(spotId))
                 .onSuccess {
                     val newPagingData = state.value.results.map { spot ->
                         if (spot.spotId == spotId) {

@@ -2,8 +2,10 @@ package com.cmc.data.base
 
 
 import com.cmc.domain.base.exception.ApiException
+import com.cmc.domain.base.exception.AppException
 import com.cmc.domain.base.exception.AppInternalException
 import com.cmc.domain.base.exception.NetworkException
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -25,30 +27,47 @@ suspend fun <T : Any, R> apiRequestCatching(
             successCallBack(Unit as T)
             Result.success(Unit as R)
         } else {
-            Result.failure(ApiException.ServerError(response.message))
+            val createException = createResultException(response)
+            Result.failure(createException)
         }
     }.getOrElse { exception ->
+        exception.printStackTrace()
         when (exception) {
             is IOException -> Result.failure(NetworkException.NoInternetConnection)
             is HttpException ->  {
                 Result.failure(createException(exception.response()?.errorBody()?.string()))
             }
-            else -> Result.failure(AppInternalException.UnknownError)
+            else -> Result.failure(AppInternalException.UnknownError(exception.message ?: "알 수 없는 오류 발생"))
         }
     }
 }
 
-private fun createException(errorBody: String?): Exception {
-    val errorResponse = GsonProvider.gson.fromJson(errorBody, ErrorResponse::class.java)
-    val createExceptionFunc = errorCodeMap[errorResponse.code] ?: { msg: String -> ApiException.ServerError(msg) }
-    return createExceptionFunc(errorResponse.message)
+private fun <T> createResultException(response: ApiResponse<T>): AppException {
+    val errorCode = response.code
+    val errorMessage = response.message
+    val errorResult = response.result
+
+    return when (errorCode) {
+        ApiCode.Spot.SPOT_TOO_MANY_REGISTERED -> ApiException.RegistrationLimitExceeded(errorMessage, errorResult)
+        else -> AppInternalException.UnknownError("알 수 없는 오류 발생")
+    }
 }
 
-private val errorCodeMap = mapOf(
-    ApiCode.Auth.INVALID_GOOGLE_ID_TOKEN to { msg: String -> ApiException.NotFound(msg) },
-    ApiCode.Auth.GOOGLE_ID_TOKEN_VERIFICATION_FAILED to { msg: String -> ApiException.Unauthorized(msg) },
-    ApiCode.Common.GENERIC_ERROR to { msg: String -> ApiException.BadRequest(msg) }
-)
+private fun createException(errorBody: String?): Exception {
+    val exception = try {
+        val errorResponse = GsonProvider.gson.fromJson(errorBody, ErrorResponse::class.java)
+        mapErrorCodeToException(errorResponse.code, errorResponse.message)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        AppInternalException.IOException(e.message ?: "CreateException GsonProvider Error")
+    }
+    return exception
+}
+
+private fun mapErrorCodeToException(errorCode: String, message: String, result: Any? = null): AppException {
+    return errorCodeMap[errorCode]?.invoke(message, result) ?: ApiException.ServerError(message)
+}
+
 fun <R> Result<R>.asFlow(): Flow<Result<R>> {
     return flow {
         emit(this@asFlow)

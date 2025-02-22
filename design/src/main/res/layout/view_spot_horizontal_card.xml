@@ -120,7 +120,7 @@
         android:textColor="@color/blue_50"
         android:layout_width="75dp"
         android:layout_height="24dp"
-        android:text="@string/label_recommend"
+        android:text="@string/label_recommend_spot"
         android:background="@drawable/bg_rounded_24_navy_100"
         android:gravity="center"
         android:layout_margin="2dp"

@@ -8,6 +8,14 @@
     <fragment
         android:id="@+id/SpotDetailFragment"
         android:name="com.cmc.presentation.spot.view.SpotDetailFragment"
-        tools:layout="@layout/fragment_spot_detail"/>
+        tools:layout="@layout/fragment_spot_detail">
+        <action
+            android:id="@+id/navigate_edit_spot"
+            app:destination="@+id/EditSpotFragment"/>
+    </fragment>
 
+    <fragment
+        android:id="@+id/EditSpotFragment"
+        android:name="com.cmc.presentation.spot.view.EditSpotFragment"
+        tools:layout="@layout/fragment_edit_spot"/>
 </navigation>

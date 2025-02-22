@@ -22,6 +22,7 @@
         android:textColor="@color/text_info"
         android:textColorHint="@color/text_disabled"
         android:inputType="text"
+        android:saveEnabled="false"
         android:imeOptions="actionDone"
         android:gravity="top"
         app:layout_constraintStart_toStartOf="parent"

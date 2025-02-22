@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
 }
@@ -94,6 +95,7 @@ dependencies {
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics.ktx)
 
     // Kotlin Coroutines
     implementation(libs.kotlinx.coroutines.core)

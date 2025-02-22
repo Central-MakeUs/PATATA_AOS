@@ -18,12 +18,14 @@ import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
 import com.cmc.design.component.PatataAlert
 import com.cmc.design.util.EaseOutBounceInterpolator
+import com.cmc.design.util.SnackBarUtil
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentLoginBinding
 import com.cmc.presentation.login.manager.LoginManager
 import com.cmc.presentation.login.viewmodel.LoginSideEffect
 import com.cmc.presentation.login.viewmodel.LoginState
 import com.cmc.presentation.login.viewmodel.LoginViewModel
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -48,17 +50,15 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
     }
 
     private fun updateUI(state: LoginState) {
-        when (state) {
-            is LoginState.Success -> {
-                viewModel.handleLoginResult(state.user)
-            }
-            else -> {}
+        if (state.loginSuccess) {
+            state.user?.let { viewModel.handleLoginResult(it) }
         }
     }
     private fun handleSideEffect(effect: LoginSideEffect) {
         when (effect) {
+            is LoginSideEffect.ShowSnackBar -> { showSnackBar(effect.message) }
             is LoginSideEffect.NavigateToHome -> { (activity as GlobalNavigation).navigateHome() }
-            is LoginSideEffect.NavigateToProfileSetting -> { navigate(R.id.navigate_profile_setting)}
+            is LoginSideEffect.NavigateToProfileSetting -> { navigate(R.id.navigate_profile_input)}
         }
     }
 
@@ -88,6 +88,7 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
                     }
                 }
             }
+            viewModel.oneTabClientIsHide()
         }
 
 
@@ -95,15 +96,20 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
         binding.layoutGoogleLogin.setOnClickListener {
             repeatWhenUiStarted {
                 try {
-                    val pendingIntent = loginManager.signInIntent(requireActivity())
-                    startForResult.launch(
-                        IntentSenderRequest.Builder(pendingIntent)
-                            .build()
-                    )
+                    if (viewModel.state.value.oneTabClientShowing.not()) {
+                        viewModel.oneTabClientIsShowing()
+                        val pendingIntent = loginManager.signInIntent(requireActivity())
+                        startForResult.launch(
+                            IntentSenderRequest.Builder(pendingIntent)
+                                .build()
+                        )
+                    }
                 } catch (e: com.google.android.gms.common.api.ApiException) {
                     e.stackTrace
+                    FirebaseCrashlytics.getInstance().log("Login ApiException $e")
                     showGoogleAccountRegistrationPrompt()
                 } catch (e: Exception) {
+                    FirebaseCrashlytics.getInstance().recordException(e)
                     e.stackTrace
                 }
             }
@@ -163,10 +169,6 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
             start()
         }
     }
-    private fun playTogetherAnimation(a1: ObjectAnimator, a2: ObjectAnimator) {
-        AnimatorSet().apply {
-            playTogether(a1, a2)
-            start()
-        }
-    }
+
+    private fun showSnackBar(message: String) { SnackBarUtil.show(binding.root, message) }
 }

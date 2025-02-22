@@ -1,7 +1,11 @@
 package com.cmc.data.feature.auth.repository
 
+import android.content.Context
+import android.net.Uri
+import android.util.Log
 import com.cmc.data.base.apiRequestCatching
 import com.cmc.data.base.asFlow
+import com.cmc.data.base.uriToFile
 import com.cmc.data.feature.auth.model.LoginRequest
 import com.cmc.data.feature.auth.model.NickNameRequest
 import com.cmc.data.feature.auth.model.toDomain
@@ -11,12 +15,22 @@ import com.cmc.data.preferences.TokenPreferences
 import com.cmc.data.preferences.UserPreferences
 import com.cmc.domain.base.exception.ApiException
 import com.cmc.domain.feature.auth.model.AuthResponse
+import com.cmc.domain.feature.auth.model.Member
 import com.cmc.domain.feature.auth.repository.AuthRepository
+import com.cmc.domain.model.ImageMetadata
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 import javax.inject.Inject
 
 
 internal class AuthRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val authApiService: AuthApiService,
     private val tokenPreferences: TokenPreferences,
     private val userPreferences: UserPreferences,
@@ -95,6 +109,45 @@ internal class AuthRepositoryImpl @Inject constructor(
                 NickNameRequest(nickName)
             )},
             responseClass = Unit::class,
+        )
+    }
+
+    override suspend fun updateProfileImage(profileImage: ImageMetadata): Result<String> {
+        return apiRequestCatching(
+            apiCall = {
+                val file = uriToFile(context, Uri.parse(profileImage.uri), profileImage.fileName)
+                val imageFilePart = createImageMultipart(file, profileImage.fileName, profileImage.mimeType)
+
+                authApiService.updateProfileImage(imageFilePart)
+            },
+            transform = { it }
+        )
+    }
+    private fun createImageMultipart(file: File, fileName: String, mimeType: String?): MultipartBody.Part {
+        val requestFile = file.asRequestBody(mimeType?.toMediaTypeOrNull() ?: "image/jpeg".toMediaTypeOrNull())
+        val imageFilePart = MultipartBody.Part.createFormData(
+            "profileImage",
+            fileName,
+            requestFile
+        )
+
+        return imageFilePart
+    }
+
+    override suspend fun getMyProfile(): Result<Member> {
+        return apiRequestCatching(
+            apiCall = { authApiService.getMyProfile() },
+            transform = { it.toDomain() }
+        )
+    }
+
+    override suspend fun signOutGoogle(googleAccessToken: String): Result<String> {
+        withContext(Dispatchers.IO) {
+            tokenPreferences.saveGoogleAccessToken(googleAccessToken)
+        }
+        return apiRequestCatching(
+            apiCall = { authApiService.signOutGoogle() },
+            transform = { it }
         )
     }
 }

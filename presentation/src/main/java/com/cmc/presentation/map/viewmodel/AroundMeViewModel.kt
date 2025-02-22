@@ -7,6 +7,7 @@ import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LONGITUDE
 import com.cmc.domain.feature.location.GetCurrentLocationUseCase
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.feature.spot.usecase.GetCategorySpotsWithMapUseCase
+import com.cmc.domain.feature.spot.usecase.ToggleSpotScrapUseCase
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.map.model.MapScreenLocation
 import com.cmc.presentation.map.model.SpotWithMapUiModel
@@ -31,6 +32,7 @@ import javax.inject.Inject
 class AroundMeViewModel @Inject constructor(
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
     private val getCategorySpotsWithMapUseCase: GetCategorySpotsWithMapUseCase,
+    private val toggleSpotScrapUseCase: ToggleSpotScrapUseCase,
 ): ViewModel() {
 
     private val _state = MutableStateFlow(AroundMeState())
@@ -79,13 +81,26 @@ class AroundMeViewModel @Inject constructor(
     }
     fun onClickExploreThisArea() {
         _state.update {
+            it.copy(selectedTabPosition = null)
+        }
+        _state.update {
             it.copy(selectedTabPosition = SpotCategory.ALL.id)
         }
     }
     fun onClickAddLocationButton(targetLocation: LatLng) {
         sendSideEffect(AroundMeSideEffect.NavigateAddLocation(targetLocation.toLocation()))
     }
-
+    fun onClickMarker(spot: SpotWithMapUiModel) {
+        sendSideEffect(AroundMeSideEffect.ShowSpotBottomSheet(spot))
+    }
+    fun onClickSpotScrapButton(spotId: Int) {
+        viewModelScope.launch {
+            toggleSpotScrapUseCase.invoke(listOf(spotId))
+        }
+    }
+    fun onClickBottomSheetImage(spotId: Int) {
+        sendSideEffect(AroundMeSideEffect.NavigateSpotDetail(spotId))
+    }
 
     private fun observeStateChanges() {
         viewModelScope.launch {
@@ -142,6 +157,7 @@ class AroundMeViewModel @Inject constructor(
         val selectedTabPosition: Int? = null,
         val mapScreenLocation: MapScreenLocation = MapScreenLocation.getDefault(),
         val exploreVisible: Boolean = false,
+        val bottomSheetSpot: SpotWithMapUiModel? = null,
         val errorMessage: String? = null,
         val isLoading: Boolean = false
     )
@@ -150,6 +166,8 @@ class AroundMeViewModel @Inject constructor(
         data object RequestLocationPermission : AroundMeSideEffect()
         data class NavigateAddLocation(val location: Location): AroundMeSideEffect()
         data class NavigateSearch(val location: Location): AroundMeSideEffect()
+        data class NavigateSpotDetail(val spotId: Int): AroundMeSideEffect()
         data class UpdateCurrentLocation(val location: Location): AroundMeSideEffect()
+        data class ShowSpotBottomSheet(val spot: SpotWithMapUiModel): AroundMeSideEffect()
     }
 }

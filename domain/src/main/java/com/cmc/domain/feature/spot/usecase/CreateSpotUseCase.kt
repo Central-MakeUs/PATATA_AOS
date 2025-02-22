@@ -9,7 +9,7 @@ class CreateSpotUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         spotName: String,
-        spotDesc: String?,
+        spotDesc: String,
         spotAddress: String,
         spotAddressDetail: String?,
         latitude: Double,

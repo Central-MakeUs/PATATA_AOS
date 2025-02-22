@@ -72,6 +72,10 @@
         <attr name="editTextHint" format="reference"/>
     </declare-styleable>
 
+    <declare-styleable name="PatataEditTextHelperView">
+        <attr name="android:text" format="string"/>
+    </declare-styleable>
+
     <!-- CustomTab Layout 커스텀 속성 -->
     <declare-styleable name="CustomTabLayout">
         <attr name="customTabIndicatorColor" format="color"/>

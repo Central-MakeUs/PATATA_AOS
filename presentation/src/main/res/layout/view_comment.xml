@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingBottom="16dp"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
@@ -11,16 +12,37 @@
         android:layout_width="match_parent"
         android:layout_height="0.8dp"
         android:background="@color/blue_10"/>
-    
-    <TextView
-        android:id="@+id/tv_comment_poster"
-        style="@style/subtitle_extra_small"
-        android:textColor="@color/text_sub"
-        android:layout_width="wrap_content"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/default_spacing"
-        android:paddingHorizontal="@dimen/horizontal_padding_default_spacing"
-        tools:text="마이꾸미"/>
+        android:paddingHorizontal="16dp">
+        <TextView
+            android:id="@+id/tv_comment_poster"
+            style="@style/subtitle_extra_small"
+            android:textColor="@color/text_sub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="마이꾸미"/>
+
+        <TextView
+            android:id="@+id/tv_comment_delete"
+            style="@style/caption_small"
+            android:textColor="@color/text_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_delete"
+            android:padding="2dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="삭제하기"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/tv_comment_desc"
@@ -28,6 +50,7 @@
         android:textColor="@color/text_sub"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:maxLines="100"
         android:layout_marginTop="8dp"
         android:paddingHorizontal="@dimen/horizontal_padding_default_spacing"
         tools:text="일출시간 맞춰서 방문했는데 아주 좋았어요! 미세먼지 많은 날 촬영나갔더니 국회의사당이 흐리게 보여서 조금 아쉬웠지만, 맑은 날 가면 정말 예쁠 스팟이에요"/>

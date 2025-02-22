@@ -5,4 +5,5 @@ data class Review(
     val memberName: String,
     val reviewText: String,
     val reviewDate: String,
+    val isAuthor: Boolean,
 )

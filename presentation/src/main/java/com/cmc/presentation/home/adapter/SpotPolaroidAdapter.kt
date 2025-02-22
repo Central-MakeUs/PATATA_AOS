@@ -1,14 +1,18 @@
 package com.cmc.presentation.home.adapter
 
+import android.os.Bundle
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.cmc.common.constants.BundleKeys
 import com.cmc.design.component.SpotPolaroidView
-import com.cmc.design.component.SpotPolaroidView.SpotPolaroidItem
+import com.cmc.domain.model.SpotCategory
+import com.cmc.presentation.map.model.TodayRecommendedSpotUiModel
 
 class SpotPolaroidAdapter(
-    private val spotList: List<SpotPolaroidItem>,
-    private val onArchiveClick: (SpotPolaroidItem) -> Unit,
-    private val onImageClick: (SpotPolaroidItem) -> Unit
+    private var items: List<TodayRecommendedSpotUiModel>,
+    private val onArchiveClick: (Int) -> Unit,
+    private val onImageClick: (Int) -> Unit
 ) : RecyclerView.Adapter<SpotPolaroidAdapter.SpotPolaroidViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SpotPolaroidViewHolder {
@@ -22,27 +26,64 @@ class SpotPolaroidAdapter(
     }
 
     override fun onBindViewHolder(holder: SpotPolaroidViewHolder, position: Int) {
-        val actualPosition = position % spotList.size
-        val spot = spotList[actualPosition]
-        holder.bind(spot)
+        val actualPosition = position % items.size
+        val spot = items[actualPosition]
+        holder.bind(spot, onArchiveClick, onImageClick)
+    }
+
+    fun setItems(newItems: List<TodayRecommendedSpotUiModel>) {
+        if (items == newItems) {
+            notifyDataSetChanged() // 강제 UI 갱신
+            return
+        }
+        val diffCallback = DiffCallback(items, newItems)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        items = newItems
+        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun getItemCount(): Int = Int.MAX_VALUE
 
-    inner class SpotPolaroidViewHolder(private val spotView: SpotPolaroidView) :
+    class SpotPolaroidViewHolder(private val spotView: SpotPolaroidView) :
         RecyclerView.ViewHolder(spotView) {
 
-        fun bind(spot: SpotPolaroidItem) {
+        fun bind(
+            spot: TodayRecommendedSpotUiModel,
+            onArchiveClick: (Int) -> Unit,
+            onImageClick: (Int) -> Unit
+        ) {
             spotView.setSpotPolaroidView(
-                title = spot.title,
-                location = spot.location,
-                imageResId = spot.imageResId,
+                title = spot.spotName,
+                location = spot.address,
+                imageUrl = spot.images[0],
                 tags = spot.tags,
                 isArchived = spot.isScraped,
-                isBadgeVisible = spot.isRecommended,
-                archiveClick = { onArchiveClick.invoke(spot) },
-                imageClick = { onImageClick.invoke(spot) },
+                isBadgeVisible = SpotCategory.isRecommended(spot.categoryId),
+                archiveClick = { onArchiveClick.invoke(spot.spotId) },
+                imageClick = { onImageClick.invoke(spot.spotId) },
             )
+        }
+    }
+
+
+    class DiffCallback(
+        private val oldList: List<TodayRecommendedSpotUiModel>,
+        private val newList: List<TodayRecommendedSpotUiModel>
+    ): DiffUtil.Callback() {
+        override fun getOldListSize() = oldList.size
+        override fun getNewListSize() = newList.size
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].spotId == newList[newItemPosition].spotId
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition] == newList[newItemPosition]
+        }
+
+        override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+            return if (oldList[oldItemPosition].isScraped != newList[newItemPosition].isScraped) {
+                Bundle().apply { putBoolean(BundleKeys.Spot.KEY_IS_CHANGED_SCRAP, true) }
+            } else null
         }
     }
 }
