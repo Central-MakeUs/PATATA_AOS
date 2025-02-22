@@ -250,15 +250,12 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     }
 
     private fun navigateAddLocation(location: Location) {
-        navigate(R.id.navigate_around_me_to_select_location, Bundle().apply {
-            putDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE, location.latitude)
-            putDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE, location.longitude)
-        })
+        (activity as GlobalNavigation).navigateSelectLocation(location.latitude, location.longitude)
     }
     private fun navigateSearch(location: Location) {
         navigate(R.id.navigate_around_me_to_search_input, Bundle().apply {
-            putDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE, location.latitude)
-            putDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE, location.longitude)
+            putDouble(NavigationKeys.Location.ARGUMENT_LATITUDE, location.latitude)
+            putDouble(NavigationKeys.Location.ARGUMENT_LONGITUDE, location.longitude)
         })
     }
     private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }

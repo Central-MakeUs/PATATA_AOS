@@ -1,4 +1,4 @@
-package com.cmc.presentation.map.view
+package com.cmc.presentation.spot.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,80 +7,134 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.navArgs
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cmc.common.base.BaseFragment
+import com.cmc.common.base.GlobalNavigation
 import com.cmc.common.constants.NavigationKeys
 import com.cmc.design.component.BottomSheetDialog
 import com.cmc.design.util.SnackBarUtil
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.ContentSheetAddSpotCategoryFilterBinding
-import com.cmc.presentation.databinding.FragmentAddSpotBinding
+import com.cmc.presentation.databinding.FragmentEditSpotBinding
 import com.cmc.presentation.map.adapter.SelectedImageAdapter
-import com.cmc.presentation.map.viewmodel.AddSpotViewModel
-import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.NavigateToAroundMe
-import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.NavigateToCreateSpotSuccess
-import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.ShowCategoryPicker
-import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.ShowPhotoPicker
-import com.cmc.presentation.map.viewmodel.AddSpotViewModel.AddSpotSideEffect.ShowSnackbar
+import com.cmc.presentation.spot.viewmodel.EditSpotViewModel
+import com.cmc.presentation.spot.viewmodel.EditSpotViewModel.EditSpotSideEffect.ShowCategoryPicker
+import com.cmc.presentation.spot.viewmodel.EditSpotViewModel.EditSpotSideEffect.ShowPhotoPicker
+import com.cmc.presentation.spot.viewmodel.EditSpotViewModel.EditSpotSideEffect.ShowSnackbar
+import com.cmc.presentation.spot.viewmodel.EditSpotViewModel.EditSpotSideEffect.Finish
+import com.cmc.presentation.spot.viewmodel.EditSpotViewModel.EditSpotSideEffect.NavigateSelectLocation
 import com.cmc.presentation.model.SpotCategoryItem
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-
 @AndroidEntryPoint
-class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_add_spot) {
+class EditSpotFragment: BaseFragment<FragmentEditSpotBinding>(R.layout.fragment_edit_spot) {
 
-    private val args: AddSpotFragmentArgs by navArgs()
+    private val viewModel: EditSpotViewModel by viewModels()
 
-    private val viewModel: AddSpotViewModel by viewModels()
     private lateinit var imageAdapter: SelectedImageAdapter
 
     override fun initObserving() {
         repeatWhenUiStarted {
-            launch {
-                viewModel.state.collectLatest { state ->
-                    updateUI(state)
-                }
-            }
-            launch {
-                viewModel.sideEffect.collect { effect ->
-                    handleSideEffect(effect)
-                }
-            }
+            launch { viewModel.state.collect { state -> updateUI(state) } }
+            launch { viewModel.sideEffect.collectLatest { effect -> handleSideEffect(effect) } }
         }
     }
 
     override fun initView() {
-        setArgument(args)
+        setSavedState()
+        setArgument(arguments)
         setAppbar()
+        setButton()
         setupRecyclerView()
         setupViewActionListeners()
     }
 
-    private fun setArgument(args: AddSpotFragmentArgs) {
-        viewModel.updateLocationWithAddress(
-            args.argumentlatitude.toDouble(),
-            args.argumentlongitude.toDouble(),
-            args.argumentaddressname
-        )
+    private fun updateUI(state: EditSpotViewModel.EditSpotState) {
+        binding.apply {
+            tvChooseCategory.apply {
+                text = state.selectedCategory?.let { getString(SpotCategoryItem(it).getName()) } ?: getString(
+                    R.string.hint_choose_category)
+                setTextAppearance(
+                    if (state.selectedCategory != null) com.cmc.design.R.style.subtitle_small
+                    else com.cmc.design.R.style.body_small
+                )
+                setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        if (state.selectedCategory != null) com.cmc.design.R.color.text_sub
+                        else com.cmc.design.R.color.text_disabled
+                    )
+                )
+            }
+
+            // 태그 및 이미지 업데이트
+            updateTags(state.tags)
+            imageAdapter.updateImages(state.selectedImages.toList())
+
+            // 등록 버튼 활성화 상태 업데이트
+            layoutEditButton.isEnabled = state.isRegisterEnabled
+        }
+    }
+    private fun handleSideEffect(effect: EditSpotViewModel.EditSpotSideEffect) {
+        when (effect) {
+            is Finish -> { finish() }
+            is ShowCategoryPicker -> showCategoryFilter()
+            is ShowPhotoPicker -> pickImagesLauncher.launch("image/*")
+            is NavigateSelectLocation -> { navigateSelectLocation(effect.latitude, effect.longitude)}
+            is ShowSnackbar -> { showSnackBar(effect.message) }
+        }
     }
 
+    private fun setSavedState() {
+        findNavController().currentBackStackEntry?.savedStateHandle
+            ?.getLiveData<Bundle>("resultKey")
+            ?.observe(viewLifecycleOwner) { bundle ->
+                val addressName = bundle.getString("addressName") ?: viewModel.state.value.address
+                val latitude = bundle.getDouble("latitude")
+                val longitude = bundle.getDouble("longitude")
+                viewModel.setSelectLocationResult(addressName, latitude, longitude)
+                binding.etInputAddressDetail.setEditorText("")
+
+                setDataBind(viewModel.state.value)
+            }
+    }
+    private fun setArgument(bundle: Bundle?) {
+        if (viewModel.state.value.isInitialized) return
+        bundle?.getInt(NavigationKeys.SpotDetail.ARGUMENT_SPOT_ID)?.let {  spotId ->
+            viewModel.fetchSpotDetail(spotId) { currentState ->
+                setDataBind(currentState)
+            }
+        }
+    }
+    private fun setDataBind(currentState: EditSpotViewModel.EditSpotState) {
+        with(binding) {
+            etInputTitle.setEditorText(currentState.spotName)
+            tvInputAddress.text = currentState.address
+            currentState.addressDetail?.let { etInputAddressDetail.setEditorText(it) }
+            etContentDesc.setEditorText(currentState.description)
+            groupSpotDesc.isVisible = currentState.description.isEmpty()
+        }
+    }
     private fun setAppbar() {
         binding.addSpotAppbar.apply {
             setupAppBar(
-                title = getString(R.string.title_add_a_spot),
+                title = getString(R.string.title_edit_a_spot),
                 onHeadButtonClick = { finish() },
                 onFootButtonClick = { viewModel.onCancelButtonClicked()  }
             )
         }
     }
+    private fun setButton() {
+        binding.tvInputAddress.setOnClickListener { viewModel.onClickAddress() }
+    }
     private fun setupRecyclerView() {
-        imageAdapter = SelectedImageAdapter { image -> viewModel.removeSelectedImage(image) }
+        imageAdapter = SelectedImageAdapter(isEditable = false) { image -> viewModel.removeSelectedImage(image) }
 
         binding.rvSelectedImages.apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -109,50 +163,7 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
         }
 
         binding.layoutChooseCategoryTitle.setOnClickListener { viewModel.openCategoryPicker() }
-        binding.layoutChoosePictureButton.setOnClickListener { viewModel.openPhotoPicker() }
-        binding.layoutRegisterButton.setOnClickListener { viewModel.onClickRegisterButton() }
-    }
-
-    private fun updateUI(state: AddSpotViewModel.AddSpotState) {
-        binding.apply {
-            tvInputAddress.text = state.address
-            groupSpotDesc.isVisible = state.description.isEmpty()
-
-            binding.tvPictureError.isVisible = state.errorMessage.isNullOrEmpty().not()
-            state.errorMessage?.let { binding.tvPictureError.setText(it) }
-
-            // 카테고리 선택 UI 업데이트
-            tvChooseCategory.apply {
-                text = state.selectedCategory?.let { getString(SpotCategoryItem(it).getName()) } ?: getString(R.string.hint_choose_category)
-                setTextAppearance(
-                    if (state.selectedCategory != null) com.cmc.design.R.style.subtitle_small
-                    else com.cmc.design.R.style.body_small
-                )
-                setTextColor(
-                    ContextCompat.getColor(
-                        context,
-                        if (state.selectedCategory != null) com.cmc.design.R.color.text_sub
-                        else com.cmc.design.R.color.text_disabled
-                    )
-                )
-            }
-
-            // 태그 및 이미지 업데이트
-            updateTags(state.tags)
-            imageAdapter.updateImages(state.selectedImages.toList())
-
-            // 등록 버튼 활성화 상태 업데이트
-            layoutRegisterButton.isEnabled = state.isRegisterEnabled
-        }
-    }
-    private fun handleSideEffect(effect: AddSpotViewModel.AddSpotSideEffect) {
-        when (effect) {
-            is ShowCategoryPicker -> showCategoryFilter()
-            is ShowPhotoPicker -> pickImagesLauncher.launch("image/*")
-            is NavigateToAroundMe -> { navigateAroundMe() }
-            is NavigateToCreateSpotSuccess -> { navigateCreateSpotSuccess() }
-            is ShowSnackbar -> { showSnackBar(effect.message) }
-        }
+        binding.layoutEditButton.setOnClickListener { viewModel.onClickEditButton() }
     }
 
     private fun updateTags(tags: List<String>) {
@@ -169,20 +180,6 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
             }
             binding.layoutHashtagContainer.addView(tagView)
         }
-    }
-    private fun showCategoryFilter() {
-        val dialogContentBinding = ContentSheetAddSpotCategoryFilterBinding.inflate(LayoutInflater.from(requireContext()))
-        BottomSheetDialog(requireContext())
-            .bindBuilder(
-                dialogContentBinding
-            ) { dialog ->
-
-                updateDialogUI(dialogContentBinding, viewModel.state.value.selectedCategory) {
-                    dialog.dismiss()
-                }
-
-                dialog.show()
-            }
     }
     private fun updateDialogUI(
         binding: ContentSheetAddSpotCategoryFilterBinding,
@@ -212,7 +209,6 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
             viewModel.updateSelectedImages(uris)
         }
     }
-
     private fun createItemTouchCallback() = object : ItemTouchHelper.Callback() {
         override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
             return makeMovementFlags(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT, 0)
@@ -236,7 +232,23 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
         override fun isLongPressDragEnabled(): Boolean = true
     }
 
+    private fun showCategoryFilter() {
+        val dialogContentBinding = ContentSheetAddSpotCategoryFilterBinding.inflate(LayoutInflater.from(requireContext()))
+        BottomSheetDialog(requireContext())
+            .bindBuilder(
+                dialogContentBinding
+            ) { dialog ->
+
+                updateDialogUI(dialogContentBinding, viewModel.state.value.selectedCategory) {
+                    dialog.dismiss()
+                }
+
+                dialog.show()
+            }
+    }
     private fun showSnackBar(message: String) { SnackBarUtil.show(binding.root, message) }
-    private fun navigateAroundMe(){ navigate(R.id.navigate_add_spot_to_around_me) }
-    private fun navigateCreateSpotSuccess() { navigate(R.id.navigate_spot_added_success) }
+
+    private fun navigateSelectLocation(latitude: Double, longitude: Double){
+        (activity as GlobalNavigation).navigateSelectLocation(latitude, longitude, true)
+    }
 }

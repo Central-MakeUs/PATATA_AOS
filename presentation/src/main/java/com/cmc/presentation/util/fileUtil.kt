@@ -6,16 +6,60 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.OpenableColumns
-import android.util.Log
 import com.cmc.domain.constants.ImageUploadPolicy
 import com.cmc.domain.model.ImageMetadata
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.URL
 import java.util.UUID
 
-fun List<Uri>.toImageMetaDataList(context: Context): List<Result<ImageMetadata>> {
+fun List<Uri>.toUriImageMetaDataList(context: Context): List<Result<ImageMetadata>> {
     return this.map { uri -> uriToImageMetadata(context, uri) }
+}
+
+suspend fun List<String>.toStringImageMetaDataList(context: Context): List<Result<ImageMetadata>> {
+    return this.map { url -> serverUrlToImageMetadata(context, url) }
+}
+
+suspend fun serverUrlToImageMetadata(context: Context, imageUrl: String): Result<ImageMetadata> {
+    return withContext(Dispatchers.IO) {
+        runCatching {
+            val fileName = imageUrl.substringAfterLast("/").takeIf { it.isNotEmpty() }
+                ?: "temp_image_${UUID.randomUUID()}.jpg"
+
+            val url = URL(imageUrl)
+            val connection = url.openConnection() as HttpURLConnection
+            connection.connect()
+
+            val mimeType = connection.contentType ?: "image/jpeg"
+            val originalSize = connection.contentLengthLong.takeIf { it > 0 } ?: 0L
+
+            val tempFile = File(context.cacheDir, fileName)
+            connection.inputStream.use { inputStream ->
+                FileOutputStream(tempFile).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            }
+            connection.disconnect()
+
+            val fileToUse = if (!ImageUploadPolicy.isSingleImageSizeValid(tempFile.length())) {
+                resizeImageUntilValid(context, Uri.fromFile(tempFile))
+            } else {
+                tempFile
+            }
+
+            ImageMetadata(
+                uri = fileToUse.toURI().toString(),
+                fileName = fileName,
+                mimeType = mimeType,
+                fileSize = fileToUse.length()
+            )
+        }
+    }
 }
 
 fun uriToImageMetadata(context: Context, uri: Uri): Result<ImageMetadata> {

@@ -4,6 +4,8 @@ import com.cmc.data.base.ApiResponse
 import com.cmc.data.feature.spot.model.CategorySpotsResponseDto
 import com.cmc.data.feature.spot.model.CreateReviewRequest
 import com.cmc.data.feature.spot.model.CreateSpotResponseDto
+import com.cmc.data.feature.spot.model.EditSpotRequestBody
+import com.cmc.data.feature.spot.model.EditSpotResponseDto
 import com.cmc.data.feature.spot.model.MySpotsResponseDto
 import com.cmc.data.feature.spot.model.ReviewResponseDto
 import com.cmc.data.feature.spot.model.SpotPreviewResponseDto
@@ -102,6 +104,12 @@ interface SpotApiService {
         @Part("tags") tags: RequestBody?,
         @Part images: List<MultipartBody.Part>
     ): ApiResponse<CreateSpotResponseDto>
+
+    @PATCH("spot/{spot_id}")
+    suspend fun editSpot(
+        @Path("spot_id") spotId: Int,
+        @Body spotRequestBody: EditSpotRequestBody,
+    ): ApiResponse<EditSpotResponseDto>
 
     @DELETE("spot/{spotId}")
     suspend fun deleteSpot(

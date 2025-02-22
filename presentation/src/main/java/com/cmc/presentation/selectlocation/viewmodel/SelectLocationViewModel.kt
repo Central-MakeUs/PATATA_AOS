@@ -1,10 +1,9 @@
-package com.cmc.presentation.map.viewmodel
+package com.cmc.presentation.selectlocation.viewmodel
 
 import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc.domain.base.exception.ApiException
@@ -48,7 +47,12 @@ class SelectLocationViewModel @Inject constructor(
         viewModelScope.launch {
             checkSpotRegistration.invoke(latitude = latLng.latitude, longitude = latLng.longitude)
                 .onSuccess {
-                    _sideEffect.emit(SelectLocationSideEffect.NavigateToAddSpot(addressName, latLng))
+                    val sideEffect = if (state.value.isEdit) {
+                        SelectLocationSideEffect.NavigateEditSpot(addressName, latLng)
+                    } else {
+                        SelectLocationSideEffect.NavigateAddSpot(addressName, latLng)
+                    }
+                    sendSideEffect(sideEffect)
                 }.onFailure { e ->
                     when (e) {
                         is ApiException.RegistrationLimitExceeded -> {
@@ -69,6 +73,11 @@ class SelectLocationViewModel @Inject constructor(
         }
     }
 
+    fun initIsEditState(isEdit: Boolean) {
+        _state.update {
+            it.copy(isEdit = isEdit)
+        }
+    }
     fun initCurrentTargetLocation(location: Location) {
         _state.update { it.copy(currentTargetLatLng = location) }
     }
@@ -120,13 +129,15 @@ class SelectLocationViewModel @Inject constructor(
 
     data class SelectLocationState(
         val isLoading: Boolean = false,
+        val isEdit: Boolean = false,
         val nearBySpots: List<CheckSpotRegistrationResponse> = emptyList(),
         var currentTargetAddress: String = "",
         val currentTargetLatLng: Location = Location(0.0, 0.0)
     )
 
     sealed class SelectLocationSideEffect {
-        data class NavigateToAddSpot(val addressName: String, val location: Location): SelectLocationSideEffect()
+        data class NavigateAddSpot(val addressName: String, val location: Location): SelectLocationSideEffect()
+        data class NavigateEditSpot(val addressName: String, val location: Location): SelectLocationSideEffect()
         data class UpdateCurrentLocation(val location: Location): SelectLocationSideEffect()
     }
 }

@@ -7,6 +7,7 @@ import androidx.paging.PagingConfig
 import com.cmc.data.base.apiRequestCatching
 import com.cmc.data.base.uriToFile
 import com.cmc.data.feature.spot.model.CreateReviewRequest
+import com.cmc.data.feature.spot.model.EditSpotRequestBody
 import com.cmc.data.feature.spot.model.toDomain
 import com.cmc.data.feature.spot.model.toListDomain
 import com.cmc.data.feature.spot.paging.CategorySpotPagingSource
@@ -173,7 +174,7 @@ class SpotRepositoryImpl @Inject constructor(
 
     override suspend fun createSpot(
         spotName: String,
-        spotDesc: String?,
+        spotDesc: String,
         spotAddress: String,
         spotAddressDetail: String?,
         latitude: Double,
@@ -201,6 +202,35 @@ class SpotRepositoryImpl @Inject constructor(
                     images = imageParts
                 )
             }, transform = { Unit }
+        )
+    }
+
+    override suspend fun editSpot(
+        spotId: Int,
+        spotName: String,
+        spotDesc: String,
+        spotAddress: String,
+        spotAddressDetail: String?,
+        latitude: Double,
+        longitude: Double,
+        categoryId: Int,
+        tags: List<String>?
+    ): Result<Unit> {
+        return apiRequestCatching(
+            apiCall = {
+                val requestBody = EditSpotRequestBody(
+                    spotName = spotName,
+                    spotDesc = spotDesc,
+                    spotAddress = spotAddress,
+                    spotAddressDetail = spotAddressDetail,
+                    latitude = latitude,
+                    longitude = longitude,
+                    categoryId = categoryId,
+                    tags = tags
+                )
+                spotApiService.editSpot(spotId = spotId, requestBody)
+            },
+            transform = { Unit }
         )
     }
 
@@ -243,7 +273,7 @@ class SpotRepositoryImpl @Inject constructor(
 
     private fun createSpotRequestToMultipart(
         spotName: String,
-        spotDesc: String?,
+        spotDesc: String,
         spotAddress: String,
         spotAddressDetail: String?,
         latitude: Double,
@@ -253,7 +283,7 @@ class SpotRepositoryImpl @Inject constructor(
     ): Map<String, RequestBody> {
         return mapOf(
             "spotName" to spotName.toRequestBody(),
-            "spotDesc" to (spotDesc ?: "").toRequestBody(),
+            "spotDesc" to (spotDesc).toRequestBody(),
             "spotAddress" to spotAddress.toRequestBody(),
             "spotAddressDetail" to (spotAddressDetail ?: "").toRequestBody(),
             "latitude" to latitude.toString().toRequestBody(),

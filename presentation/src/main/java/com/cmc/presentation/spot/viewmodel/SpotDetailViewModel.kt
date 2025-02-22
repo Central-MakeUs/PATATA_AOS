@@ -104,7 +104,10 @@ class SpotDetailViewModel @Inject constructor(
             )
         )
     }
-    fun onClickSpotDelete() {
+    fun onClickEditSpot() {
+        sendSideEffect(SpotDetailSideEffect.NavigateEditSpot(state.value.spotDetail.spotId))
+    }
+    fun onClickDeleteSpot() {
         viewModelScope.launch {
             deleteSpotUseCase.invoke(state.value.spotDetail.spotId)
                 .onSuccess {
@@ -156,5 +159,6 @@ class SpotDetailViewModel @Inject constructor(
         data class ShowSnackBar(val message: String) : SpotDetailSideEffect()
         data class ShowBottomSheet(val spotIsMine: Boolean): SpotDetailSideEffect()
         data class NavigateReport(val reportType: Int, val targetId: Int): SpotDetailSideEffect()
+        data class NavigateEditSpot(val spotId: Int): SpotDetailSideEffect()
     }
 }

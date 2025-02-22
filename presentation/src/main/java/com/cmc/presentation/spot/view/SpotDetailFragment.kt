@@ -1,7 +1,6 @@
 package com.cmc.presentation.spot.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.TextView
 import androidx.core.view.isVisible
@@ -13,7 +12,6 @@ import com.cmc.common.constants.NavigationKeys
 import com.cmc.design.component.BottomSheetDialog
 import com.cmc.design.component.PatataAlert
 import com.cmc.design.util.SnackBarUtil
-import com.cmc.domain.model.Spot
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.ContentSheetSpotDetailComplaintBinding
@@ -86,6 +84,7 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
             is SpotDetailSideEffect.ShowBottomSheet -> { setFooterBottomSheetDialog(effect.spotIsMine) }
             is SpotDetailSideEffect.ShowSnackBar -> { showSnackBar(effect.message) }
             is SpotDetailSideEffect.NavigateReport -> { navigateReport(effect.reportType, effect.targetId) }
+            is SpotDetailSideEffect.NavigateEditSpot -> { navigateEditSpot(effect.spotId) }
         }
     }
 
@@ -144,10 +143,13 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
                     ContentSheetSpotDetailMoreBinding.inflate(LayoutInflater.from(requireContext()))
                 ) { dialog ->
                     with(dialog) {
-                        tvEditPost.setOnClickListener {  }
+                        tvEditPost.setOnClickListener {
+                            hide()
+                            viewModel.onClickEditSpot()
+                        }
                         tvDelete.setOnClickListener {
                             hide()
-                            viewModel.onClickSpotDelete()
+                            viewModel.onClickDeleteSpot()
                         }
                         show()
                     }
@@ -192,7 +194,7 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
             .multiButton {
                 leftButton(getString(R.string.cancel))
                 rightButton(getString(R.string.delete)) {
-                    viewModel.onClickSpotDelete()
+                    viewModel.onClickDeleteSpot()
                 }
             }
     }
@@ -203,7 +205,11 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
     private fun navigateReport(reportType: Int, targetId: Int) {
         (activity as GlobalNavigation).navigateReport(reportType, targetId)
     }
-
+    private fun navigateEditSpot(spotId: Int) {
+        navigate(R.id.navigate_edit_spot, Bundle().apply {
+            putInt(NavigationKeys.SpotDetail.ARGUMENT_SPOT_ID, spotId)
+        })
+    }
     override fun onStop() {
         super.onStop()
         dialog?.dismiss()

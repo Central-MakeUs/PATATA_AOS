@@ -4,11 +4,10 @@ object NavigationKeys {
 
     object SpotDetail {
         const val ARGUMENT_SPOT_ID = "spotId"
-
     }
 
-    object AddSpot {
-        const val ARGUMENT_ADDRESS_NAME = "addressname"
+    object Location {
+        const val ARGUMENT_IS_EDIT = "isEdit"
         const val ARGUMENT_LATITUDE = "latitude"
         const val ARGUMENT_LONGITUDE = "longitude"
     }

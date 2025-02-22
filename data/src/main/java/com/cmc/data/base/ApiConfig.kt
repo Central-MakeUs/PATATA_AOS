@@ -49,6 +49,12 @@ internal object ApiCode {
     }
 
     object Image {
+        // 스팟 생성
         const val IMAGE_NOT_ATTACHED = "IMAGE4000"
+        const val IMAGE_FAILED_UPLOAD = "IMAGE4002"
+    }
+
+    object Report {
+        const val REPORT_USER = "REPORT4002"
     }
 }

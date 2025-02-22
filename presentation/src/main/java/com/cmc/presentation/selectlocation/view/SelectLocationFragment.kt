@@ -1,8 +1,11 @@
-package com.cmc.presentation.map.view
+package com.cmc.presentation.selectlocation.view
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.cmc.common.base.BaseFragment
+import com.cmc.common.base.GlobalNavigation
 import com.cmc.common.constants.NavigationKeys
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.model.SpotCategory
@@ -10,9 +13,9 @@ import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentSelectLocationBinding
 import com.cmc.presentation.map.manager.MarkerManager
 import com.cmc.presentation.map.model.SpotWithMapUiModel
-import com.cmc.presentation.map.viewmodel.SelectLocationViewModel
-import com.cmc.presentation.map.viewmodel.SelectLocationViewModel.SelectLocationSideEffect
-import com.cmc.presentation.map.viewmodel.SelectLocationViewModel.SelectLocationState
+import com.cmc.presentation.selectlocation.viewmodel.SelectLocationViewModel
+import com.cmc.presentation.selectlocation.viewmodel.SelectLocationViewModel.SelectLocationSideEffect
+import com.cmc.presentation.selectlocation.viewmodel.SelectLocationViewModel.SelectLocationState
 import com.cmc.presentation.util.toLatLng
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
@@ -34,26 +37,22 @@ class SelectLocationFragment: BaseFragment<FragmentSelectLocationBinding>(R.layo
 
     override fun initObserving() {
         repeatWhenUiStarted {
-            launch {
-                viewModel.state.collectLatest { state ->
-                    updateUI(state)
-                }
-            }
-            launch {
-                viewModel.sideEffect.collect { effect ->
-                    handleEffect(effect)
-                }
-            }
+            launch { viewModel.state.collectLatest { state -> updateUI(state) } }
+            launch { viewModel.sideEffect.collect { effect -> handleEffect(effect) } }
         }
     }
     override fun initView() {
         arguments?.let {
-            val latitude = it.getDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE)
-            val longitude = it.getDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE)
+            val isEdit = it.getBoolean(NavigationKeys.Location.ARGUMENT_IS_EDIT)
+            val latitude = it.getDouble(NavigationKeys.Location.ARGUMENT_LATITUDE)
+            val longitude = it.getDouble(NavigationKeys.Location.ARGUMENT_LONGITUDE)
+
+            viewModel.initIsEditState(isEdit)
             viewModel.initCurrentTargetLocation(Location(latitude, longitude))
+
+            setAppBar(isEdit)
         }
         setMap()
-        setAppBar()
         seCompleteButtonListener()
     }
 
@@ -82,12 +81,11 @@ class SelectLocationFragment: BaseFragment<FragmentSelectLocationBinding>(R.layo
     }
     private fun handleEffect(effect: SelectLocationSideEffect) {
         when (effect) {
-            is SelectLocationSideEffect.NavigateToAddSpot -> {
-                navigate(R.id.navigate_add_spot, Bundle().apply {
-                    putString(NavigationKeys.AddSpot.ARGUMENT_ADDRESS_NAME, effect.addressName)
-                    putDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE, effect.location.latitude)
-                    putDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE, effect.location.longitude)
-                })
+            is SelectLocationSideEffect.NavigateAddSpot -> {
+                navigateAddSpot(effect.addressName, effect.location.latitude, effect.location.longitude)
+            }
+            is SelectLocationSideEffect.NavigateEditSpot -> {
+                navigateEditSpot(effect.addressName, effect.location.latitude, effect.location.longitude)
             }
             is SelectLocationSideEffect.UpdateCurrentLocation -> { moveCameraPosition(effect.location) }
         }
@@ -96,10 +94,10 @@ class SelectLocationFragment: BaseFragment<FragmentSelectLocationBinding>(R.layo
     private fun setMap() {
         binding.viewSelectLocationMap.getMapAsync(this)
     }
-    private fun setAppBar() {
+    private fun setAppBar(isEdit: Boolean) {
         binding.selectLocationAppbar.apply {
             setupAppBar(
-                getString(R.string.title_add_a_spot),
+                getString(if (isEdit)  R.string.title_edit_a_spot else R.string.title_add_a_spot),
                 onHeadButtonClick = { finish() }
             )
         }
@@ -138,4 +136,21 @@ class SelectLocationFragment: BaseFragment<FragmentSelectLocationBinding>(R.layo
         val cameraUpdate = CameraUpdate.scrollTo(location.toLatLng())
         naverMap.moveCamera(cameraUpdate)
     }
+
+    private fun navigateAddSpot(addressName: String, latitude: Double, longitude: Double) {
+        (activity as GlobalNavigation).navigateAddSpot(addressName, latitude, longitude)
+    }
+    private fun navigateEditSpot(addressName: String, latitude: Double, longitude: Double) {
+        val resultBundle = Bundle().apply {
+            putString("addressName", addressName)
+            putDouble("latitude", latitude)
+            putDouble("longitude", longitude)
+        }
+        findNavController().previousBackStackEntry?.savedStateHandle?.set("resultKey", resultBundle)
+        findNavController().popBackStack()
+
+    }
+//    private fun navigateEditSpot(spotId: Int, latitude: Double, longitude: Double) {
+//        (activity as GlobalNavigation).navigateEditSpot(spotId, latitude, longitude)
+//    }
 }

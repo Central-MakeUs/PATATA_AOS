@@ -1,5 +1,6 @@
 package com.cmc.patata
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.cmc.common.base.GlobalNavigation
 import com.cmc.common.constants.NavigationKeys
+import com.cmc.common.util.DeepLinkUtil
 import com.cmc.patata.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -85,7 +87,21 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             putInt(NavigationKeys.Report.ARGUMENT_REPORT_TARGET_ID, targetId)
         })
     }
+    override fun navigateSelectLocation(latitude: Double, longitude: Double, isEdit: Boolean) {
+        navigate(R.id.nav_select_location, Bundle().apply {
+            putBoolean(NavigationKeys.Location.ARGUMENT_IS_EDIT, isEdit)
+            putDouble(NavigationKeys.Location.ARGUMENT_LATITUDE, latitude)
+            putDouble(NavigationKeys.Location.ARGUMENT_LONGITUDE, longitude)
+        })
+    }
+    override fun navigateAddSpot(addressName: String, latitude: Double, longitude: Double) {
+        navigate(DeepLinkUtil.createAddSpotUri(addressName, latitude, longitude))
+    }
+
     private fun navigate(navId: Int, bundle: Bundle? = null) {
         navHostFragment.navController.navigate(navId, bundle)
+    }
+    private fun navigate(uri: Uri) {
+        navHostFragment.navController.navigate(uri)
     }
 }

@@ -1,14 +1,16 @@
-package com.cmc.presentation.map.viewmodel
+package com.cmc.presentation.spot.viewmodel
 
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc.domain.constants.ImageUploadPolicy
-import com.cmc.domain.feature.spot.usecase.CreateSpotUseCase
+import com.cmc.domain.feature.spot.usecase.EditSpotUseCase
+import com.cmc.domain.feature.spot.usecase.GetSpotDetailUseCase
 import com.cmc.domain.model.ImageMetadata
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
+import com.cmc.presentation.util.toStringImageMetaDataList
 import com.cmc.presentation.util.toUriImageMetaDataList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -23,19 +25,61 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddSpotViewModel @Inject constructor(
+class EditSpotViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val createSpotUseCase: CreateSpotUseCase,
+    private val editSpotUseCase: EditSpotUseCase,
+    private val getSpotDetailUseCase: GetSpotDetailUseCase,
 ): ViewModel() {
 
-    private val _state = MutableStateFlow(AddSpotState())
-    val state: StateFlow<AddSpotState> = _state.asStateFlow()
+    private val _state = MutableStateFlow(EditSpotState())
+    val state: StateFlow<EditSpotState> = _state.asStateFlow()
 
-    private val _sideEffect = MutableSharedFlow<AddSpotSideEffect>()
+    private val _sideEffect = MutableSharedFlow<EditSpotSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
     init {
         observeStateChanges()
+    }
+
+    fun setSelectLocationResult(address: String, latitude: Double, longitude: Double) {
+        _state.update {
+            it.copy(address = address, latitude = latitude, longitude = longitude)
+        }
+    }
+
+    fun fetchSpotDetail(spotId: Int?, callback: (EditSpotState) -> Unit) {
+        if (spotId == null) {
+            sendSideEffect(EditSpotSideEffect.Finish)
+            return
+        }
+        viewModelScope.launch {
+            getSpotDetailUseCase.invoke(spotId)
+                .onSuccess { spot ->
+                    _state.update {
+                        val result = spot.images.toStringImageMetaDataList(context)
+                        val images = result.mapNotNull { image -> image.getOrNull() }
+
+                        val newState = it.copy(
+                            isInitialized = true,
+                            spotId = spotId,
+                            spotName = spot.spotName,
+                            latitude = spot.latitude,
+                            longitude = spot.longitude,
+                            address = spot.address,
+                            addressDetail = spot.addressDetail,
+                            description = spot.description,
+                            selectedCategory = SpotCategory.fromId(spot.categoryId),
+                            selectedImages = images,
+                            tags = spot.tags,
+                        )
+                        callback.invoke(newState)
+                        newState
+                    }
+                }
+                .onFailure {
+                    sendSideEffect(EditSpotSideEffect.Finish)
+                }
+        }
     }
 
     fun updateSpotName(spotName: String) {
@@ -70,25 +114,26 @@ class AddSpotViewModel @Inject constructor(
 
     fun openCategoryPicker() {
         viewModelScope.launch {
-            _sideEffect.emit(AddSpotSideEffect.ShowCategoryPicker)
+            _sideEffect.emit(EditSpotSideEffect.ShowCategoryPicker)
         }
     }
 
     fun openPhotoPicker() {
         viewModelScope.launch {
-            _sideEffect.emit(AddSpotSideEffect.ShowPhotoPicker)
+            _sideEffect.emit(EditSpotSideEffect.ShowPhotoPicker)
         }
     }
 
     fun onCancelButtonClicked() {
         viewModelScope.launch {
-            _sideEffect.emit(AddSpotSideEffect.NavigateToAroundMe)
+            _sideEffect.emit(EditSpotSideEffect.Finish)
         }
     }
-    fun onClickRegisterButton() {
+    fun onClickEditButton() {
         viewModelScope.launch {
             state.value.let {
-                createSpotUseCase.invoke(
+                editSpotUseCase.invoke(
+                    spotId = it.spotId,
                     spotName = it.spotName,
                     spotDesc = it.description,
                     spotAddress = it.address,
@@ -97,14 +142,17 @@ class AddSpotViewModel @Inject constructor(
                     longitude = it.longitude,
                     categoryId = it.selectedCategory!!.id,
                     tags = it.tags,
-                    images = it.selectedImages,
                 ).onSuccess {
-                    sendSideEffect(AddSpotSideEffect.NavigateToCreateSpotSuccess)
+                    sendSideEffect(EditSpotSideEffect.Finish)
                 }.onFailure { e ->
-                    e.stackTrace
+                    e.printStackTrace()
                 }
             }
         }
+    }
+    fun onClickAddress() {
+        val currentState = state.value
+        sendSideEffect(EditSpotSideEffect.NavigateSelectLocation(currentState.latitude, currentState.longitude))
     }
 
     // 위치 변경 된 이미지 반영
@@ -171,7 +219,7 @@ class AddSpotViewModel @Inject constructor(
     fun addTag(tag: String) {
         if (_state.value.tags.size >= MAX_TAG_COUNT) {
             viewModelScope.launch {
-                _sideEffect.emit(AddSpotSideEffect.ShowSnackbar("최대 ${MAX_TAG_COUNT}개의 태그만 추가할 수 있습니다."))
+                _sideEffect.emit(EditSpotSideEffect.ShowSnackbar("최대 ${MAX_TAG_COUNT}개의 태그만 추가할 수 있습니다."))
             }
             return
         }
@@ -194,40 +242,42 @@ class AddSpotViewModel @Inject constructor(
     }
 
     // 필수 입력 필드 검사
-    private fun checkFormValid(state: AddSpotState): Boolean {
+    private fun checkFormValid(state: EditSpotState): Boolean {
         return state.spotName.isNotBlank() &&
                 state.description.isNotBlank() &&
                 state.selectedCategory != null &&
                 state.selectedImages.isNotEmpty()
     }
 
-    private fun sendSideEffect(effect: AddSpotSideEffect) {
+    private fun sendSideEffect(effect: EditSpotSideEffect) {
         viewModelScope.launch {
             _sideEffect.emit(effect)
         }
     }
 
-    data class AddSpotState(
+    data class EditSpotState(
+        val isInitialized: Boolean = false,
+        val isLoading: Boolean = false,
+        val errorMessage: String? = null,
+        val spotId: Int = 0,
         val spotName: String = "",
         val latitude: Double = 0.0,
         val longitude: Double = 0.0,
         val address: String = "",
-        val addressDetail: String = "",
+        val addressDetail: String? = null,
         val description: String = "",
         val selectedCategory: SpotCategory? = null,
         val selectedImages: List<ImageMetadata> = emptyList(),
         val tags: List<String> = emptyList(),
         val isRegisterEnabled: Boolean = false,  // 등록 버튼 활성화 여부
-        val isLoading: Boolean = false,
-        val errorMessage: String? = null
     )
 
-    sealed class AddSpotSideEffect {
-        data object ShowCategoryPicker : AddSpotSideEffect()
-        data object ShowPhotoPicker : AddSpotSideEffect()
-        data object NavigateToAroundMe : AddSpotSideEffect()
-        data object NavigateToCreateSpotSuccess : AddSpotSideEffect()
-        data class ShowSnackbar(val message: String) : AddSpotSideEffect()
+    sealed class EditSpotSideEffect {
+        data object Finish: EditSpotSideEffect()
+        data object ShowCategoryPicker : EditSpotSideEffect()
+        data object ShowPhotoPicker : EditSpotSideEffect()
+        data class NavigateSelectLocation(val latitude: Double, val longitude: Double): EditSpotSideEffect()
+        data class ShowSnackbar(val message: String) : EditSpotSideEffect()
     }
 
     companion object {

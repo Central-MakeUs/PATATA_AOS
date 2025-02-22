@@ -70,7 +70,7 @@ interface SpotRepository {
 
     suspend fun createSpot(
         spotName: String,
-        spotDesc: String?,
+        spotDesc: String,
         spotAddress: String,
         spotAddressDetail: String?,
         latitude: Double,
@@ -78,6 +78,18 @@ interface SpotRepository {
         categoryId: Int,
         tags: List<String>?,
         images: List<ImageMetadata>,
+    ): Result<Unit>
+
+    suspend fun editSpot(
+        spotId: Int,
+        spotName: String,
+        spotDesc: String,
+        spotAddress: String,
+        spotAddressDetail: String?,
+        latitude: Double,
+        longitude: Double,
+        categoryId: Int,
+        tags: List<String>?,
     ): Result<Unit>
 
     suspend fun deleteSpot(spotId: Int): Result<Unit>

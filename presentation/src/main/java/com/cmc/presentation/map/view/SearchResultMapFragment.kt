@@ -69,8 +69,8 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
 
     override fun initView() {
         arguments?.let {
-            val latitude = it.getDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE)
-            val longitude = it.getDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE)
+            val latitude = it.getDouble(NavigationKeys.Location.ARGUMENT_LATITUDE)
+            val longitude = it.getDouble(NavigationKeys.Location.ARGUMENT_LONGITUDE)
             val keyword = it.getString(NavigationKeys.Search.ARGUMENT_KEYWORD)
 
             viewModel.initCurrentTargetLocation(Location(latitude, longitude))
@@ -264,15 +264,12 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
     }
 
     private fun navigateAddLocation(location: Location) {
-        navigate(R.id.navigate_search_result_map_to_select_location, Bundle().apply {
-            putDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE, location.latitude)
-            putDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE, location.longitude)
-        })
+        (activity as GlobalNavigation).navigateSelectLocation(location.latitude, location.longitude)
     }
     private fun navigateSearchInput(location: Location) {
         navigate(R.id.navigate_search_result_map_to_search_input, Bundle().apply{
-            putDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE, location.latitude)
-            putDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE, location.longitude)
+            putDouble(NavigationKeys.Location.ARGUMENT_LATITUDE, location.latitude)
+            putDouble(NavigationKeys.Location.ARGUMENT_LONGITUDE, location.longitude)
         })
     }
     private fun navigateAroundMe() { navigate(R.id.navigate_search_result_map_to_around_me) }

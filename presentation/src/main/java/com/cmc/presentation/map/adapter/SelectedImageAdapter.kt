@@ -1,6 +1,7 @@
 package com.cmc.presentation.map.adapter
 
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -11,6 +12,7 @@ import com.cmc.presentation.databinding.ViewSelectedImageBinding
 import java.util.Collections
 
 class SelectedImageAdapter(
+    private val isEditable: Boolean = true,
     private val onRemoveImage: (ImageMetadata) -> Unit,
 ) : RecyclerView.Adapter<SelectedImageAdapter.SelectedImageViewHolder>() {
 
@@ -53,6 +55,7 @@ class SelectedImageAdapter(
     inner class SelectedImageViewHolder(private val binding: ViewSelectedImageBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(image: ImageMetadata) {
             binding.layoutRepresentsImage.isVisible = absoluteAdapterPosition == 0
+            binding.ivDeleteButton.isVisible = isEditable
             binding.ivDeleteButton.setOnClickListener { onRemoveImage(image) }
             Glide.with(binding.root)
                 .load(Uri.parse(image.uri))

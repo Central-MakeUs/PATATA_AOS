@@ -38,8 +38,8 @@ class SearchInputFragment: BaseFragment<FragmentSearchInputBinding>(R.layout.fra
     }
     override fun initView() {
         arguments?.let {
-            val latitude = it.getDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE)
-            val longitude = it.getDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE)
+            val latitude = it.getDouble(NavigationKeys.Location.ARGUMENT_LATITUDE)
+            val longitude = it.getDouble(NavigationKeys.Location.ARGUMENT_LONGITUDE)
             viewModel.setTargetLocation(latitude, longitude)
         }
         setAppBar()
@@ -60,8 +60,8 @@ class SearchInputFragment: BaseFragment<FragmentSearchInputBinding>(R.layout.fra
 
     private fun navigateSearchResultMap(keyword: String, location: Location) {
         navigate(R.id.navigate_search_input_to_search_result_map, Bundle().apply{
-            putDouble(NavigationKeys.AddSpot.ARGUMENT_LATITUDE, location.latitude)
-            putDouble(NavigationKeys.AddSpot.ARGUMENT_LONGITUDE, location.longitude)
+            putDouble(NavigationKeys.Location.ARGUMENT_LATITUDE, location.latitude)
+            putDouble(NavigationKeys.Location.ARGUMENT_LONGITUDE, location.longitude)
             putString(NavigationKeys.Search.ARGUMENT_KEYWORD, keyword)
         })
     }
