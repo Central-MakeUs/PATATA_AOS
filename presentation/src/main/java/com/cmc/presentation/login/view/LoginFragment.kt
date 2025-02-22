@@ -88,7 +88,6 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
                     }
                 }
             }
-            viewModel.oneTabClientIsHide()
         }
 
 
@@ -96,14 +95,11 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
         binding.layoutGoogleLogin.setOnClickListener {
             repeatWhenUiStarted {
                 try {
-                    if (viewModel.state.value.oneTabClientShowing.not()) {
-                        viewModel.oneTabClientIsShowing()
-                        val pendingIntent = loginManager.signInIntent(requireActivity())
-                        startForResult.launch(
-                            IntentSenderRequest.Builder(pendingIntent)
-                                .build()
-                        )
-                    }
+                    val pendingIntent = loginManager.signInIntent(requireActivity())
+                    startForResult.launch(
+                        IntentSenderRequest.Builder(pendingIntent)
+                            .build()
+                    )
                 } catch (e: com.google.android.gms.common.api.ApiException) {
                     e.stackTrace
                     FirebaseCrashlytics.getInstance().log("Login ApiException $e")

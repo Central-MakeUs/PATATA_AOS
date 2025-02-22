@@ -55,16 +55,6 @@ class LoginViewModel @Inject constructor(
             sendSideEffect(LoginSideEffect.NavigateToProfileSetting)
         }
     }
-    fun oneTabClientIsShowing() {
-        _state.update {
-            it.copy(oneTabClientShowing = true)
-        }
-    }
-    fun oneTabClientIsHide() {
-        _state.update {
-            it.copy(oneTabClientShowing = false)
-        }
-    }
 
     private fun sendSideEffect(effect: LoginSideEffect) {
         viewModelScope.launch {
@@ -77,7 +67,6 @@ class LoginViewModel @Inject constructor(
 data class LoginState(
     val loginSuccess: Boolean = false,
     val user: AuthResponseUiModel? = null,
-    val oneTabClientShowing: Boolean = false,
 )
 
 sealed class LoginSideEffect {
