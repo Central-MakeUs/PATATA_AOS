@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.cmc.presentation.R
 import com.cmc.presentation.databinding.ViewCommentBinding
 import com.cmc.presentation.spot.model.ReviewUiModel
 import com.example.common.util.DateTimeFormatterUtil.formatUtcToLocal
@@ -38,6 +39,8 @@ class SpotReviewAdapter(
         fun bind(item: ReviewUiModel, onDeleteClick: (Int) -> Unit) {
             with(binding) {
                 tvCommentPoster.text = item.memberName
+                val textColor = if (item.isAuthor) com.cmc.design.R.color.blue_100 else com.cmc.design.R.color.text_sub
+                tvCommentPoster.setTextColor(root.context.getColor(textColor))
                 tvCommentDesc.text = item.reviewText
                 tvCommentDate.text = formatUtcToLocal(item.reviewDate)
                 tvCommentDelete.isVisible = item.isAuthor
