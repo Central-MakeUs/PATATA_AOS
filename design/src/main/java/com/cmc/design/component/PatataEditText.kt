@@ -42,6 +42,7 @@ class PatataEditText @JvmOverloads constructor(
         applyStyle(false)
         initAttributes(context, attrs)
         initListeners()
+        setFocusState(false)
     }
 
     private fun initAttributes(context: Context, attrs: AttributeSet?) {
@@ -203,11 +204,11 @@ class PatataEditText @JvmOverloads constructor(
     }
     fun setErrorState(isError: Boolean) {
         helperView?.setVisible(isError)
-        setBorderColor(if (isError) R.color.red_100 else if (isFocusableState) R.color.blue_100 else R.color.white)
+        setBorderColor(if (isError) R.color.red_100 else R.color.white)
     }
 
     fun setFocusState(isCaution: Boolean) {
-        isFocusableState = true
+        isFocusableState = isCaution
         setBorderColor(if (isCaution) R.color.blue_100 else R.color.white)
     }
 
