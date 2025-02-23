@@ -4,5 +4,5 @@ data class Member(
     val memberId: Int,
     val nickName: String,
     val email: String,
-    val profileImage: String,
+    val profileImage: String?,
 )

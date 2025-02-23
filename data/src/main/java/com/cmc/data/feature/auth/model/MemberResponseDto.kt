@@ -11,7 +11,7 @@ data class MemberResponseDto(
     @SerializedName("email")
     val email: String,
     @SerializedName("profileImage")
-    val profileImage: String,
+    val profileImage: String?,
 )
 
 fun MemberResponseDto.toDomain(): Member {

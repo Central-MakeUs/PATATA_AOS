@@ -97,7 +97,7 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
     private fun navigateCategorySpot(categoryId: Int) {
         (activity as GlobalNavigation).navigateCategorySpots(categoryId)
     }
-    private fun navigateSettingProfile(nickName: String, profileImage: String) {
+    private fun navigateSettingProfile(nickName: String, profileImage: String?) {
         navigate(R.id.navigate_profile_setting, Bundle().apply {
             putString(NavigationKeys.Setting.ARGUMENT_PROFILE_NICKNAME, nickName)
             putString(NavigationKeys.Setting.ARGUMENT_PROFILE_IMAGE, profileImage)

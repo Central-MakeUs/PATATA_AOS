@@ -92,7 +92,7 @@ class MyViewModel @Inject constructor(
         data object NavigateToSetting : MySideEffect()
         data class NavigateToCategorySpots(val categoryId: Int) : MySideEffect()
         data class NavigateSpotDetail(val spotId: Int) : MySideEffect()
-        data class NavigateSettingProfile(val nickName: String, val profileImage: String) : MySideEffect()
+        data class NavigateSettingProfile(val nickName: String, val profileImage: String?) : MySideEffect()
         data class ShowSnackBar(val message: String) : MySideEffect()
     }
 }

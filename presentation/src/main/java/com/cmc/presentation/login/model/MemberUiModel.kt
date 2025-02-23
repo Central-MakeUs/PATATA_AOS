@@ -6,7 +6,7 @@ data class MemberUiModel(
     val memberId: Int,
     val nickName: String,
     val email: String,
-    val profileImage: String,
+    val profileImage: String?,
 ) {
     companion object {
         fun getDefault(): MemberUiModel {
