@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Intent
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.result.ActivityResult
@@ -21,12 +22,20 @@ import com.cmc.design.util.EaseOutBounceInterpolator
 import com.cmc.design.util.SnackBarUtil
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentLoginBinding
+import com.cmc.presentation.login.manager.GoogleSignInManager
 import com.cmc.presentation.login.manager.LoginManager
 import com.cmc.presentation.login.viewmodel.LoginSideEffect
 import com.cmc.presentation.login.viewmodel.LoginState
 import com.cmc.presentation.login.viewmodel.LoginViewModel
+import com.cmc.presentation.util.CrashlyticsLogger
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.crashlytics
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -36,6 +45,7 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
 
     private val viewModel: LoginViewModel by viewModels()
     private val loginManager = LoginManager()
+    private val googleSignInManager by lazy { GoogleSignInManager(requireActivity()) }
 
     override fun initView() {
         runLoginAnimation()
@@ -89,26 +99,71 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
                 }
             }
         }
+    private fun handleGoogleSignInResult(data: Intent?) {
+        val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val idToken = account?.idToken
 
+            if (idToken != null) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    viewModel.googleLogin(idToken)
+                }
+            } else {
+                showGoogleAccountRegistrationPrompt()
+            }
+        } catch (e: ApiException) {
+            CrashlyticsLogger.apply {
+                setLastUIAction("구글 로그인 실패")
+                log("로그인 실패: ${e.localizedMessage}")
+            }
+            showGoogleAccountRegistrationPrompt()
+        }
+    }
+    private val googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            handleGoogleSignInResult(result.data)
+        } else {
+            showGoogleAccountRegistrationPrompt()
+        }
+    }
+    private fun startGoogleSignIn() {
+        repeatWhenUiStarted {
+            runCatching {
+                val signInIntent = googleSignInManager.getGoogleSignInIntent()
+                googleSignInLauncher.launch(signInIntent)
+            }.onFailure {
+                CrashlyticsLogger.apply {
+                    setLastUIAction("구글 로그인 버튼 클릭")
+                    log("Google 로그인 실패: ${it.localizedMessage}")
+                }
+                showGoogleAccountRegistrationPrompt()
+            }
+        }
+    }
 
     private fun setLoginButton() {
         binding.layoutGoogleLogin.setOnClickListener {
-            repeatWhenUiStarted {
-                try {
-                    val pendingIntent = loginManager.signInIntent(requireActivity())
-                    startForResult.launch(
-                        IntentSenderRequest.Builder(pendingIntent)
-                            .build()
-                    )
-                } catch (e: com.google.android.gms.common.api.ApiException) {
-                    e.stackTrace
-                    FirebaseCrashlytics.getInstance().log("Login ApiException $e")
-                    showGoogleAccountRegistrationPrompt()
-                } catch (e: Exception) {
-                    FirebaseCrashlytics.getInstance().recordException(e)
-                    e.stackTrace
-                }
-            }
+            startGoogleSignIn()
+//            repeatWhenUiStarted {
+//                try {
+//                    val pendingIntent = loginManager.signInIntent(requireActivity())
+//                    startForResult.launch(
+//                        IntentSenderRequest.Builder(pendingIntent)
+//                            .build()
+//                    )
+//                } catch (e: com.google.android.gms.common.api.ApiException) {
+//                    e.stackTrace
+//                    CrashlyticsLogger.apply {
+//                        setLastUIAction("구글 로그인 버튼 클릭")
+//                        log("$e")
+//                    }
+//                    showGoogleAccountRegistrationPrompt()
+//                } catch (e: Exception) {
+//                    FirebaseCrashlytics.getInstance().recordException(e)
+//                    e.stackTrace
+//                }
+//            }
         }
     }
 
