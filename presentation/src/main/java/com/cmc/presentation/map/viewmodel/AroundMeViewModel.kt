@@ -101,6 +101,10 @@ class AroundMeViewModel @Inject constructor(
     fun onClickBottomSheetImage(spotId: Int) {
         sendSideEffect(AroundMeSideEffect.NavigateSpotDetail(spotId))
     }
+    fun onClickHeadButton() {
+        sendSideEffect(AroundMeSideEffect.SendData(state.value.results ?: emptyList()))
+        sendSideEffect(AroundMeSideEffect.NavigateList)
+    }
 
     private fun observeStateChanges() {
         viewModelScope.launch {
@@ -164,6 +168,8 @@ class AroundMeViewModel @Inject constructor(
 
     sealed class AroundMeSideEffect {
         data object RequestLocationPermission : AroundMeSideEffect()
+        data object NavigateList : AroundMeSideEffect()
+        data class SendData(val spots: List<SpotWithMapUiModel>) : AroundMeSideEffect()
         data class NavigateAddLocation(val location: Location): AroundMeSideEffect()
         data class NavigateSearch(val location: Location): AroundMeSideEffect()
         data class NavigateSpotDetail(val spotId: Int): AroundMeSideEffect()

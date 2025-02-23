@@ -1,6 +1,5 @@
 package com.cmc.presentation.map.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LATITUDE
@@ -16,7 +15,6 @@ import com.cmc.presentation.map.model.MapScreenLocation
 import com.cmc.presentation.map.model.SpotWithMapUiModel
 import com.cmc.presentation.map.model.toListUiModel
 import com.cmc.presentation.map.model.toUiModel
-import com.cmc.presentation.spot.model.toListUiModel
 import com.cmc.presentation.util.toLocation
 import com.naver.maps.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -240,6 +238,10 @@ class SearchResultMapViewModel @Inject constructor(
     fun onClickBottomSheetImage(spotId: Int) {
         sendSideEffect(SearchResultMapSideEffect.NavigateSpotDetail(spotId))
     }
+    fun onClickHeadButton() {
+        sendSideEffect(SearchResultMapSideEffect.SendData(state.value.spots ?: emptyList()))
+        sendSideEffect(SearchResultMapSideEffect.NavigateList)
+    }
 
     private fun observeStateChanges() {
         viewModelScope.launch {
@@ -284,7 +286,9 @@ class SearchResultMapViewModel @Inject constructor(
 
     sealed class SearchResultMapSideEffect {
         data object RequestLocationPermission : SearchResultMapSideEffect()
+        data object NavigateList : SearchResultMapSideEffect()
         data object NavigateAroundMe: SearchResultMapSideEffect()
+        data class SendData(val spots: List<SpotWithMapUiModel>): SearchResultMapSideEffect()
         data class UpdateCurrentLocation(val location: Location): SearchResultMapSideEffect()
         data class ShowNoResultAlert(val message: String): SearchResultMapSideEffect()
         data class NavigateAddLocation(val location: Location): SearchResultMapSideEffect()

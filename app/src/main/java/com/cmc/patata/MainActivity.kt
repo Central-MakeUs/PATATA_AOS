@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
+import androidx.activity.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
@@ -12,6 +13,7 @@ import com.cmc.common.base.GlobalNavigation
 import com.cmc.common.constants.NavigationKeys
 import com.cmc.common.util.DeepLinkUtil
 import com.cmc.patata.databinding.ActivityMainBinding
+import com.cmc.presentation.map.viewmodel.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -19,6 +21,8 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     GlobalNavigation {
 
     private lateinit var binding: ActivityMainBinding
+
+    private val sharedViewModel: SharedViewModel by viewModels()
 
     private val navHostFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.fragment_container_main) as NavHostFragment

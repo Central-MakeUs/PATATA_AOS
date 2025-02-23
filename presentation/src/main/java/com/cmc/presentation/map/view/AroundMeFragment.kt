@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.view.marginBottom
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.cmc.common.base.BaseFragment
@@ -35,6 +36,7 @@ import com.cmc.presentation.map.model.MapScreenLocation
 import com.cmc.presentation.map.model.SpotWithMapUiModel
 import com.cmc.presentation.map.viewmodel.AroundMeViewModel
 import com.cmc.presentation.map.viewmodel.AroundMeViewModel.AroundMeSideEffect
+import com.cmc.presentation.map.viewmodel.SharedViewModel
 import com.cmc.presentation.model.SpotCategoryItem
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.naver.maps.geometry.LatLng
@@ -50,6 +52,7 @@ import kotlinx.coroutines.launch
 class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_around_me), OnMapReadyCallback {
 
     private val viewModel: AroundMeViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
@@ -93,6 +96,8 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     private fun handleEffect(effect: AroundMeSideEffect) {
         when (effect) {
             is AroundMeSideEffect.RequestLocationPermission -> { checkLocationRequest() }
+            is AroundMeSideEffect.NavigateList -> { navigateList() }
+            is AroundMeSideEffect.SendData -> { sendData(effect.spots) }
             is AroundMeSideEffect.NavigateAddLocation -> { navigateAddLocation(effect.location) }
             is AroundMeSideEffect.NavigateSearch -> { navigateSearch(effect.location) }
             is AroundMeSideEffect.NavigateSpotDetail -> { navigateSpotDetail(effect.spotId)}
@@ -103,6 +108,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
 
     private fun setAppBar() {
         binding.appbar.setupAppBar(
+            onHeadButtonClick = { viewModel.onClickHeadButton() },
             onBodyClick = { viewModel.onClickSearchBar(naverMap.cameraPosition.target) },
             searchBarDisable = true
         )
@@ -259,7 +265,17 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
         })
     }
     private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
+    private fun navigateList() { navigate(R.id.navigate_around_me_to_around_me_list) }
 
+    private fun sendData(spots: List<SpotWithMapUiModel>) { sharedViewModel.sendData(spots) }
+
+    private val openAppSettingsLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK || result.resultCode == RESULT_CANCELED) {
+            checkLocationRequest()
+        }
+    }
     private fun checkLocationRequest() {
         val permissions = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -269,14 +285,6 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
                 ContextCompat.checkSelfPermission(requireContext(), it) != PackageManager.PERMISSION_GRANTED
             }) {
             locationPermissionRequest.launch(permissions)
-        }
-    }
-    private val openAppSettingsLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        // 설정창에서 뒤로가기로 앱에 돌아오는 경우 CANCELED로 처리됨
-        if (result.resultCode == RESULT_OK || result.resultCode == RESULT_CANCELED) {
-            checkLocationRequest()
         }
     }
     private val locationPermissionRequest = registerForActivityResult(

@@ -13,6 +13,20 @@
         <action
             android:id="@+id/navigate_around_me_to_search_input"
             app:destination="@+id/SearchInputFragment"/>
+        <action
+            android:id="@+id/navigate_around_me_to_around_me_list"
+            app:destination="@+id/AroundMeListFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/AroundMeListFragment"
+        android:name="com.cmc.presentation.map.view.AroundMeListFragment"
+        tools:layout="@layout/fragment_around_me_list">
+        <action
+            android:id="@+id/navigate_around_me_list_to_search_input"
+            app:destination="@+id/SearchInputFragment"
+            app:popUpTo="@id/SearchInputFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -34,12 +48,14 @@
             android:id="@+id/navigate_search_result_map_to_search_input"
             app:destination="@+id/SearchInputFragment"
             app:popUpTo="@id/SearchResultMapFragment"/>
-
         <action
             android:id="@+id/navigate_search_result_map_to_around_me"
             app:destination="@+id/AroundMeFragment"
             app:popUpTo="@id/AroundMeFragment"
             app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/navigate_search_result_map_to_around_me_list"
+            app:destination="@+id/AroundMeListFragment"/>
     </fragment>
 
     <fragment
