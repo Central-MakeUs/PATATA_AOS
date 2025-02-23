@@ -1,7 +1,10 @@
 package com.cmc.presentation.home.view
 
 import android.util.Log
+import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
@@ -13,6 +16,7 @@ import com.cmc.presentation.home.viewmodel.TodaySpotRecommendationViewModel.Toda
 import com.cmc.presentation.home.viewmodel.TodaySpotRecommendationViewModel.TodaySpotRecommendSideEffect
 import com.cmc.presentation.map.model.TodayRecommendedSpotUiModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -30,6 +34,7 @@ class TodaySpotRecommendationFragment: BaseFragment<FragmentTodaySpotRecommendat
     }
     override fun initView() {
         setAppBar()
+        startShimmer()
     }
 
     private fun updateUI(state: TodaySpotRecommendationState) {
@@ -46,6 +51,16 @@ class TodaySpotRecommendationFragment: BaseFragment<FragmentTodaySpotRecommendat
         }
     }
 
+    private fun startShimmer() {
+        binding.layoutShimmer.startShimmer()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(1500)
+            binding.layoutShimmer.stopShimmer()
+            binding.layoutShimmer.isVisible = false
+            binding.rvTodaySpotRecommendation.isVisible = true
+        }
+    }
     private fun setAppBar() {
         binding.appbarTodaySpotRecommendation.setupAppBar(
             title = getString(R.string.title_today_spot_recommend),

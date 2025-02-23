@@ -54,7 +54,7 @@ class MyViewModel @Inject constructor(
         getMySpotsUseCase.invoke()
             .onSuccess { spots ->
                 _state.update {
-                    it.copy(spots = spots.toListUiModel())
+                    it.copy(isLoading = false, spots = spots.toListUiModel())
                 }
             }
             .onFailure {  }
@@ -83,6 +83,7 @@ class MyViewModel @Inject constructor(
     }
 
     data class MyState(
+        val isLoading: Boolean = true,
         val spots: List<SpotPreviewUiModel> = emptyList(),
         val profile: MemberUiModel = MemberUiModel.getDefault(),
     )

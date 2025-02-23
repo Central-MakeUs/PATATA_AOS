@@ -1,37 +1,57 @@
 package com.cmc.presentation.home.adapter
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.cmc.common.constants.BundleKeys
 import com.cmc.design.component.SpotPolaroidView
+import com.cmc.design.databinding.ViewSpotPolaroidShimmerBinding
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.map.model.TodayRecommendedSpotUiModel
 
 class SpotPolaroidAdapter(
     private var items: List<TodayRecommendedSpotUiModel>,
+    private var isLoading: Boolean = true,
     private val onArchiveClick: (Int) -> Unit,
     private val onImageClick: (Int) -> Unit
-) : RecyclerView.Adapter<SpotPolaroidAdapter.SpotPolaroidViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SpotPolaroidViewHolder {
-        val spotView = SpotPolaroidView(parent.context).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
+    companion object {
+        private const val VIEW_TYPE_SKELETON = 0
+        private const val VIEW_TYPE_ITEM = 1
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_SKELETON) {
+            val view = ViewSpotPolaroidShimmerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            SkeletonViewHolder(view.root.rootView)
+        } else {
+            val spotView = SpotPolaroidView(parent.context).apply {
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+            }
+            SpotPolaroidViewHolder(spotView)
         }
-        return SpotPolaroidViewHolder(spotView)
     }
 
-    override fun onBindViewHolder(holder: SpotPolaroidViewHolder, position: Int) {
-        val actualPosition = position % items.size
-        val spot = items[actualPosition]
-        holder.bind(spot, onArchiveClick, onImageClick)
+    override fun getItemViewType(position: Int): Int {
+        return if (isLoading) VIEW_TYPE_SKELETON else VIEW_TYPE_ITEM
     }
 
-    fun setItems(newItems: List<TodayRecommendedSpotUiModel>) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is SpotPolaroidViewHolder) {
+            val actualPosition = position % items.size
+            val spot = items[actualPosition]
+            holder.bind(spot, onArchiveClick, onImageClick)
+        }
+    }
+
+    fun setItems(newItems: List<TodayRecommendedSpotUiModel>, isLoading: Boolean) {
         if (items == newItems) {
             notifyDataSetChanged() // 강제 UI 갱신
             return
@@ -65,6 +85,7 @@ class SpotPolaroidAdapter(
         }
     }
 
+    class SkeletonViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     class DiffCallback(
         private val oldList: List<TodayRecommendedSpotUiModel>,

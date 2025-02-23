@@ -1,6 +1,7 @@
 package com.cmc.presentation.home.view
 
 import android.view.LayoutInflater
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,6 +21,7 @@ import com.cmc.presentation.home.viewmodel.CategorySpotsViewModel.CategorySpotsS
 import com.cmc.presentation.model.SpotCategoryItem
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -43,6 +45,7 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
             SpotCategory.ALL.id
         )
 
+        startShimmer()
         initAppBar()
         initCategoryTab(categoryType)
         initHorizontalCardView()
@@ -63,6 +66,16 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
         }
     }
 
+    private fun startShimmer() {
+        binding.layoutShimmer.startShimmer()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(1500)
+            binding.layoutShimmer.stopShimmer()
+            binding.layoutShimmer.isVisible = false
+            binding.groupContents.isVisible = true
+        }
+    }
     private fun initAppBar() {
         binding.categorySpotsAppbar.setupAppBar(
             title = getString(R.string.category),

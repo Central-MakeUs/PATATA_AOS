@@ -70,7 +70,7 @@ class HomeViewModel @Inject constructor(
             .onSuccess { list ->
                 val recommendedSpots = list.toListUiModel()
                 _state.update {
-                    it.copy(recommendedSpots = recommendedSpots)
+                    it.copy(isLoading = false, recommendedSpots = recommendedSpots)
                 }
             }.onFailure {
 
@@ -168,6 +168,7 @@ class HomeViewModel @Inject constructor(
     }
 
     data class HomeState(
+        val isLoading: Boolean = true,
         var recommendedSpots: List<TodayRecommendedSpotUiModel> = emptyList(),
         var categorySpots: List<SpotWithStatusUiModel> = emptyList(),
         var selectedCategory: SpotCategory? = null,

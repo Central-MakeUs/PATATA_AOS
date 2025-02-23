@@ -43,7 +43,7 @@ class ArchiveViewModel @Inject constructor(
             getScrapSpotsUseCase.invoke()
                 .onSuccess { images ->
                     _state.update {
-                        it.copy(images = images.toListUiModel())
+                        it.copy(isLoading = false, images = images.toListUiModel())
                     }
                 }.onFailure {
 
@@ -133,6 +133,7 @@ class ArchiveViewModel @Inject constructor(
     }
 
     data class ArchiveState(
+        val isLoading: Boolean = true,
         val footerType: FooterType = PatataAppBar.FooterType.SELECT,
         val images: List<SpotPreviewUiModel> = emptyList()
     )

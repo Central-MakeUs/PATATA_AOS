@@ -92,4 +92,7 @@ dependencies {
 
     // Naver
     implementation(libs.map.sdk)
+
+    // Shimmer(Skeleton)
+    implementation(libs.shimmer)
 }

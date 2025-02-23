@@ -45,4 +45,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     // Glide
     implementation(libs.glide)
+    // Shimmer(Skeleton)
+    implementation(libs.shimmer)
 }

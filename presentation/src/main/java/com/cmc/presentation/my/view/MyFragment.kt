@@ -62,7 +62,7 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
     }
     private fun setRegisteredSpotViewModel(state: MyState) {
         myRegisteredSpotAdapter.setItems(state.spots)
-        binding.layoutRegisteredSpotNoResult.isVisible = state.spots.isEmpty()
+        binding.layoutRegisteredSpotNoResult.isVisible = state.spots.isEmpty() && state.isLoading.not()
         binding.tvMyRegisteredSpotsCount.text = state.spots.size.toString() ?: getString(R.string.zero)
     }
 

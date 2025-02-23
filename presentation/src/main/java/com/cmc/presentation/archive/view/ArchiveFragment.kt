@@ -41,10 +41,10 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
     }
 
     private fun updateUI(state: ArchiveState) {
-        binding.layoutArchiveNoResult.isVisible = state.images.isEmpty()
+        binding.layoutArchiveNoResult.isVisible = state.images.isEmpty() && state.isLoading.not()
 
         binding.archiveAppbar.setFooterType(state.footerType)
-        archiveAdapter.setItems(state.images)
+        archiveAdapter.setItems(state.images, false)
         archiveAdapter.notifyDataSetChanged()
     }
     private fun handleSideEffect(effect: ArchiveSideEffect) {
