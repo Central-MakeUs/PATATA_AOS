@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.domain.constants.UserPolicy
 import com.cmc.domain.feature.auth.usecase.UpdateNickNameUseCase
 import com.cmc.domain.feature.auth.usecase.UpdateProfileImageUseCase
 import com.cmc.domain.model.ImageMetadata
@@ -131,6 +132,7 @@ class ProfileSettingViewModel @Inject constructor(
 
     private fun checkFormValid(state: ProfileSettingState): Boolean {
         return state.changedNickName.isNotBlank() &&
+                state.changedNickName.length >= UserPolicy.MAX_NICKNAME_LENGTH &&
                 state.isNickNameError.not() &&
                 state.isImageError.not() &&
                 (state.changedNickName != state.profile.nickName || state.uploadImage.uri != state.profile.profileImage)

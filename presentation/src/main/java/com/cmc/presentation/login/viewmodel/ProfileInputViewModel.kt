@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.domain.constants.UserPolicy
 import com.cmc.domain.feature.auth.usecase.UpdateNickNameUseCase
 import com.cmc.domain.feature.auth.usecase.UpdateProfileImageUseCase
 import com.cmc.domain.model.ImageMetadata
@@ -115,6 +116,7 @@ class ProfileInputViewModel @Inject constructor(
 
     private fun checkFormValid(state: ProfileInputState): Boolean {
         return state.changedNickName.isNotBlank() &&
+                state.changedNickName.length >= UserPolicy.MAX_NICKNAME_LENGTH &&
                 state.isNickNameError.not() &&
                 state.isImageError.not()
     }
