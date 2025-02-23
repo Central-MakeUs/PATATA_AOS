@@ -146,11 +146,11 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
                 ) { dialog ->
                     with(dialog) {
                         tvEditPost.setOnClickListener {
-                            hide()
+                            dismiss()
                             viewModel.onClickEditSpot()
                         }
                         tvDelete.setOnClickListener {
-                            hide()
+                            dismiss()
                             viewModel.onClickDeleteSpot()
                         }
                         show()
@@ -163,11 +163,11 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
                 ) { dialog ->
                     with(dialog) {
                         tvComplaintPost.setOnClickListener {
-                            hide()
+                            dismiss()
                             viewModel.onClickPostReport()
                         }
                         tvComplaintUser.setOnClickListener {
-                            hide()
+                            dismiss()
                             viewModel.onClickUserReport()
                         }
                         show()

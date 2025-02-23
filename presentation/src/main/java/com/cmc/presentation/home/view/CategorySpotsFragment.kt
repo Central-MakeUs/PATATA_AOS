@@ -153,7 +153,7 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
                         setTextColor(getTextColor(type == CategorySortType.DISTANCE))
                         setOnClickListener {
                             viewModel.onClickSortByDistance()
-                            hide()
+                            dismiss()
                         }
                     }
 
@@ -161,7 +161,7 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
                         setTextColor(getTextColor(type == CategorySortType.RECOMMEND))
                         setOnClickListener {
                             viewModel.onClickSortByRecommend()
-                            hide()
+                            dismiss()
                         }
                     }
                     show()

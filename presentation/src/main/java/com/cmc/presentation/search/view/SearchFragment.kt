@@ -162,7 +162,7 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
                         setTextColor(getTextColor(type == CategorySortType.DISTANCE))
                         setOnClickListener {
                             viewModel.onClickSortByDistance()
-                            hide()
+                            dismiss()
                         }
                     }
 
@@ -170,7 +170,7 @@ class SearchFragment: BaseFragment<FragmentSearchBinding>(R.layout.fragment_sear
                         setTextColor(getTextColor(type == CategorySortType.RECOMMEND))
                         setOnClickListener {
                             viewModel.onClickSortByRecommend()
-                            hide()
+                            dismiss()
                         }
                     }
 
