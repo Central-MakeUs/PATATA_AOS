@@ -12,7 +12,6 @@
         android:layout_height="80dp"
         android:paddingTop="13dp"
         android:paddingBottom="9dp"
-        android:layout_marginStart="8dp"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
