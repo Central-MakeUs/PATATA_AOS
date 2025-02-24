@@ -53,6 +53,14 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
     }
 
     private fun updateUI(state: CategorySpotsState) {
+        if (state.isLoading.not()) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                binding.layoutShimmer.stopShimmer()
+                binding.layoutShimmer.isVisible = false
+                binding.groupContents.isVisible = true
+            }
+        }
+        binding.layoutCategorySpotsNoResult.isVisible = state.isLoading.not() && state.spotCount == 0
         viewLifecycleOwner.lifecycleScope.launch {
             categoryRecommendAdapter.submitData(state.categorySpots)
         }
@@ -68,13 +76,6 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
 
     private fun startShimmer() {
         binding.layoutShimmer.startShimmer()
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            delay(1500)
-            binding.layoutShimmer.stopShimmer()
-            binding.layoutShimmer.isVisible = false
-            binding.groupContents.isVisible = true
-        }
     }
     private fun initAppBar() {
         binding.categorySpotsAppbar.setupAppBar(

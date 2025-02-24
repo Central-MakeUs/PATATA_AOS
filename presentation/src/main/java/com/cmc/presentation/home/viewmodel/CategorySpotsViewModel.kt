@@ -20,6 +20,7 @@ import com.cmc.presentation.home.adapter.SpotHorizontalPaginatedCardAdapter
 import com.cmc.presentation.spot.model.SpotWithStatusUiModel
 import com.cmc.presentation.spot.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -109,12 +110,17 @@ class CategorySpotsViewModel @Inject constructor(
             val isNothing =
                 (loadState.refresh is LoadState.NotLoading || loadState.append is LoadState.NotLoading) && adapter.itemCount == 0
 
-            _state.update {
-                it.copy(
-                    isLoading = isLoading,
-                    isEmpty = isNothing,
-                    isError = isError,
-                )
+            viewModelScope.launch {
+                _state.update { it.copy(isLoading = true) }
+                delay(1500)
+
+                _state.update {
+                    it.copy(
+                        isLoading = isLoading,
+                        isEmpty = isNothing,
+                        isError = isError,
+                    )
+                }
             }
         }
     }

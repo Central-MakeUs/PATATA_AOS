@@ -45,12 +45,18 @@ class AroundMeListFragment: BaseFragment<FragmentAroundMeListBinding>(R.layout.f
         }
     }
     override fun initView() {
+        startShimmer()
         initAppBar()
         initCategoryTab()
         initRecyclerView()
     }
 
     private fun updateUI(state: AroundMeListState) {
+        if (state.isLoading.not()) {
+            binding.layoutShimmer.stopShimmer()
+            binding.layoutShimmer.isVisible = false
+            binding.rvSpotCategory.isVisible = true
+        }
         binding.layoutMapListNoResult.isVisible = state.spots.isEmpty() && state.isLoading.not()
         mapSpotAdapter.setItems(state.spots)
     }
@@ -71,6 +77,9 @@ class AroundMeListFragment: BaseFragment<FragmentAroundMeListBinding>(R.layout.f
             layoutManager = LinearLayoutManager(context)
             this.adapter = mapSpotAdapter
         }
+    }
+    private fun startShimmer() {
+        binding.layoutShimmer.startShimmer()
     }
     private fun initAppBar() {
         binding.aroundMeListAppbar.setupAppBar(

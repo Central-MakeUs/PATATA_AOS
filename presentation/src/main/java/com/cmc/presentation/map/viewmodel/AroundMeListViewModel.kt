@@ -14,6 +14,7 @@ import com.cmc.presentation.home.viewmodel.TodaySpotRecommendationViewModel.Toda
 import com.cmc.presentation.map.model.SpotWithMapUiModel
 import com.cmc.presentation.spot.model.toListUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -43,8 +44,11 @@ class AroundMeListViewModel @Inject constructor(
     }
 
     fun initSpots(spots: List<SpotWithMapUiModel>) {
-        _state.update {
-            it.copy(isLoading = false, originalSpots = spots, spots = spots)
+        viewModelScope.launch {
+            _state.update {
+                delay(1500)
+                it.copy(isLoading = false, originalSpots = spots, spots = spots)
+            }
         }
     }
 
