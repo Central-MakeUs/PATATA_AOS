@@ -57,7 +57,12 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         categoryRecommendAdapter.setItems(state.categorySpots)
 
         if (previousState?.recommendedSpots != state.recommendedSpots){
-            initTodayRecommendedSpotView(state.recommendedSpots, state.isLoading)
+            if (state.recommendedSpots.isNotEmpty()) {
+                initTodayRecommendedSpotView(state.recommendedSpots, true)
+                spotRecommendAdapter.setLoadingState(false)
+            } else {
+                initTodayRecommendedSpotView(state.recommendedSpots, true)
+            }
         }
         previousState = state
     }
@@ -73,7 +78,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private fun initTodayRecommendedSpotView(items: List<TodayRecommendedSpotUiModel>, isLoading: Boolean = true) {
         spotRecommendAdapter = SpotPolaroidAdapter(
-            items = items,
+            initialItems = items,
             onArchiveClick = { spotId -> viewModel.onClickSpotScrapButton(spotId) },
             onImageClick = { spotId -> viewModel.onClickSpotImage(spotId) },
             isLoading = isLoading,

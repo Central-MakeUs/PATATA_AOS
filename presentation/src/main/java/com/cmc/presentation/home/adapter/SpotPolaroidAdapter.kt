@@ -13,11 +13,13 @@ import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.map.model.TodayRecommendedSpotUiModel
 
 class SpotPolaroidAdapter(
-    private var items: List<TodayRecommendedSpotUiModel>,
+    initialItems: List<TodayRecommendedSpotUiModel>,
     private var isLoading: Boolean = true,
     private val onArchiveClick: (Int) -> Unit,
     private val onImageClick: (Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private val items: MutableList<TodayRecommendedSpotUiModel> = initialItems.toMutableList()
 
     companion object {
         private const val VIEW_TYPE_SKELETON = 0
@@ -51,15 +53,11 @@ class SpotPolaroidAdapter(
         }
     }
 
-    fun setItems(newItems: List<TodayRecommendedSpotUiModel>, isLoading: Boolean) {
-        if (items == newItems) {
-            notifyDataSetChanged() // 강제 UI 갱신
-            return
+    fun setLoadingState(isLoading: Boolean) {
+        this.isLoading = isLoading
+        if (isLoading.not()) {
+            notifyDataSetChanged()
         }
-        val diffCallback = DiffCallback(items, newItems)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        items = newItems
-        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun getItemCount(): Int = Int.MAX_VALUE
