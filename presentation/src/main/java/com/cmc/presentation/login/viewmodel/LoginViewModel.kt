@@ -48,11 +48,31 @@ class LoginViewModel @Inject constructor(
             }
     }
 
+    fun startGoogleLoginProcess() {
+        _state.update {
+            it.copy(isGoogleSignInInProgress = true)
+        }
+    }
+    fun endGoogleLoginProcess() {
+        _state.update {
+            it.copy(isGoogleSignInInProgress = false)
+        }
+    }
+
     fun handleLoginResult(user: AuthResponseUiModel) {
         if (user.nickName.isNullOrEmpty().not()) {
             sendSideEffect(LoginSideEffect.NavigateToHome)
         } else {
             sendSideEffect(LoginSideEffect.NavigateToProfileSetting)
+        }
+    }
+    fun clearState() {
+        _state.update {
+            it.copy(
+                isGoogleSignInInProgress = false,
+                loginSuccess = false,
+                user = null
+            )
         }
     }
 
@@ -65,6 +85,7 @@ class LoginViewModel @Inject constructor(
 }
 
 data class LoginState(
+    val isGoogleSignInInProgress: Boolean = false,
     val loginSuccess: Boolean = false,
     val user: AuthResponseUiModel? = null,
 )

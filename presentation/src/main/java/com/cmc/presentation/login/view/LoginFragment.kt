@@ -92,6 +92,9 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
         }
 
     private fun handleGoogleSignInResult() {
+        if (viewModel.state.value.isGoogleSignInInProgress) return // 이미 로그인 중이면 실행 X
+        viewModel.startGoogleLoginProcess()
+
         repeatWhenUiStarted {
             try {
                 val pendingIntent = loginManager.signInIntent(requireActivity())
@@ -109,6 +112,8 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
             } catch (e: Exception) {
                 FirebaseCrashlytics.getInstance().recordException(e)
                 e.stackTrace
+            } finally {
+                viewModel.endGoogleLoginProcess()
             }
         }
     }
