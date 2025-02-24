@@ -63,6 +63,11 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        viewModel.clearState()
+    }
+
     private fun showGoogleAccountRegistrationPrompt() {
         PatataAlert(requireContext())
             .title("구글 계정이 등록되어 있지 않습니다.")
