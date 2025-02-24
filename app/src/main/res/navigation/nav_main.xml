@@ -28,7 +28,7 @@
     <action
         android:id="@+id/nav_login"
         app:destination="@+id/nav_login"
-        app:popUpTo="@id/nav_onboarding"
+        app:popUpTo="@id/nav_graph"
         app:popUpToInclusive="true"/>
 
     <action
