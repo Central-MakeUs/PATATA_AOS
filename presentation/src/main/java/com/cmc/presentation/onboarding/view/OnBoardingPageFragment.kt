@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import com.cmc.common.base.BaseFragment
 import com.cmc.design.util.Util.dp
+import com.cmc.design.util.Util.dpToFloat
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentOnboardingPageBinding
 
@@ -41,7 +42,7 @@ class OnBoardingPageFragment : BaseFragment<FragmentOnboardingPageBinding>(R.lay
     private fun animateViewUp(view: LinearLayout) {
         val distance = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30f , resources.displayMetrics)
 
-        ObjectAnimator.ofFloat(view, "translationY", view.translationY, view.translationY - distance).apply {
+        ObjectAnimator.ofFloat(view, "translationY", 60.dpToFloat, 60.dpToFloat - distance).apply {
             duration = 1500
             interpolator = LinearInterpolator()
             start()
