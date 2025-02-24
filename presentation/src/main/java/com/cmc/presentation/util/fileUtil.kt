@@ -4,8 +4,10 @@ import android.content.Context
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
 import android.provider.OpenableColumns
+import androidx.exifinterface.media.ExifInterface
 import com.cmc.domain.constants.ImageUploadPolicy
 import com.cmc.domain.model.ImageMetadata
 import kotlinx.coroutines.Dispatchers
@@ -74,7 +76,7 @@ fun uriToImageMetadata(context: Context, uri: Uri): Result<ImageMetadata> {
         val resizedFile = if (ImageUploadPolicy.isSingleImageSizeValid(originalSize).not()) {
             resizeImageUntilValid(context, uri)
         } else {
-            file
+            rotateImageIfRequired(context, file)
         }
 
         val finalSize = resizedFile.length()
@@ -134,6 +136,60 @@ fun getFileFromUri(context: Context, uri: Uri): File {
 }
 
 /**
+ * 이미지의 EXIF 정보를 읽어서 필요한 경우 회전 보정
+ */
+fun rotateImageIfRequired(context: Context, file: File): File {
+    val uri = Uri.fromFile(file)
+    val inputStream = context.contentResolver.openInputStream(uri) ?: return file
+    val exif = ExifInterface(inputStream)
+    inputStream.close()
+
+    val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+    val rotationDegrees = when (orientation) {
+        ExifInterface.ORIENTATION_ROTATE_90 -> 90
+        ExifInterface.ORIENTATION_ROTATE_180 -> 180
+        ExifInterface.ORIENTATION_ROTATE_270 -> 270
+        else -> 0
+    }
+
+    if (rotationDegrees == 0) return file // 회전 필요 없음
+
+    val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+    val matrix = Matrix().apply { postRotate(rotationDegrees.toFloat()) }
+    val rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+
+    // 회전된 이미지를 새로운 파일에 저장
+    val rotatedFile = File(context.cacheDir, "rotated_${UUID.randomUUID()}.jpg")
+    FileOutputStream(rotatedFile).use { outputStream ->
+        rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+    }
+
+    return rotatedFile
+}
+
+fun rotateBitmapIfRequired(context: Context, uri: Uri, bitmap: Bitmap): Bitmap {
+    val inputStream = context.contentResolver.openInputStream(uri) ?: return bitmap
+    val exif = ExifInterface(inputStream)
+    inputStream.close()
+
+    val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+
+    val rotationDegrees = when (orientation) {
+        ExifInterface.ORIENTATION_ROTATE_90 -> 90
+        ExifInterface.ORIENTATION_ROTATE_180 -> 180
+        ExifInterface.ORIENTATION_ROTATE_270 -> 270
+        else -> 0
+    }
+
+    return if (rotationDegrees != 0) {
+        val matrix = Matrix().apply { postRotate(rotationDegrees.toFloat()) }
+        Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    } else {
+        bitmap
+    }
+}
+
+/**
  * 5MB 이하가 될 때까지 이미지 크기와 품질을 조절하며 리사이징
  */
 fun resizeImageUntilValid(context: Context, uri: Uri): File {
@@ -171,7 +227,9 @@ fun resizeImage(context: Context, uri: Uri, maxSize: Int, quality: Int): File {
         throw IllegalArgumentException("Failed to decode bitmap from URI: $uri")
     }
 
-    val resizedBitmap = scaleBitmap(originalBitmap, maxSize)
+    val rotatedBitmap = rotateBitmapIfRequired(context, uri, originalBitmap)
+
+    val resizedBitmap = scaleBitmap(rotatedBitmap, maxSize)
 
     val resizedFile = File(context.cacheDir, "resized_${UUID.randomUUID()}.jpg")
     FileOutputStream(resizedFile).use { outputStream ->
