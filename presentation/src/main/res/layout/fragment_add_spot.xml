@@ -171,6 +171,7 @@
                     style="@style/caption_medium"
                     android:textColor="@color/text_disabled"
                     android:layout_height="wrap_content"
+                    android:maxLines="2"
                     android:text="@string/hint_input_spot_desc_waring"
                     android:layout_marginHorizontal="@dimen/default_spacing"
                     app:layout_constraintTop_toBottomOf="@+id/tv_input_spot_desc"
