@@ -28,6 +28,11 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(R.layout.fragment_spl
     }
 
     override fun initView() {
+    }
+
+    override fun onResume() {
+        super.onResume()
+
         checkLocationRequest()
     }
 
