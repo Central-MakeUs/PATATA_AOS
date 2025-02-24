@@ -111,9 +111,6 @@ class CategorySpotsViewModel @Inject constructor(
                 (loadState.refresh is LoadState.NotLoading || loadState.append is LoadState.NotLoading) && adapter.itemCount == 0
 
             viewModelScope.launch {
-                _state.update { it.copy(isLoading = true) }
-                delay(1500)
-
                 _state.update {
                     it.copy(
                         isLoading = isLoading,
@@ -166,8 +163,13 @@ class CategorySpotsViewModel @Inject constructor(
             ).cachedIn(viewModelScope)
                 .map { pagingData -> pagingData.map { data -> data.toUiModel() }}
                 .collectLatest { data ->
+                    if (state.value.isInitialized.not()) {
+                        _state.update { it.copy(isLoading = true, isInitialized = true) }
+                        delay(1500)
+                    }
                     _state.update {
                         it.copy(
+                            isLoading = false,
                             categorySpots = data
                         )
                     }
@@ -181,6 +183,7 @@ class CategorySpotsViewModel @Inject constructor(
     }
 
     data class CategorySpotsState(
+        var isInitialized: Boolean = false,
         var isLoading: Boolean = true,
         var isEmpty: Boolean = true,
         var isError: Boolean = false,
