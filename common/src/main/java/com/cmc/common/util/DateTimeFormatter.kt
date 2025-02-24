@@ -5,7 +5,7 @@ import java.util.*
 
 object DateTimeFormatterUtil {
 
-    private const val INPUT_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+    private const val INPUT_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
     private const val OUTPUT_FORMAT = "yy.MM.dd  HH:mm"
 
     /**
@@ -15,14 +15,10 @@ object DateTimeFormatterUtil {
      */
     fun formatUtcToLocal(utcDateTime: String): String {
         return try {
-            val inputFormat = SimpleDateFormat(INPUT_FORMAT, Locale.getDefault()).apply {
-                timeZone = TimeZone.getTimeZone("UTC")  // 입력은 UTC
-            }
+            val inputFormat = SimpleDateFormat(INPUT_FORMAT, Locale.getDefault())
             val date = inputFormat.parse(utcDateTime) ?: return "25.01.01  00:00"
 
-            val outputFormat = SimpleDateFormat(OUTPUT_FORMAT, Locale.getDefault()).apply {
-                timeZone = TimeZone.getDefault()  // 출력은 로컬 시간
-            }
+            val outputFormat = SimpleDateFormat(OUTPUT_FORMAT, Locale.getDefault())
             outputFormat.format(date)
         } catch (e: Exception) {
             "25.01.01  00:00"
