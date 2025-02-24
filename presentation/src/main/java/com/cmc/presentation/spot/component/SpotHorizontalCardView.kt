@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.cmc.design.R
 import com.cmc.design.databinding.ViewSpotHorizontalCardBinding
+import com.cmc.design.util.animateClickEffect
 
 class SpotHorizontalCardView @JvmOverloads constructor(
     context: Context,
@@ -29,6 +30,7 @@ class SpotHorizontalCardView @JvmOverloads constructor(
     private fun initListeners() {
         // 아카이브 버튼 클릭 리스너
         binding.ivSpotArchive.setOnClickListener {
+            binding.ivSpotArchive.animateClickEffect()
             onArchiveClickListener?.invoke()
         }
 

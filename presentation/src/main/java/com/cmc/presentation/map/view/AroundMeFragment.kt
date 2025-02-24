@@ -26,6 +26,7 @@ import com.cmc.common.constants.NavigationKeys
 import com.cmc.common.util.DistanceFormatter
 import com.cmc.design.component.BottomSheetDialog
 import com.cmc.design.component.PatataAlert
+import com.cmc.design.util.animateClickEffect
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
@@ -318,6 +319,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
             .into(ivSpotImage)
 
         ivSpotArchive.setOnClickListener {
+            ivSpotArchive.animateClickEffect()
             viewModel.onClickSpotScrapButton(spot.spotId)
             ivSpotArchive.isSelected = ivSpotArchive.isSelected.not()
         }

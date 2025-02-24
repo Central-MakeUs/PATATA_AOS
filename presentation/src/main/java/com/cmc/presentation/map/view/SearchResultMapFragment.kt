@@ -27,6 +27,7 @@ import com.cmc.common.util.DistanceFormatter
 import com.cmc.design.component.BottomSheetDialog
 import com.cmc.design.component.PatataAlert
 import com.cmc.design.util.SnackBarUtil
+import com.cmc.design.util.animateClickEffect
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
@@ -336,6 +337,7 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
             .load(spot.images.first())
             .into(ivSpotImage)
         ivSpotArchive.setOnClickListener {
+            ivSpotArchive.animateClickEffect()
             viewModel.onClickSpotScrapButton(spot.spotId)
             ivSpotArchive.isSelected = ivSpotArchive.isSelected.not()
         }

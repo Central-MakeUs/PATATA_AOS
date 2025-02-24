@@ -13,6 +13,7 @@ import com.cmc.common.adapter.HorizontalSpaceItemDecoration
 import com.cmc.common.constants.BundleKeys
 import com.cmc.common.util.DistanceFormatter
 import com.cmc.design.util.Util.dp
+import com.cmc.design.util.animateClickEffect
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.databinding.ViewSpotDoubleImageBinding
 import com.cmc.presentation.databinding.ViewSpotScrollImageBinding
@@ -106,7 +107,10 @@ class MapSpotHorizontalMultiImageCardAdapter(
                     .load(spot.images.first())
                     .into(ivSpotImage)
 
-                ivSpotArchive.setOnClickListener { onArchiveClick.invoke(spot.spotId) }
+                ivSpotArchive.setOnClickListener {
+                    ivSpotArchive.animateClickEffect()
+                    onArchiveClick.invoke(spot.spotId)
+                }
                 ivSpotImage.setOnClickListener { onImageClick.invoke(spot.spotId) }
             }
         }
@@ -147,7 +151,10 @@ class MapSpotHorizontalMultiImageCardAdapter(
                     .load(spot.images[1])
                     .into(ivSpotImageSecond)
 
-                ivSpotArchive.setOnClickListener { onArchiveClick.invoke(spot.spotId) }
+                ivSpotArchive.setOnClickListener {
+                    ivSpotArchive.animateClickEffect()
+                    onArchiveClick.invoke(spot.spotId)
+                }
                 ivSpotImageFirst.setOnClickListener { onImageClick.invoke(spot.spotId) }
                 ivSpotImageSecond.setOnClickListener { onImageClick.invoke(spot.spotId) }
             }
@@ -180,7 +187,10 @@ class MapSpotHorizontalMultiImageCardAdapter(
                     layoutTagContainer.addView(tagView)
                 }
 
-                ivSpotArchive.setOnClickListener { onArchiveClick.invoke(spot.spotId) }
+                ivSpotArchive.setOnClickListener {
+                    ivSpotArchive.animateClickEffect()
+                    onArchiveClick.invoke(spot.spotId)
+                }
 
                 rvSpotImage.apply {
                     layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)

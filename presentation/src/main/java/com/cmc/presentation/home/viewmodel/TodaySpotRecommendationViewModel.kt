@@ -75,15 +75,15 @@ class TodaySpotRecommendationViewModel @Inject constructor(
         viewModelScope.launch {
             toggleSpotScrapUseCase.invoke(listOf(spotId))
                 .onSuccess { spotList ->
-                    val spotIds = spotList.toListUiModel().map { it.spotId }
-                    val newData =state.value.recommendedSpots.map {
-                        it.copy(isScraped = if (it.spotId in spotIds) it.isScraped.not() else it.isScraped)
-                    }
-                    _state.update {
-                        it.copy(
-                            recommendedSpots = newData,
-                        )
-                    }
+//                    val spotIds = spotList.toListUiModel().map { it.spotId }
+//                    val newData =state.value.recommendedSpots.map {
+//                        it.copy(isScraped = if (it.spotId in spotIds) it.isScraped.not() else it.isScraped)
+//                    }
+//                    _state.update {
+//                        it.copy(
+//                            recommendedSpots = newData,
+//                        )
+//                    }
                 }
         }
     }

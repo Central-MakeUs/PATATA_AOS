@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.cmc.common.constants.BundleKeys
 import com.cmc.common.util.DistanceFormatter.formatDistance
 import com.cmc.design.databinding.ViewSpotThumbnailBinding
+import com.cmc.design.util.animateClickEffect
 import com.cmc.presentation.search.model.SpotWithDistanceUiModel
 
 class SpotThumbnailAdapter(
@@ -68,7 +69,10 @@ class SpotThumbnailAdapter(
                 item.reviewCount.toString().also { tvReviewCount.text = it }
                 ivSpotArchive.isSelected = item.isScraped
 
-                ivSpotArchive.setOnClickListener { onArchiveClick.invoke(item.spotId) }
+                ivSpotArchive.setOnClickListener {
+                    ivSpotArchive.animateClickEffect()
+                    onArchiveClick.invoke(item.spotId)
+                }
                 ivSpotImage.setOnClickListener { onImageClick.invoke(item.spotId) }
             }
         }

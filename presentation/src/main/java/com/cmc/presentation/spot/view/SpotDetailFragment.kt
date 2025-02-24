@@ -13,6 +13,7 @@ import com.cmc.common.util.ClipboardUtil
 import com.cmc.design.component.BottomSheetDialog
 import com.cmc.design.component.PatataAlert
 import com.cmc.design.util.SnackBarUtil
+import com.cmc.design.util.animateClickEffect
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.ContentSheetSpotDetailComplaintBinding
@@ -130,9 +131,14 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
         }
     }
     private fun setClickListener() {
-        binding.ivSpotArchive.setOnClickListener { viewModel.onClickScrapButton() }
-        binding.tvSpotLocationCopy.setOnClickListener {
-            viewModel.onClickLocationCopyButton()
+        with(binding) {
+            ivSpotArchive.setOnClickListener {
+                ivSpotArchive.animateClickEffect()
+                viewModel.onClickScrapButton()
+            }
+            tvSpotLocationCopy.setOnClickListener {
+                viewModel.onClickLocationCopyButton()
+            }
         }
     }
     private fun setCommentCount(reviewCount: Int) {

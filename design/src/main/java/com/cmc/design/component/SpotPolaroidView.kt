@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.cmc.design.R
 import com.cmc.design.databinding.ViewSpotPolaroidBinding
+import com.cmc.design.util.animateClickEffect
 
 class SpotPolaroidView @JvmOverloads constructor(
     context: Context,
@@ -30,6 +31,7 @@ class SpotPolaroidView @JvmOverloads constructor(
         binding.ivSpotArchive.apply {
             setOnClickListener {
                 isSelected = isSelected.not()
+                animateClickEffect()
                 onArchiveClickListener?.invoke()
             }
         }
