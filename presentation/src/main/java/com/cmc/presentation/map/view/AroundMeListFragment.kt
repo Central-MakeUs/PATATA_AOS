@@ -73,7 +73,7 @@ class AroundMeListFragment: BaseFragment<FragmentAroundMeListBinding>(R.layout.f
         }
     }
     private fun initAppBar() {
-        binding.categorySpotsAppbar.setupAppBar(
+        binding.aroundMeListAppbar.setupAppBar(
             onHeadButtonClick = { viewModel.onClickHeadButton() },
             onBodyClick = { viewModel.onClickBody() },
             searchBarDisable = true

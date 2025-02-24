@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
         android:background="@color/white">
         <com.cmc.design.component.PatataAppBar
-            android:id="@+id/category_spots_appbar"
+            android:id="@+id/around_me_list_appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:headButtonType="map"
@@ -32,7 +32,7 @@
             app:tabIndicatorHeight="2dp"
             app:tabMode="scrollable"
             app:tabIndicatorFullWidth="true"
-            app:layout_constraintTop_toBottomOf="@+id/category_spots_appbar"/>
+            app:layout_constraintTop_toBottomOf="@+id/around_me_list_appbar"/>
 
         <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
@@ -46,7 +46,7 @@
             android:id="@+id/layout_map_list_no_result"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/around_me_list_appbar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
