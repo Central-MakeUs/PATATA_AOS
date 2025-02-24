@@ -58,12 +58,12 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
                 binding.layoutShimmer.stopShimmer()
                 binding.layoutShimmer.isVisible = false
                 binding.groupContents.isVisible = true
+
+                if (state.isLoading.not())
+                    categoryRecommendAdapter.submitData(state.categorySpots)
             }
         }
         binding.layoutCategorySpotsNoResult.isVisible = state.isLoading.not() && state.spotCount == 0
-        viewLifecycleOwner.lifecycleScope.launch {
-            categoryRecommendAdapter.submitData(state.categorySpots)
-        }
         setSort(state.sortType)
         setSpotCount(state.spotCount)
     }
@@ -131,7 +131,8 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
     }
 
     private fun setSpotCount(count: Int) {
-        count.toString().also { binding.tvCategoryCount.text = it }
+        val str = if (count >= 0) count.toString() else ""
+        str.also { binding.tvCategoryCount.text = it }
     }
     private fun setSort(sortType: CategorySortType) {
         binding.tvCategorySort.text = sortType.text

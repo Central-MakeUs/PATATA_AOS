@@ -149,31 +149,34 @@ class CategorySpotsViewModel @Inject constructor(
         category: SpotCategory,
         location: Location,
         sortType: CategorySortType,
-        ) {
-            getPaginatedCategorySpotsUseCase.invoke(
-                categoryId = category.id,
-                latitude = location.latitude,
-                longitude = location.longitude,
-                sortBy = sortType.name,
-                totalCountCallBack = { count ->
-                    _state.update {
-                        it.copy(spotCount = count)
-                    }
+    ) {
+        getPaginatedCategorySpotsUseCase.invoke(
+            categoryId = category.id,
+            latitude = location.latitude,
+            longitude = location.longitude,
+            sortBy = sortType.name,
+            totalCountCallBack = { count ->
+                _state.update {
+                    it.copy(spotCount = count)
                 }
-            ).cachedIn(viewModelScope)
-                .map { pagingData -> pagingData.map { data -> data.toUiModel() }}
-                .collectLatest { data ->
-                    if (state.value.isInitialized.not()) {
-                        _state.update { it.copy(isLoading = true, isInitialized = true) }
-                        delay(1500)
-                    }
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            categorySpots = data
-                        )
-                    }
+            }
+        ).cachedIn(viewModelScope)
+            .map { pagingData -> pagingData.map { data -> data.toUiModel() }}
+            .collectLatest { data ->
+                if (state.value.isInitialized.not()) {
+                    _state.update { it.copy(
+                        isLoading = true
+                    ) }
+                    delay(1500)
                 }
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        categorySpots = data
+                    )
+                }
+                _state.update { it.copy(isInitialized = true) }
+            }
     }
 
     private fun sendSideEffect(effect: CategorySpotsSideEffect) {
@@ -188,7 +191,7 @@ class CategorySpotsViewModel @Inject constructor(
         var isEmpty: Boolean = true,
         var isError: Boolean = false,
         var categorySpots: PagingData<SpotWithStatusUiModel> = PagingData.empty(),
-        var spotCount: Int = 0,
+        var spotCount: Int = -1,
         var selectedCategoryTab: SpotCategory = SpotCategory.ALL,
         var sortType: CategorySortType = CategorySortType.getDefault(),
     )
