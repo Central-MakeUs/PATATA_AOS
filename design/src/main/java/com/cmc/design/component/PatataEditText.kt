@@ -8,7 +8,6 @@ import android.text.InputType
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.Gravity
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.inputmethod.EditorInfo
@@ -19,6 +18,7 @@ import androidx.core.view.isVisible
 import com.cmc.design.R
 import com.cmc.design.databinding.ViewPatataEditTextBinding
 import com.cmc.design.util.Util.dpToFloat
+import java.util.regex.Pattern
 
 class PatataEditText @JvmOverloads constructor(
     context: Context,
@@ -210,6 +210,13 @@ class PatataEditText @JvmOverloads constructor(
         binding.etEditTextInput.requestFocus()
         showKeyboard()
     }
+    /**
+     * 태그 입력 타입으로 변경 
+     */
+    fun setTagInput() {
+        binding.etEditTextInput.filters = arrayOf(filterAlphaNumKorean)
+    }
+    
     fun setErrorState(isError: Boolean) {
         helperView?.setVisible(isError)
         setBorderColor(if (isError) R.color.red_100 else R.color.white)
@@ -239,4 +246,9 @@ class PatataEditText @JvmOverloads constructor(
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(binding.etEditTextInput, InputMethodManager.SHOW_IMPLICIT)
     }
+}
+
+private val filterAlphaNumKorean = InputFilter { source, start, end, dest, dstart, dend ->
+    val ps = Pattern.compile("^[ㄱ-ㅣ가-힣a-zA-Z0-9]+$") // 공백 제거 (\\s 삭제)
+    if (!ps.matcher(source).matches()) "" else source
 }

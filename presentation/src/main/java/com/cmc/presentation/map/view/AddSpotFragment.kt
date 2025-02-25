@@ -91,26 +91,29 @@ class AddSpotFragment: BaseFragment<FragmentAddSpotBinding>(R.layout.fragment_ad
         itemTouchHelper.attachToRecyclerView(binding.rvSelectedImages)
     }
     private fun setupViewActionListeners() {
-        binding.etInputTitle.setAfterTextChangeListener { str ->
-            viewModel.updateSpotName(str)
-        }
+        with(binding) {
+            etInputTitle.setAfterTextChangeListener { str ->
+                viewModel.updateSpotName(str)
+            }
 
-        binding.etInputAddressDetail.setAfterTextChangeListener { str ->
-            viewModel.updateAddressDetail(str)
-        }
+            etInputAddressDetail.setAfterTextChangeListener { str ->
+                viewModel.updateAddressDetail(str)
+            }
 
-        binding.etContentDesc.setAfterTextChangeListener { str ->
-            viewModel.updateDescription(str)
-        }
+            etContentDesc.setAfterTextChangeListener { str ->
+                viewModel.updateDescription(str)
+            }
 
-        binding.etInputHashtag.setOnSubmitListener { str ->
-            binding.etInputHashtag.clearEditor()
-            viewModel.addTag(str)
-        }
+            etInputHashtag.setTagInput()
+            etInputHashtag.setOnSubmitListener { str ->
+                binding.etInputHashtag.clearEditor()
+                viewModel.addTag(str)
+            }
 
-        binding.layoutChooseCategoryTitle.setOnClickListener { viewModel.openCategoryPicker() }
-        binding.layoutChoosePictureButton.setOnClickListener { viewModel.openPhotoPicker() }
-        binding.layoutRegisterButton.setOnClickListener { viewModel.onClickRegisterButton() }
+            layoutChooseCategoryTitle.setOnClickListener { viewModel.openCategoryPicker() }
+            layoutChoosePictureButton.setOnClickListener { viewModel.openPhotoPicker() }
+            layoutRegisterButton.setOnClickListener { viewModel.onClickRegisterButton() }
+        }
     }
 
     private fun updateUI(state: AddSpotViewModel.AddSpotState) {

@@ -354,6 +354,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="84dp"
                     android:foregroundGravity="top"
+                    android:maxLength="8"
                     app:layout_constraintTop_toBottomOf="@+id/tv_input_hashtag"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 

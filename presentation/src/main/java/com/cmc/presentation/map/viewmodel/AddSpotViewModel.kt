@@ -175,13 +175,15 @@ class AddSpotViewModel @Inject constructor(
     }
 
     fun addTag(tag: String) {
-        if (_state.value.tags.size >= MAX_TAG_COUNT) {
+        if (state.value.tags.size >= MAX_TAG_COUNT) {
             viewModelScope.launch {
                 _sideEffect.emit(AddSpotSideEffect.ShowSnackbar("최대 ${MAX_TAG_COUNT}개의 태그만 추가할 수 있습니다."))
             }
             return
         }
-        _state.update { it.copy(tags = it.tags + tag) }
+        if (tag !in state.value.tags) {
+            _state.update { it.copy(tags = it.tags + tag) }
+        }
     }
 
     fun removeTag(tag: String) {
