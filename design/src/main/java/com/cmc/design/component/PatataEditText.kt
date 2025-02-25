@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.text.Editable
 import android.text.InputFilter
+import android.text.InputType
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.Gravity
@@ -68,11 +69,19 @@ class PatataEditText @JvmOverloads constructor(
     }
 
     private fun setLinesOption(isSingleLine: Boolean) {
-        binding.etEditTextInput.isSingleLine = isSingleLine
-        binding.layoutEditTextRoot.layoutParams = binding.layoutEditTextRoot.layoutParams.apply {
-            this.height = (if (isSingleLine) 48 else 120).dpToFloat.toInt()
+        with(binding) {
+            val inputType = if (isSingleLine) InputType.TYPE_CLASS_TEXT
+                else InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+            etEditTextInput.inputType = inputType
+
+            layoutEditTextRoot.layoutParams = binding.layoutEditTextRoot.layoutParams.apply {
+                this.height = (if (isSingleLine) 48 else 120).dpToFloat.toInt()
+            }
+            etEditTextInput.gravity = if (isSingleLine) Gravity.CENTER_VERTICAL else Gravity.TOP
+
+            val imeOptions = if (isSingleLine) EditorInfo.IME_ACTION_DONE else  EditorInfo.IME_FLAG_NO_ENTER_ACTION
+            etEditTextInput.imeOptions = imeOptions
         }
-        binding.etEditTextInput.gravity = if (isSingleLine) Gravity.CENTER_VERTICAL else Gravity.TOP
     }
 
     private fun applyStyle(isDarkMode: Boolean) {
@@ -117,8 +126,7 @@ class PatataEditText @JvmOverloads constructor(
         // 키보드 Enter 키 입력 시 검색 실행 (활성화 상태에서만)
         binding.etEditTextInput.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE ||
-                actionId == EditorInfo.IME_ACTION_SEARCH ||
-                (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+                actionId == EditorInfo.IME_ACTION_SEARCH) {
                 hideKeyboard()
                 performSubmit()
                 true
