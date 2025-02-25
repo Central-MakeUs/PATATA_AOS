@@ -130,18 +130,18 @@ class CategorySpotsViewModel @Inject constructor(
             ) { sortType, category ->
                 sortType to category
             }.collectLatest { (sortType, category) ->
-                    getCurrentLocationUseCase.invoke()
-                        .onSuccess { location ->
-                            updateCategorySpots(category, location, sortType)
-                        }.onFailure { e ->
-                            when (e) {
-                                is SecurityException -> {
-                                    val location = Location(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
-                                    updateCategorySpots(category, location, sortType)
-                                }
+                getCurrentLocationUseCase.invoke()
+                    .onSuccess { location ->
+                        updateCategorySpots(category, location, sortType)
+                    }.onFailure { e ->
+                        when (e) {
+                            is SecurityException -> {
+                                val location = Location(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
+                                updateCategorySpots(category, location, sortType)
                             }
                         }
-                }
+                    }
+            }
         }
     }
 

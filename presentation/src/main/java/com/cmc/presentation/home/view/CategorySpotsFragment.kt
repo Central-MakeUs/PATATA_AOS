@@ -117,6 +117,7 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
         // 초기 탭 설정
         binding.tabCategoryFilter.getTabAt(categoryType ?: SpotCategory.ALL.id)
             ?.select()
+        viewModel.onClickCategoryTab(SpotCategory.fromId(categoryType ?: SpotCategory.ALL.id))
 
         // 탭 선택 이벤트
         binding.tabCategoryFilter.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
