@@ -109,7 +109,7 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
     }
 
     companion object {
-        private const val SPAN_COUNT = 2
+        private const val SPAN_COUNT = 3
         private const val GRID_SPACE = 12 // 아이템 간격 (px)
     }
 }

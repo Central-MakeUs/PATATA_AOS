@@ -21,10 +21,12 @@ class GridSpaceItemDecoration(private val spanCount: Int, private val space: Int
             outRect.top = space
         }
 
-        // 좌우 여백 조정 (양쪽 끝을 맞추기 위해)
-        val halfSpace = space / 2
-        outRect.left = if (column == 0) 0 else halfSpace
-        outRect.right = if (column == spanCount - 1) 0 else halfSpace
+        // 좌우 여백 조정: 좌우 여백을 균등하게 배분하여 양쪽 맞춤
+        val leftSpacing = column * space / spanCount
+        val rightSpacing = space - (column + 1) * space / spanCount
+
+        outRect.left = leftSpacing
+        outRect.right = rightSpacing
 
     }
 

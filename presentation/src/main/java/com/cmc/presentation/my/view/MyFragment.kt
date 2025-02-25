@@ -107,7 +107,7 @@ class MyFragment: BaseFragment<FragmentMyBinding>(R.layout.fragment_my) {
     private fun showSnackBar(message: String) { SnackBarUtil.show(binding.root, message) }
 
     companion object {
-        private const val SPAN_COUNT = 2
+        private const val SPAN_COUNT = 3
         private const val GRID_SPACE = 12 // 아이템 간격 (px)
     }
 }
