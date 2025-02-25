@@ -24,6 +24,9 @@ class SettingViewModel @Inject constructor(
     private val _sideEffect: MutableSharedFlow<SettingSideEffect> = MutableSharedFlow()
     val sideEffect: SharedFlow<SettingSideEffect> = _sideEffect.asSharedFlow()
 
+    fun onClickReview() {
+        sendSideEffect(SettingSideEffect.OpenAppReview)
+    }
     fun onClickFAQ() {
         sendSideEffect(SettingSideEffect.OpenNotionPage("https://www.notion.so/dogdduddy/FAQ-1a00ee442b80809094d4cc3414bc589b?pvs="))
     }
@@ -53,6 +56,7 @@ class SettingViewModel @Inject constructor(
         data object NavigateSignOut: SettingSideEffect()
         data object NavigateLogin :SettingSideEffect()
         data object ShowDialog: SettingSideEffect()
+        data object OpenAppReview: SettingSideEffect()
         data class OpenNotionPage(val url: String): SettingSideEffect()
     }
 }

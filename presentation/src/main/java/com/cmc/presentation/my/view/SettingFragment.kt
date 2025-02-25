@@ -1,5 +1,6 @@
 package com.cmc.presentation.my.view
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -47,6 +48,7 @@ class SettingFragment: BaseFragment<FragmentSettingBinding>(R.layout.fragment_se
             is SettingSideEffect.NavigateSignOut -> { navigateSignOut() }
             is SettingSideEffect.NavigateLogin -> { navigateLogin() }
             is SettingSideEffect.ShowDialog -> {}
+            is SettingSideEffect.OpenAppReview -> { openPlayStoreForRating() }
             is SettingSideEffect.OpenNotionPage -> { openNotionPage(effect.url) }
         }
     }
@@ -59,6 +61,7 @@ class SettingFragment: BaseFragment<FragmentSettingBinding>(R.layout.fragment_se
             layoutTerms.setOnClickListener { viewModel.onClickFAQ() }
             layoutPrivacyPolicy.setOnClickListener { viewModel.onClickFAQ() }
             layoutOpenSourceLicense.setOnClickListener { viewModel.onClickFAQ() }
+            layoutSettingReview.setOnClickListener { viewModel.onClickReview() }
             layoutSettingNotice.setOnClickListener { viewModel.onClickFAQ() }
             layoutSettingFaq.setOnClickListener { viewModel.onClickFAQ() }
             layoutSettingContact.setOnClickListener { viewModel.onClickFAQ() }
@@ -73,6 +76,28 @@ class SettingFragment: BaseFragment<FragmentSettingBinding>(R.layout.fragment_se
             packageInfo.versionName // "1.0.0" 같은 형식의 버전명 반환
         } catch (e: PackageManager.NameNotFoundException) {
             "Unknown"
+        }
+    }
+    private fun openPlayStoreForRating() {
+        val packageName = requireContext().packageName
+        try {
+            // Play Store 앱에서 열기
+            val intent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("market://details?id=$packageName")
+            ).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            requireContext().startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            // Play Store 앱이 없을 경우 웹 브라우저에서 열기
+            val intent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+            ).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            requireContext().startActivity(intent)
         }
     }
     private fun openNotionPage(url: String) {

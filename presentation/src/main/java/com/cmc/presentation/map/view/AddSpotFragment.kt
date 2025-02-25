@@ -1,6 +1,5 @@
 package com.cmc.presentation.map.view
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,7 +11,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cmc.common.base.BaseFragment
-import com.cmc.common.constants.NavigationKeys
 import com.cmc.design.component.BottomSheetDialog
 import com.cmc.design.util.SnackBarUtil
 import com.cmc.domain.model.SpotCategory

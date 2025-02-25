@@ -168,7 +168,6 @@
             android:text="서비스 안내"
             app:layout_constraintTop_toBottomOf="@+id/layout_setting_version_license"/>
         <!-- PATATA 앱 평점 주러가기 -->
-        <!--
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_setting_review"
             android:layout_width="match_parent"
@@ -200,13 +199,13 @@
             android:layout_height="1dp"
             android:background="@color/gray_10"
             app:layout_constraintTop_toBottomOf="@+id/layout_setting_review"/>
-            -->
+
         <!-- 공지사항 -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_setting_notice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/tv_setting_service_info_title">
+            app:layout_constraintTop_toBottomOf="@+id/layout_setting_review">
             <TextView
                 android:id="@+id/tv_setting_notice_title"
                 style="@style/body_small"
