@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.cmc.design.R
 import com.cmc.design.databinding.ViewSpotHorizontalCardBinding
 import com.cmc.design.util.animateClickEffect
@@ -57,7 +58,6 @@ class SpotHorizontalCardView @JvmOverloads constructor(
     ) {
         Glide.with(binding.root)
             .load(imageUrl)
-            .placeholder(R.drawable.img_sample)
             .into(binding.ivSpotImage)
         binding.tvSpotLocation.text = location
         binding.tvSpotTitle.text = title

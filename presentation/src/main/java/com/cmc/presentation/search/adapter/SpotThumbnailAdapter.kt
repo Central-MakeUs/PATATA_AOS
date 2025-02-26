@@ -60,7 +60,6 @@ class SpotThumbnailAdapter(
             with(binding) {
                 Glide.with(ivSpotImage.context)
                     .load(item.image)
-                    .placeholder(com.cmc.design.R.drawable.img_sample)
                     .into(ivSpotImage)
 
                 tvSpotTitle.text = item.spotName

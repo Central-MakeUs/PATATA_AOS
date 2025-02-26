@@ -59,7 +59,6 @@ class SelectedImageAdapter(
             binding.ivDeleteButton.setOnClickListener { onRemoveImage(image) }
             Glide.with(binding.root)
                 .load(Uri.parse(image.uri))
-                .placeholder(com.cmc.design.R.drawable.img_sample)
                 .into(binding.ivSelectedImage)
         }
     }
