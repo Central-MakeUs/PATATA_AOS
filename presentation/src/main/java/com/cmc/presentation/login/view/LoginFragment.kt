@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Intent
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.result.ActivityResult
@@ -14,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.animation.doOnEnd
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
 import com.cmc.design.component.PatataAlert
@@ -100,7 +102,7 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
         if (viewModel.state.value.isGoogleSignInInProgress) return // 이미 로그인 중이면 실행 X
         viewModel.startGoogleLoginProcess()
 
-        repeatWhenUiStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val pendingIntent = loginManager.signInIntent(requireActivity())
                 startForResult.launch(
@@ -124,6 +126,7 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
     }
     private fun setLoginButton() {
         binding.layoutGoogleLogin.setOnClickListener {
+            Log.d("testLog", "login Click")
             handleGoogleSignInResult()
         }
     }
