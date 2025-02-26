@@ -218,6 +218,9 @@ class SearchResultMapViewModel @Inject constructor(
         sendSideEffect(SearchResultMapSideEffect.NavigateAddLocation(targetLocation.toLocation()))
     }
     fun onClickMarker(spot: SpotWithMapUiModel) {
+        _state.update {
+            it.copy(searchSpot = spot, keyword = spot.spotName)
+        }
         sendSideEffect(SearchResultMapSideEffect.ShowSpotBottomSheet(spot))
     }
     fun onClickSpotScrapButton(spotId: Int) {
@@ -256,8 +259,12 @@ class SearchResultMapViewModel @Inject constructor(
             launch {
                 _state.map { it.mapScreenLocation }.distinctUntilChanged()
                     .collectLatest { _ ->
-                        if (state.value.nearBySpotFetchEnabled) {
-                            _state.update { it.copy(nearBySpotFetchEnabled = false) }
+                        val currentState= state.value
+                        if (currentState.nearBySpotFetchEnabled && currentState.isInitialized.not()) {
+                            _state.update { it.copy(
+                                isInitialized = true,
+                                nearBySpotFetchEnabled = false,
+                            ) }
                             fetchNearBySpots(SpotCategory.ALL.id, true)
                         }
                     }
@@ -272,6 +279,7 @@ class SearchResultMapViewModel @Inject constructor(
     }
 
     data class SearchResultMapState(
+        val isInitialized: Boolean = false,
         val keyword: String = "",
         val searchSpot: SpotWithMapUiModel? = null,
         val spots: List<SpotWithMapUiModel>? = null,
