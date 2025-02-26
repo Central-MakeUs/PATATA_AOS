@@ -56,7 +56,8 @@
                     android:layout_height="wrap_content"
                     android:drawablePadding="2dp"
                     android:text="서울특별시 마포구"
-                    android:textColor="@color/white"
+                    android:textColor="@color/white_80"
+                    android:drawableTint="@color/white_80"
                     android:layout_marginBottom="3dp"
                     app:drawableStartCompat="@drawable/ic_spot_location" />
 
