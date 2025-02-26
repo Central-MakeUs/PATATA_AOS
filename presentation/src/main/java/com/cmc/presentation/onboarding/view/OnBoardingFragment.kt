@@ -54,7 +54,8 @@ class OnBoardingFragment : BaseFragment<FragmentOnboardingBinding>(R.layout.frag
     private fun setNextButton() {
         binding.btnOnboarding.setOnClickListener {
             val maxCount = adapter.itemCount
-            viewModel.onClickNextButton(maxCount)
+            val currentPagePosition = binding.viewpager.currentItem
+            viewModel.onClickNextButton(currentPagePosition, maxCount)
         }
     }
 

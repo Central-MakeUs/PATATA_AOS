@@ -1,5 +1,6 @@
 package com.cmc.presentation.onboarding.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc.domain.feature.auth.usecase.SetOnBoardingStatusUseCase
@@ -25,8 +26,8 @@ class OnBoardingViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<OnBoardingSideEffect>()
     val sideEffect: SharedFlow<OnBoardingSideEffect> = _sideEffect.asSharedFlow()
 
-    fun onClickNextButton(maxCount: Int) {
-        val currentPagePosition = _state.value.currentPagePosition
+    fun onClickNextButton(currentPagePosition: Int, maxCount: Int) {
+        Log.d("testLog",": c $currentPagePosition, max $maxCount")
         if (currentPagePosition < maxCount - 1) {
             _state.update {
                 it.copy(currentPagePosition = currentPagePosition + 1)
