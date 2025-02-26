@@ -21,7 +21,6 @@ import com.cmc.presentation.home.viewmodel.CategorySpotsViewModel.CategorySpotsS
 import com.cmc.presentation.model.SpotCategoryItem
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -115,9 +114,13 @@ class CategorySpotsFragment: BaseFragment<FragmentCategorySpotsBinding>(R.layout
         }
 
         // 초기 탭 설정
-        binding.tabCategoryFilter.getTabAt(categoryType ?: SpotCategory.ALL.id)
-            ?.select()
-        viewModel.onClickCategoryTab(SpotCategory.fromId(categoryType ?: SpotCategory.ALL.id))
+        val tabPosition = if (viewModel.state.value.isInitialized) {
+            viewModel.state.value.selectedCategoryTab.id
+        } else {
+            categoryType ?: SpotCategory.ALL.id
+        }
+        binding.tabCategoryFilter.getTabAt(tabPosition)?.select()
+        viewModel.onClickCategoryTab(SpotCategory.fromId(tabPosition))
 
         // 탭 선택 이벤트
         binding.tabCategoryFilter.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
