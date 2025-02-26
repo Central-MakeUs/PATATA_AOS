@@ -28,8 +28,8 @@ class OnBoardingPageFragment : BaseFragment<FragmentOnboardingPageBinding>(R.lay
         }
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
         animateViewUp(binding.layoutSpotRegist)
     }
 
@@ -43,7 +43,7 @@ class OnBoardingPageFragment : BaseFragment<FragmentOnboardingPageBinding>(R.lay
         val distance = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30f , resources.displayMetrics)
 
         ObjectAnimator.ofFloat(view, "translationY", 60.dpToFloat, 60.dpToFloat - distance).apply {
-            duration = 1500
+            duration = 800
             interpolator = LinearInterpolator()
             start()
         }
