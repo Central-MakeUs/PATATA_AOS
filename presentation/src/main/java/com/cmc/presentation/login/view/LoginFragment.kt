@@ -126,7 +126,6 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
     }
     private fun setLoginButton() {
         binding.layoutGoogleLogin.setOnClickListener {
-            Log.d("testLog", "login Click")
             handleGoogleSignInResult()
         }
     }

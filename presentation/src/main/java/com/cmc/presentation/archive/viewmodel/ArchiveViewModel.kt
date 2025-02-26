@@ -29,21 +29,30 @@ class ArchiveViewModel @Inject constructor(
     private val toggleSpotScrapUseCase: ToggleSpotScrapUseCase,
 ) : ViewModel() {
 
-    init {
-        fetchScrapSpots()
-    }
     private val _state = MutableStateFlow(ArchiveState())
     val state: StateFlow<ArchiveState> = _state.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<ArchiveSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
+    fun refreshArchiveScreen() {
+        fetchScrapSpots()
+    }
+    fun clearState() {
+        _state.update {
+            it.copy(isLoading = true)
+        }
+    }
     private fun fetchScrapSpots() {
         viewModelScope.launch {
             getScrapSpotsUseCase.invoke()
                 .onSuccess { images ->
                     _state.update {
-                        it.copy(isLoading = false, images = images.toListUiModel())
+                        it.copy(
+                            isLoading = false,
+                            images = images.toListUiModel(),
+                            footerType = if (images.isEmpty()) FooterType.NONE else FooterType.SELECT
+                        )
                     }
                 }.onFailure {
 

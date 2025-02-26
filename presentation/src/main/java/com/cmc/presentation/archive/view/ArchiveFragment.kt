@@ -1,5 +1,6 @@
 package com.cmc.presentation.archive.view
 
+import android.util.Log
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
@@ -41,7 +42,9 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
     }
 
     private fun updateUI(state: ArchiveState) {
-        binding.layoutArchiveNoResult.isVisible = state.images.isEmpty() && state.isLoading.not()
+        if (state.isLoading.not()) {
+            binding.layoutArchiveNoResult.isVisible = state.images.isEmpty()
+        }
 
         binding.archiveAppbar.setFooterType(state.footerType)
         archiveAdapter.setItems(state.images, false)
@@ -54,6 +57,16 @@ class ArchiveFragment: BaseFragment<FragmentArchiveBinding>(R.layout.fragment_ar
             is ArchiveSideEffect.NavigateSpotDetail -> { navigateSpotDetail(effect.spotId) }
             is ArchiveSideEffect.NavigateToCategorySpots -> { navigateCategorySpot(effect.categoryId) }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.refreshArchiveScreen()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.clearState()
     }
 
     private fun setAppBar() {

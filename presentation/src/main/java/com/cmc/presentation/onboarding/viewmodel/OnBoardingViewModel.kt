@@ -27,7 +27,6 @@ class OnBoardingViewModel @Inject constructor(
     val sideEffect: SharedFlow<OnBoardingSideEffect> = _sideEffect.asSharedFlow()
 
     fun onClickNextButton(currentPagePosition: Int, maxCount: Int) {
-        Log.d("testLog",": c $currentPagePosition, max $maxCount")
         if (currentPagePosition < maxCount - 1) {
             _state.update {
                 it.copy(currentPagePosition = currentPagePosition + 1)

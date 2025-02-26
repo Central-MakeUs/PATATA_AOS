@@ -28,6 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@color/gray_10"
+            android:visibility="gone"
             android:gravity="center"
             android:orientation="vertical"
             app:layout_constraintTop_toBottomOf="@+id/archive_appbar"
