@@ -8,8 +8,6 @@ import com.cmc.domain.constants.UserPolicy
 import com.cmc.domain.feature.auth.usecase.UpdateNickNameUseCase
 import com.cmc.domain.feature.auth.usecase.UpdateProfileImageUseCase
 import com.cmc.domain.model.ImageMetadata
-import com.cmc.presentation.my.viewmodel.ProfileSettingViewModel.ProfileSettingSideEffect
-import com.cmc.presentation.my.viewmodel.ProfileSettingViewModel.ProfileSettingState
 import com.cmc.presentation.util.uriToImageMetadata
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -93,7 +91,7 @@ class ProfileInputViewModel @Inject constructor(
             true
         }
         else {
-            _state.update { it.copy(isImageError = true) }
+            _state.update { it.copy(uploadImage = ImageMetadata.getDefault()) }
             false
         }
     }
@@ -117,8 +115,7 @@ class ProfileInputViewModel @Inject constructor(
     private fun checkFormValid(state: ProfileInputState): Boolean {
         return state.changedNickName.isNotBlank() &&
                 state.changedNickName.length >= UserPolicy.MAX_NICKNAME_LENGTH &&
-                state.isNickNameError.not() &&
-                state.isImageError.not()
+                state.isNickNameError.not()
     }
 
     private fun sendSideEffect(effect: ProfileInputSideEffect) {
@@ -131,7 +128,6 @@ class ProfileInputViewModel @Inject constructor(
         var changedNickName: String = "",
         var uploadImage: ImageMetadata = ImageMetadata.getDefault(),
         var isNickNameError: Boolean = false,
-        var isImageError: Boolean = false,
         var isCompletedEnabled: Boolean = false
     )
 

@@ -1,20 +1,18 @@
 package com.cmc.presentation.login.view
 
-import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
-import com.cmc.common.constants.NavigationKeys.Setting
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentProfileInputBinding
 import com.cmc.presentation.login.viewmodel.ProfileInputViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import com.cmc.presentation.login.viewmodel.ProfileInputViewModel.ProfileInputState
 import com.cmc.presentation.login.viewmodel.ProfileInputViewModel.ProfileInputSideEffect
+import com.cmc.presentation.login.viewmodel.ProfileInputViewModel.ProfileInputState
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ProfileInputFragment: BaseFragment<FragmentProfileInputBinding>(R.layout.fragment_profile_input) {
