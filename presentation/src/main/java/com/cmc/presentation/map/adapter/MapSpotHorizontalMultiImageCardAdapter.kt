@@ -108,6 +108,7 @@ class MapSpotHorizontalMultiImageCardAdapter(
                     .load(spot.images.first())
                     .thumbnail(0.25f)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .onlyRetrieveFromCache(false)
                     .into(ivSpotImage)
 
                 ivSpotArchive.setOnClickListener {
@@ -148,10 +149,16 @@ class MapSpotHorizontalMultiImageCardAdapter(
 
                 Glide.with(this.root)
                     .load(spot.images[0])
+                    .thumbnail(0.25f)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .onlyRetrieveFromCache(false)
                     .into(ivSpotImageFirst)
 
                 Glide.with(this.root)
                     .load(spot.images[1])
+                    .thumbnail(0.25f)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .onlyRetrieveFromCache(false)
                     .into(ivSpotImageSecond)
 
                 ivSpotArchive.setOnClickListener {

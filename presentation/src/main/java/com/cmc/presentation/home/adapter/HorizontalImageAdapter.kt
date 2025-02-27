@@ -5,6 +5,7 @@ import android.widget.ImageView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.cmc.design.util.Util.dp
 
 class HorizontalImageAdapter(
@@ -23,7 +24,12 @@ class HorizontalImageAdapter(
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        Glide.with(holder.imageView.context).load(images[position]).into(holder.imageView)
+        Glide.with(holder.imageView.context)
+            .load(images[position])
+            .thumbnail(0.25f)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .onlyRetrieveFromCache(false)
+            .into(holder.imageView)
         holder.imageView.setOnClickListener { onImageClick.invoke() }
     }
 
