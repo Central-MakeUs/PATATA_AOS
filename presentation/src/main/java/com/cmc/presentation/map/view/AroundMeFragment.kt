@@ -39,8 +39,9 @@ import com.cmc.presentation.map.viewmodel.AroundMeViewModel
 import com.cmc.presentation.map.viewmodel.AroundMeViewModel.AroundMeSideEffect
 import com.cmc.presentation.map.viewmodel.SharedViewModel
 import com.cmc.presentation.model.SpotCategoryItem
+import com.cmc.presentation.util.toLatLng
+import com.cmc.presentation.util.toLocation
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
@@ -144,8 +145,8 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
 
 
     override fun onMapReady(map: NaverMap) {
-        viewModel.getCurrentLocation()
         naverMap = map
+        viewModel.initCurrentLocation()
 
         with(naverMap) {
             markerManager = MarkerManager(requireContext(), this@with) { spot ->
@@ -162,7 +163,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
                 if (reason == CameraUpdate.REASON_GESTURE) { viewModel.movedCameraPosition() }
             }
             addOnCameraIdleListener {
-                viewModel.updateMapScreenLocation(getMapScreenLocation())
+                viewModel.updateCurrentLocation(mapScreenLocation = getMapScreenLocation())
             }
         }
     }
@@ -173,6 +174,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
         val northEast = bounds.northEast
 
         return MapScreenLocation(
+            naverMap.cameraPosition.target.toLocation(),
             southWest.latitude,
             southWest.longitude,
             northEast.latitude,
@@ -202,8 +204,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
         }
     }
     private fun moveCameraPosition(location: Location) {
-        val latLng = LatLng(location.latitude, location.longitude)
-        val cameraUpdate = CameraUpdate.scrollTo(latLng)
+        val cameraUpdate = CameraUpdate.scrollTo(location.toLatLng())
         naverMap.moveCamera(cameraUpdate)
     }
     private fun showLocationPermissionDialog() {

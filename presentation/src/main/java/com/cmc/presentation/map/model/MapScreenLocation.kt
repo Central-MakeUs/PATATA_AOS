@@ -1,6 +1,9 @@
 package com.cmc.presentation.map.model
 
+import com.cmc.domain.feature.location.Location
+
 data class MapScreenLocation(
+    val targetLocation: Location,
     val minLatitude: Double,
     val minLongitude: Double,
     val maxLatitude: Double,
@@ -8,7 +11,7 @@ data class MapScreenLocation(
 ) {
     companion object {
         fun getDefault(): MapScreenLocation {
-            return MapScreenLocation(0.0, 0.0, 0.0, 0.0)
+            return MapScreenLocation(Location(0.0, 0.0),0.0, 0.0, 0.0, 0.0)
         }
     }
 }

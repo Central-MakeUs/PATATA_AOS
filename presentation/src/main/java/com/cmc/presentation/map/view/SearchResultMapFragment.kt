@@ -41,6 +41,7 @@ import com.cmc.presentation.map.viewmodel.SearchResultMapViewModel.SearchResultM
 import com.cmc.presentation.map.viewmodel.SearchResultMapViewModel.SearchResultMapState
 import com.cmc.presentation.map.viewmodel.SharedViewModel
 import com.cmc.presentation.model.SpotCategoryItem
+import com.cmc.presentation.util.toLocation
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
@@ -184,6 +185,7 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
         val northEast = bounds.northEast
 
         return MapScreenLocation(
+            naverMap.cameraPosition.target.toLocation(),
             southWest.latitude,
             southWest.longitude,
             northEast.latitude,

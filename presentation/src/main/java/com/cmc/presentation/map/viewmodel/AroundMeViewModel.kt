@@ -45,6 +45,16 @@ class AroundMeViewModel @Inject constructor(
         observeStateChanges()
     }
 
+    fun initCurrentLocation() {
+        if (state.value.isInitialized) {
+            sendSideEffect(AroundMeSideEffect.UpdateCurrentLocation(
+                state.value.mapScreenLocation.targetLocation
+            ))
+        } else {
+            getCurrentLocation()
+        }
+    }
+
     fun getCurrentLocation() {
         viewModelScope.launch {
             val result = getCurrentLocationUseCase.invoke()
@@ -57,9 +67,9 @@ class AroundMeViewModel @Inject constructor(
     }
 
 
-    fun updateMapScreenLocation(mapScreenLocation: MapScreenLocation) {
+    fun updateCurrentLocation(mapScreenLocation: MapScreenLocation) {
         _state.update {
-            it.copy(mapScreenLocation = mapScreenLocation)
+            it.copy(mapScreenLocation = mapScreenLocation, isInitialized = true)
         }
     }
 
@@ -149,7 +159,7 @@ class AroundMeViewModel @Inject constructor(
             withSearch = false
         ).onSuccess { spots ->
             _state.update {
-                it.copy(results = spots.toListUiModel())
+                it.copy(results = spots.toListUiModel(), isInitialized = true)
             }
         }.onFailure { e ->
             e.stackTrace
@@ -157,6 +167,7 @@ class AroundMeViewModel @Inject constructor(
     }
 
     data class AroundMeState(
+        val isInitialized: Boolean = false,
         val results: List<SpotWithMapUiModel>? = null,
         val selectedTabPosition: Int? = null,
         val mapScreenLocation: MapScreenLocation = MapScreenLocation.getDefault(),
