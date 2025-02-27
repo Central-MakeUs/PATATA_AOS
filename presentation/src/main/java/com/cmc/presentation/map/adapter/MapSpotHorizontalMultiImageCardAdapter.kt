@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.cmc.common.adapter.HorizontalSpaceItemDecoration
 import com.cmc.common.constants.BundleKeys
 import com.cmc.common.util.DistanceFormatter
@@ -105,6 +106,8 @@ class MapSpotHorizontalMultiImageCardAdapter(
 
                 Glide.with(this.root)
                     .load(spot.images.first())
+                    .thumbnail(0.25f)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(ivSpotImage)
 
                 ivSpotArchive.setOnClickListener {
@@ -195,7 +198,9 @@ class MapSpotHorizontalMultiImageCardAdapter(
                 rvSpotImage.apply {
                     layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
                     adapter = HorizontalImageAdapter(spot.images) { onImageClick.invoke(spot.spotId) }
-                    addItemDecoration(HorizontalSpaceItemDecoration(8.dp))
+                    if (rvSpotImage.itemDecorationCount == 0) {
+                        addItemDecoration(HorizontalSpaceItemDecoration(8.dp))
+                    }
                 }
             }
         }
