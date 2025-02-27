@@ -31,4 +31,7 @@ object NavigationKeys {
         const val ARGUMENT_REPORT_TARGET_ID = "targetID"
     }
 
+    object WebView {
+        const val ARGUMENT_WEB_VIEW_URL = "webViewUrl"
+    }
 }

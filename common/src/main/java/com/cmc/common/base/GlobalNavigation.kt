@@ -10,4 +10,5 @@ interface GlobalNavigation {
     fun navigateReport(reportType: Int, targetId: Int)
     fun navigateSelectLocation(latitude: Double, longitude: Double, isEdit: Boolean = false)
     fun navigateAddSpot(addressName: String, latitude: Double, longitude: Double)
+    fun navigateWebView(url: String)
 }

@@ -101,6 +101,11 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     override fun navigateAddSpot(addressName: String, latitude: Double, longitude: Double) {
         navigate(DeepLinkUtil.createAddSpotUri(addressName, latitude, longitude))
     }
+    override fun navigateWebView(url: String) {
+        navigate(R.id.nav_web_view, Bundle().apply {
+            putString(NavigationKeys.WebView.ARGUMENT_WEB_VIEW_URL, url)
+        })
+    }
 
     private fun navigate(navId: Int, bundle: Bundle? = null) {
         navHostFragment.navController.navigate(navId, bundle)

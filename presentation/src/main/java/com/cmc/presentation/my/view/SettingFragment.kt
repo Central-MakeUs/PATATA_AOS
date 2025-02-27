@@ -58,13 +58,13 @@ class SettingFragment: BaseFragment<FragmentSettingBinding>(R.layout.fragment_se
     }
     private fun setButton() {
         with(binding) {
-            layoutTerms.setOnClickListener { viewModel.onClickFAQ() }
-            layoutPrivacyPolicy.setOnClickListener { viewModel.onClickFAQ() }
-            layoutOpenSourceLicense.setOnClickListener { viewModel.onClickFAQ() }
+            layoutTerms.setOnClickListener { viewModel.onClickTermsOfService() }
+            layoutPrivacyPolicy.setOnClickListener { viewModel.onClickPrivacy() }
+            layoutOpenSourceLicense.setOnClickListener { viewModel.onClickOpenSourceLicense() }
             layoutSettingReview.setOnClickListener { viewModel.onClickReview() }
-            layoutSettingNotice.setOnClickListener { viewModel.onClickFAQ() }
+            layoutSettingNotice.setOnClickListener { viewModel.onClickNotices() }
             layoutSettingFaq.setOnClickListener { viewModel.onClickFAQ() }
-            layoutSettingContact.setOnClickListener { viewModel.onClickFAQ() }
+            layoutSettingContact.setOnClickListener { viewModel.onClickContactUse() }
 
             tvLogout.setOnClickListener { viewModel.onClickLogoutButton() }
             tvSignout.setOnClickListener { viewModel.onClickSignOutButton() }
@@ -100,11 +100,8 @@ class SettingFragment: BaseFragment<FragmentSettingBinding>(R.layout.fragment_se
             requireContext().startActivity(intent)
         }
     }
-    private fun openNotionPage(url: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        requireContext().startActivity(intent)
-    }
 
+    private fun openNotionPage(url: String) { (activity as GlobalNavigation).navigateWebView(url) }
     private fun navigateLogin() { (activity as GlobalNavigation).navigateLogin() }
     private fun navigateSignOut() { navigate(R.id.navigate_signout) }
 }

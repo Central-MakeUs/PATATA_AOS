@@ -18,6 +18,7 @@
     <include app:graph="@navigation/nav_category_spots"/>
     <include app:graph="@navigation/nav_report"/>
     <include app:graph="@navigation/nav_select_location"/>
+    <include app:graph="@navigation/nav_web_view"/>
 
     <action
         android:id="@+id/nav_onboarding"
@@ -65,5 +66,9 @@
         app:destination="@+id/AddSpotFragment"
         app:popUpTo="@id/nav_graph"
         app:popUpToInclusive="false"/>
+
+    <action
+        android:id="@+id/nav_web_view"
+        app:destination="@+id/nav_web_view"/>
 
 </navigation>

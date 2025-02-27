@@ -2,6 +2,7 @@ package com.cmc.presentation.my.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc.domain.constants.AppUrlPolicy
 import com.cmc.domain.feature.auth.usecase.ClearTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,8 +28,23 @@ class SettingViewModel @Inject constructor(
     fun onClickReview() {
         sendSideEffect(SettingSideEffect.OpenAppReview)
     }
+    fun onClickTermsOfService() {
+        sendSideEffect(SettingSideEffect.OpenNotionPage(AppUrlPolicy.TERMS_OF_SERVICE_URL))
+    }
+    fun onClickPrivacy() {
+        sendSideEffect(SettingSideEffect.OpenNotionPage(AppUrlPolicy.PRIVACY_URL))
+    }
+    fun onClickOpenSourceLicense()  {
+        sendSideEffect(SettingSideEffect.OpenNotionPage(AppUrlPolicy.OPEN_SOURCE_LICENSE_URL))
+    }
+    fun onClickNotices()  {
+        sendSideEffect(SettingSideEffect.OpenNotionPage(AppUrlPolicy.NOTICES_URL))
+    }
     fun onClickFAQ() {
-        sendSideEffect(SettingSideEffect.OpenNotionPage("https://www.notion.so/dogdduddy/FAQ-1a00ee442b80809094d4cc3414bc589b?pvs="))
+        sendSideEffect(SettingSideEffect.OpenNotionPage(AppUrlPolicy.FAQ_URL))
+    }
+    fun onClickContactUse()  {
+        sendSideEffect(SettingSideEffect.OpenNotionPage(AppUrlPolicy.CONTACT_USE_URL))
     }
     fun onClickLogoutButton() {
         viewModelScope.launch {
