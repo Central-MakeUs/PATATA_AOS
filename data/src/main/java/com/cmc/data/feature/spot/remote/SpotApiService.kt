@@ -15,6 +15,7 @@ import com.cmc.data.feature.spot.model.SpotDetailResponseDto
 import com.cmc.data.feature.spot.model.SpotScrapResponseDto
 import com.cmc.data.feature.spot.model.SpotWithMapResponseDto
 import com.cmc.data.feature.spot.model.TodayRecommendedSpotResponseDto
+import com.cmc.data.feature.spot.model.TodayRecommendedSpotWithHomeResponseDto
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
@@ -38,6 +39,9 @@ interface SpotApiService {
         @Query("userLatitude") userLatitude: Double,
         @Query("userLongitude") userLongitude: Double,
     ): ApiResponse<List<TodayRecommendedSpotResponseDto>>
+
+    @GET("spot/today")
+    suspend fun getHomeTodayRecommendedSpots(): ApiResponse<List<TodayRecommendedSpotWithHomeResponseDto>>
 
     @GET("spot/category")
     suspend fun getCategorySpots(

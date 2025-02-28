@@ -10,6 +10,7 @@ import com.cmc.domain.feature.spot.model.SpotWithDistance
 import com.cmc.domain.feature.spot.model.SpotWithMap
 import com.cmc.domain.feature.spot.model.SpotWithStatus
 import com.cmc.domain.feature.spot.model.TodayRecommendedSpot
+import com.cmc.domain.feature.spot.model.TodayRecommendedSpotWithHome
 import com.cmc.domain.model.ImageMetadata
 
 interface SpotRepository {
@@ -20,6 +21,8 @@ interface SpotRepository {
         latitude: Double,
         longitude: Double,
     ): Result<List<TodayRecommendedSpot>>
+
+    suspend fun getHomeTodayRecommendedSpots(): Result<List<TodayRecommendedSpotWithHome>>
 
     suspend fun getPaginatedCategorySpots(
         categoryId: Int,

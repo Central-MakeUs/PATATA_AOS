@@ -11,15 +11,16 @@ import com.cmc.design.component.SpotPolaroidView
 import com.cmc.design.databinding.ViewSpotPolaroidShimmerBinding
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.map.model.TodayRecommendedSpotUiModel
+import com.cmc.presentation.map.model.TodayRecommendedSpotWithHomeUiModel
 
 class SpotPolaroidAdapter(
-    initialItems: List<TodayRecommendedSpotUiModel>,
+    initialItems: List<TodayRecommendedSpotWithHomeUiModel>,
     private var isLoading: Boolean = true,
     private val onArchiveClick: (Int) -> Unit,
     private val onImageClick: (Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val items: MutableList<TodayRecommendedSpotUiModel> = initialItems.toMutableList()
+    private val items: MutableList<TodayRecommendedSpotWithHomeUiModel> = initialItems.toMutableList()
 
     companion object {
         private const val VIEW_TYPE_SKELETON = 0
@@ -66,14 +67,14 @@ class SpotPolaroidAdapter(
         RecyclerView.ViewHolder(spotView) {
 
         fun bind(
-            spot: TodayRecommendedSpotUiModel,
+            spot: TodayRecommendedSpotWithHomeUiModel,
             onArchiveClick: (Int) -> Unit,
             onImageClick: (Int) -> Unit
         ) {
             spotView.setSpotPolaroidView(
                 title = spot.spotName,
                 location = spot.address,
-                imageUrl = spot.images[0],
+                imageUrl = spot.imageUrl,
                 tags = spot.tags,
                 isArchived = spot.isScraped,
                 isBadgeVisible = SpotCategory.isRecommended(spot.categoryId),

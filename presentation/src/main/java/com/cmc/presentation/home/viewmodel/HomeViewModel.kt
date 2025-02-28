@@ -8,11 +8,13 @@ import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LONGITUDE
 import com.cmc.domain.feature.location.GetCurrentLocationUseCase
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.feature.spot.usecase.GetCategorySpotsUseCase
+import com.cmc.domain.feature.spot.usecase.GetHomeTodayRecommendedSpotsUseCase
 import com.cmc.domain.feature.spot.usecase.GetTodayRecommendedSpotsUseCase
 import com.cmc.domain.feature.spot.usecase.ToggleSpotScrapUseCase
 import com.cmc.domain.model.CategorySortType
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.map.model.TodayRecommendedSpotUiModel
+import com.cmc.presentation.map.model.TodayRecommendedSpotWithHomeUiModel
 import com.cmc.presentation.map.model.toListUiModel
 import com.cmc.presentation.spot.model.SpotWithStatusUiModel
 import com.cmc.presentation.spot.model.toUiModel
@@ -32,7 +34,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getTodayRecommendedSpotsUseCase: GetTodayRecommendedSpotsUseCase,
+    private val getHomeTodayRecommendedSpotsUseCase: GetHomeTodayRecommendedSpotsUseCase,
     private val getCategorySpotsUseCase: GetCategorySpotsUseCase,
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
     private val toggleSpotScrapUseCase: ToggleSpotScrapUseCase,
@@ -51,30 +53,16 @@ class HomeViewModel @Inject constructor(
 
     private fun fetchTodayRecommendedSpots() {
         viewModelScope.launch {
-            getCurrentLocationUseCase.invoke()
-                .onSuccess { location ->
-                    updateTodayRecommendedSpots(location.latitude, location.longitude)
-                }.onFailure { e ->
-                    when (e) {
-                        is SecurityException -> {
-                            val location = Location(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
-                            updateTodayRecommendedSpots(location.latitude, location.longitude)
-                        }
+            getHomeTodayRecommendedSpotsUseCase.invoke()
+                .onSuccess { list ->
+                    val recommendedSpots = list.toListUiModel()
+                    _state.update {
+                        it.copy(isLoading = false, recommendedSpots = recommendedSpots)
                     }
+                }.onFailure {
+
                 }
         }
-    }
-
-    private suspend fun updateTodayRecommendedSpots(latitude: Double, longitude: Double) {
-        getTodayRecommendedSpotsUseCase.invoke(latitude, longitude)
-            .onSuccess { list ->
-                val recommendedSpots = list.toListUiModel()
-                _state.update {
-                    it.copy(isLoading = false, recommendedSpots = recommendedSpots)
-                }
-            }.onFailure {
-
-            }
     }
 
     fun onClickSpotCategoryButton(category: SpotCategory) {
@@ -169,7 +157,7 @@ class HomeViewModel @Inject constructor(
 
     data class HomeState(
         val isLoading: Boolean = true,
-        var recommendedSpots: List<TodayRecommendedSpotUiModel> = emptyList(),
+        var recommendedSpots: List<TodayRecommendedSpotWithHomeUiModel> = emptyList(),
         var categorySpots: List<SpotWithStatusUiModel> = emptyList(),
         var selectedCategory: SpotCategory? = null,
         var selectedCategoryTab: SpotCategory = SpotCategory.ALL,

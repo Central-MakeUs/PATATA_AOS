@@ -18,6 +18,7 @@ import com.cmc.presentation.home.viewmodel.HomeViewModel
 import com.cmc.presentation.home.viewmodel.HomeViewModel.HomeSideEffect
 import com.cmc.presentation.home.viewmodel.HomeViewModel.HomeState
 import com.cmc.presentation.map.model.TodayRecommendedSpotUiModel
+import com.cmc.presentation.map.model.TodayRecommendedSpotWithHomeUiModel
 import com.cmc.presentation.model.SpotCategoryItem
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
@@ -76,7 +77,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
 
-    private fun initTodayRecommendedSpotView(items: List<TodayRecommendedSpotUiModel>, isLoading: Boolean = true) {
+    private fun initTodayRecommendedSpotView(items: List<TodayRecommendedSpotWithHomeUiModel>, isLoading: Boolean = true) {
         spotRecommendAdapter = SpotPolaroidAdapter(
             initialItems = items,
             onArchiveClick = { spotId -> viewModel.onClickSpotScrapButton(spotId) },
