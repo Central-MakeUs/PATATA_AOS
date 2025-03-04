@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.view.marginBottom
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.cmc.common.base.BaseFragment
@@ -39,7 +38,6 @@ import com.cmc.presentation.map.model.SpotWithMapUiModel
 import com.cmc.presentation.map.viewmodel.SearchResultMapViewModel
 import com.cmc.presentation.map.viewmodel.SearchResultMapViewModel.SearchResultMapSideEffect
 import com.cmc.presentation.map.viewmodel.SearchResultMapViewModel.SearchResultMapState
-import com.cmc.presentation.map.viewmodel.SharedViewModel
 import com.cmc.presentation.model.SpotCategoryItem
 import com.cmc.presentation.util.toLocation
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -57,7 +55,6 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
     OnMapReadyCallback {
 
     private val viewModel: SearchResultMapViewModel by viewModels()
-    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
@@ -106,8 +103,7 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
     private fun handleSideEffect(effect: SearchResultMapSideEffect) {
         when (effect) {
             is SearchResultMapSideEffect.RequestLocationPermission -> {}
-            is SearchResultMapSideEffect.NavigateList -> { navigateList() }
-            is SearchResultMapSideEffect.SendData -> { sendData(effect.spots) }
+            is SearchResultMapSideEffect.NavigateList -> { navigateList(effect.screenLocation) }
             is SearchResultMapSideEffect.NavigateAddLocation -> { navigateAddLocation(effect.location) }
             is SearchResultMapSideEffect.NavigateSearch -> { navigateSearchInput(effect.location) }
             is SearchResultMapSideEffect.UpdateCurrentLocation -> { moveCameraPosition(effect.location) }
@@ -283,9 +279,17 @@ class SearchResultMapFragment: BaseFragment<FragmentSearchResultMapBinding>(R.la
     }
     private fun navigateAroundMe() { navigate(R.id.navigate_search_result_map_to_around_me) }
     private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
-    private fun navigateList() { navigate(R.id.navigate_search_result_map_to_around_me_list) }
-
-    private fun sendData(spots: List<SpotWithMapUiModel>) { sharedViewModel.sendData(spots) }
+    private fun navigateList(screenLocation: MapScreenLocation) {
+        navigate(R.id.navigate_search_result_map_to_around_me_list, Bundle().apply {
+            putDouble(NavigationKeys.Location.ARGUMENT_LATITUDE, screenLocation.targetLocation.latitude)
+            putDouble(NavigationKeys.Location.ARGUMENT_LONGITUDE, screenLocation.targetLocation.longitude)
+            putDouble(NavigationKeys.Location.ARGUMENT_MIN_LATITUDE, screenLocation.minLatitude)
+            putDouble(NavigationKeys.Location.ARGUMENT_MIN_LONGITUDE, screenLocation.minLongitude)
+            putDouble(NavigationKeys.Location.ARGUMENT_MAX_LATITUDE, screenLocation.maxLatitude)
+            putDouble(NavigationKeys.Location.ARGUMENT_MAX_LONGITUDE, screenLocation.maxLongitude)
+            putBoolean(NavigationKeys.Map.ARGUMENT_WITH_SEARCH, true)
+        })
+    }
 
     private fun checkLocationRequest() {
         val permissions = arrayOf(

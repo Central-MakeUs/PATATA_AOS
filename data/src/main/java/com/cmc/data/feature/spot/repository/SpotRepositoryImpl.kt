@@ -11,6 +11,7 @@ import com.cmc.data.feature.spot.model.EditSpotRequestBody
 import com.cmc.data.feature.spot.model.toDomain
 import com.cmc.data.feature.spot.model.toListDomain
 import com.cmc.data.feature.spot.paging.CategorySpotPagingSource
+import com.cmc.data.feature.spot.paging.MapListPagingSource
 import com.cmc.data.feature.spot.paging.SearchSpotPagingSource
 import com.cmc.data.feature.spot.remote.SpotApiService
 import com.cmc.domain.feature.spot.base.PaginatedResponse
@@ -143,6 +144,39 @@ class SpotRepositoryImpl @Inject constructor(
             ) },
             transform = { it.toListDomain() }
         )
+    }
+
+    override suspend fun getCategorySpotsWithMapList(
+        categoryId: Int,
+        minLatitude: Double,
+        minLongitude: Double,
+        maxLatitude: Double,
+        maxLongitude: Double,
+        userLatitude: Double,
+        userLongitude: Double,
+        withSearch: Boolean,
+        totalCountCallBack: (Int) -> Unit,
+    ): PaginatedResponse<SpotWithMap> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 3,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                MapListPagingSource(
+                    spotApiService,
+                    categoryId,
+                    minLatitude,
+                    minLongitude,
+                    maxLatitude,
+                    maxLongitude,
+                    userLatitude,
+                    userLongitude,
+                    withSearch,
+                    totalCountCallBack
+                )
+            }
+        ).flow
     }
 
     override suspend fun getSearchSpotsWithMap(

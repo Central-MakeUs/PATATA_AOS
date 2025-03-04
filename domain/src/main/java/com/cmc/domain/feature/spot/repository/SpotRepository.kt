@@ -58,6 +58,18 @@ interface SpotRepository {
         withSearch: Boolean,
     ): Result<List<SpotWithMap>>
 
+    suspend fun getCategorySpotsWithMapList(
+        categoryId: Int,
+        minLatitude: Double,
+        minLongitude: Double,
+        maxLatitude: Double,
+        maxLongitude: Double,
+        userLatitude: Double,
+        userLongitude: Double,
+        withSearch: Boolean,
+        totalCountCallBack: (Int) -> Unit,
+    ): PaginatedResponse<SpotWithMap>
+
     suspend fun getSearchSpotsWithMap(
         keyword: String,
         minLatitude: Double?,

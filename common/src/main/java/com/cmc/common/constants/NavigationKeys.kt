@@ -10,6 +10,10 @@ object NavigationKeys {
         const val ARGUMENT_IS_EDIT = "isEdit"
         const val ARGUMENT_LATITUDE = "latitude"
         const val ARGUMENT_LONGITUDE = "longitude"
+        const val ARGUMENT_MIN_LATITUDE = "minLatitude"
+        const val ARGUMENT_MIN_LONGITUDE = "minLongitude"
+        const val ARGUMENT_MAX_LATITUDE = "maxLatitude"
+        const val ARGUMENT_MAX_LONGITUDE = "maxLongitude"
     }
 
     object Category {
@@ -18,6 +22,10 @@ object NavigationKeys {
 
     object Search {
         const val ARGUMENT_KEYWORD = "keyword"
+    }
+
+    object Map {
+        const val ARGUMENT_WITH_SEARCH = "withSearch"
     }
 
     object Setting {

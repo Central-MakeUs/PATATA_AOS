@@ -7,6 +7,7 @@ import com.cmc.data.feature.spot.model.CreateReviewResponseDto
 import com.cmc.data.feature.spot.model.CreateSpotResponseDto
 import com.cmc.data.feature.spot.model.EditSpotRequestBody
 import com.cmc.data.feature.spot.model.EditSpotResponseDto
+import com.cmc.data.feature.spot.model.MapListResponseDto
 import com.cmc.data.feature.spot.model.MySpotsResponseDto
 import com.cmc.data.feature.spot.model.ReviewResponseDto
 import com.cmc.data.feature.spot.model.SpotPreviewResponseDto
@@ -61,7 +62,7 @@ interface SpotApiService {
         @Query("sortBy") sortBy: String
     ): ApiResponse<SearchSpotsResponseDto>
 
-    @GET("map/in-bound")
+    @GET("map/in-bound/map")
     suspend fun getCategorySpotsWithMap(
         @Query("categoryId") categoryId: Int?,
         @Query("minLatitude") minLatitude: Double,
@@ -72,6 +73,19 @@ interface SpotApiService {
         @Query("userLongitude") userLongitude: Double,
         @Query("withSearch") withSearch: Boolean,
     ): ApiResponse<List<SpotWithMapResponseDto>>
+
+    @GET("map/in-bound/list")
+    suspend fun getCategorySpotsWithMapList(
+        @Query("categoryId") categoryId: Int?,
+        @Query("minLatitude") minLatitude: Double,
+        @Query("minLongitude") minLongitude: Double,
+        @Query("maxLatitude") maxLatitude: Double,
+        @Query("maxLongitude") maxLongitude: Double,
+        @Query("userLatitude") userLatitude: Double,
+        @Query("userLongitude") userLongitude: Double,
+        @Query("withSearch") withSearch: Boolean,
+        @Query("page") page: Int,
+    ): ApiResponse<MapListResponseDto>
 
     @GET("map/search")
     suspend fun getSearchSpotsWithMap(

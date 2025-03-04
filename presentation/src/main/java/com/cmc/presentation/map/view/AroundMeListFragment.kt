@@ -1,29 +1,24 @@
 package com.cmc.presentation.map.view
 
-import android.util.Log
+import android.os.Bundle
 import androidx.core.view.isVisible
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
+import com.cmc.common.constants.NavigationKeys
 import com.cmc.domain.model.SpotCategory
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentAroundMeListBinding
-import com.cmc.presentation.home.adapter.SpotHorizontalMultiImageCardAdapter
-import com.cmc.presentation.home.viewmodel.HomeViewModel.HomeState
 import com.cmc.presentation.map.adapter.MapSpotHorizontalMultiImageCardAdapter
-import com.cmc.presentation.map.model.SpotWithMapUiModel
-import com.cmc.presentation.map.model.TodayRecommendedSpotUiModel
+import com.cmc.presentation.map.model.MapScreenLocation
 import com.cmc.presentation.map.viewmodel.AroundMeListViewModel
-import com.cmc.presentation.map.viewmodel.AroundMeListViewModel.AroundMeListState
 import com.cmc.presentation.map.viewmodel.AroundMeListViewModel.AroundMeListSideEffect
-import com.cmc.presentation.map.viewmodel.SharedViewModel
+import com.cmc.presentation.map.viewmodel.AroundMeListViewModel.AroundMeListState
 import com.cmc.presentation.model.SpotCategoryItem
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -31,23 +26,20 @@ import kotlinx.coroutines.launch
 class AroundMeListFragment: BaseFragment<FragmentAroundMeListBinding>(R.layout.fragment_around_me_list) {
 
     private val viewModel: AroundMeListViewModel by viewModels()
-    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private lateinit var mapSpotAdapter: MapSpotHorizontalMultiImageCardAdapter
 
     override fun initObserving() {
         repeatWhenUiStarted {
-            launch { sharedViewModel.mapSharedData.observe(viewLifecycleOwner) { spots ->
-                viewModel.initSpots(spots)
-            }}
             launch { viewModel.state.collect { state -> updateUI(state) } }
             launch { viewModel.sideEffect.collectLatest { effect -> handleSideEffect(effect) } }
         }
     }
     override fun initView() {
+        initArgument(arguments)
         startShimmer()
-        initAppBar()
         initCategoryTab()
+        initAppBar()
         initRecyclerView()
     }
 
@@ -57,8 +49,10 @@ class AroundMeListFragment: BaseFragment<FragmentAroundMeListBinding>(R.layout.f
             binding.layoutShimmer.isVisible = false
             binding.rvSpotCategory.isVisible = true
         }
-        binding.layoutMapListNoResult.isVisible = state.spots.isEmpty() && state.isLoading.not()
-        mapSpotAdapter.setItems(state.spots)
+        binding.layoutMapListNoResult.isVisible = state.itemCount == 0 && state.isLoading.not()
+        viewLifecycleOwner.lifecycleScope.launch {
+            mapSpotAdapter.submitData(state.result)
+        }
     }
     private fun handleSideEffect(effect: AroundMeListSideEffect) {
         when (effect) {
@@ -68,6 +62,19 @@ class AroundMeListFragment: BaseFragment<FragmentAroundMeListBinding>(R.layout.f
         }
     }
 
+
+    private fun initArgument(bundle: Bundle?) {
+        bundle?.let {
+            val userLatitude = it.getDouble(NavigationKeys.Location.ARGUMENT_LATITUDE)
+            val userLongitude = it.getDouble(NavigationKeys.Location.ARGUMENT_LONGITUDE)
+            val minLatitude = it.getDouble(NavigationKeys.Location.ARGUMENT_MIN_LATITUDE)
+            val minLongitude = it.getDouble(NavigationKeys.Location.ARGUMENT_MIN_LONGITUDE)
+            val maxLatitude = it.getDouble(NavigationKeys.Location.ARGUMENT_MAX_LATITUDE)
+            val maxLongitude = it.getDouble(NavigationKeys.Location.ARGUMENT_MAX_LONGITUDE)
+            val withSearch = it.getBoolean(NavigationKeys.Map.ARGUMENT_WITH_SEARCH)
+            viewModel.initScreenLocation(userLatitude, userLongitude, minLatitude, minLongitude, maxLatitude, maxLongitude, withSearch)
+        }
+    }
     private fun initRecyclerView() {
         mapSpotAdapter = MapSpotHorizontalMultiImageCardAdapter(
             onImageClick = { viewModel.onClickSpotImage(it) },
@@ -98,6 +105,7 @@ class AroundMeListFragment: BaseFragment<FragmentAroundMeListBinding>(R.layout.f
                     .setTag(category.categoryItem)
             )
         }
+        binding.tabCategoryFilter.getTabAt(SpotCategory.ALL.id)?.select()
         binding.tabCategoryFilter.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 tab?.let {

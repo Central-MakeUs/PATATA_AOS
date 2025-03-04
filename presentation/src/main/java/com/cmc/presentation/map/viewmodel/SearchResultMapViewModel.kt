@@ -242,8 +242,7 @@ class SearchResultMapViewModel @Inject constructor(
         sendSideEffect(SearchResultMapSideEffect.NavigateSpotDetail(spotId))
     }
     fun onClickHeadButton() {
-        sendSideEffect(SearchResultMapSideEffect.SendData(state.value.spots ?: emptyList()))
-        sendSideEffect(SearchResultMapSideEffect.NavigateList)
+        sendSideEffect(SearchResultMapSideEffect.NavigateList(state.value.mapScreenLocation))
     }
 
     private fun observeStateChanges() {
@@ -294,14 +293,13 @@ class SearchResultMapViewModel @Inject constructor(
 
     sealed class SearchResultMapSideEffect {
         data object RequestLocationPermission : SearchResultMapSideEffect()
-        data object NavigateList : SearchResultMapSideEffect()
         data object NavigateAroundMe: SearchResultMapSideEffect()
-        data class SendData(val spots: List<SpotWithMapUiModel>): SearchResultMapSideEffect()
         data class UpdateCurrentLocation(val location: Location): SearchResultMapSideEffect()
         data class ShowNoResultAlert(val message: String): SearchResultMapSideEffect()
         data class NavigateAddLocation(val location: Location): SearchResultMapSideEffect()
         data class NavigateSearch(val location: Location): SearchResultMapSideEffect()
         data class NavigateSpotDetail(val spotId: Int): SearchResultMapSideEffect()
+        data class NavigateList(val screenLocation: MapScreenLocation) : SearchResultMapSideEffect()
         data class ShowSpotBottomSheet(val spot: SpotWithMapUiModel): SearchResultMapSideEffect()
     }
 }

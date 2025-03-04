@@ -66,7 +66,6 @@ class AroundMeViewModel @Inject constructor(
         }
     }
 
-
     fun updateCurrentLocation(mapScreenLocation: MapScreenLocation) {
         _state.update {
             it.copy(mapScreenLocation = mapScreenLocation, isInitialized = true)
@@ -75,10 +74,6 @@ class AroundMeViewModel @Inject constructor(
 
     fun movedCameraPosition() {
         _state.update { it.copy(exploreVisible = true) }
-    }
-
-    fun invalidateCameraMove() {
-        _state.update { it.copy(exploreVisible = false) }
     }
 
     fun onClickSearchBar(targetLocation: LatLng) {
@@ -112,8 +107,7 @@ class AroundMeViewModel @Inject constructor(
         sendSideEffect(AroundMeSideEffect.NavigateSpotDetail(spotId))
     }
     fun onClickHeadButton() {
-        sendSideEffect(AroundMeSideEffect.SendData(state.value.results ?: emptyList()))
-        sendSideEffect(AroundMeSideEffect.NavigateList)
+        sendSideEffect(AroundMeSideEffect.NavigateList(state.value.mapScreenLocation))
     }
 
     private fun observeStateChanges() {
@@ -179,11 +173,10 @@ class AroundMeViewModel @Inject constructor(
 
     sealed class AroundMeSideEffect {
         data object RequestLocationPermission : AroundMeSideEffect()
-        data object NavigateList : AroundMeSideEffect()
-        data class SendData(val spots: List<SpotWithMapUiModel>) : AroundMeSideEffect()
         data class NavigateAddLocation(val location: Location): AroundMeSideEffect()
         data class NavigateSearch(val location: Location): AroundMeSideEffect()
         data class NavigateSpotDetail(val spotId: Int): AroundMeSideEffect()
+        data class NavigateList(val screenLocation: MapScreenLocation) : AroundMeSideEffect()
         data class UpdateCurrentLocation(val location: Location): AroundMeSideEffect()
         data class ShowSpotBottomSheet(val spot: SpotWithMapUiModel): AroundMeSideEffect()
     }

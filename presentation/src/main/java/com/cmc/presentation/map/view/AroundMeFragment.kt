@@ -37,7 +37,6 @@ import com.cmc.presentation.map.model.MapScreenLocation
 import com.cmc.presentation.map.model.SpotWithMapUiModel
 import com.cmc.presentation.map.viewmodel.AroundMeViewModel
 import com.cmc.presentation.map.viewmodel.AroundMeViewModel.AroundMeSideEffect
-import com.cmc.presentation.map.viewmodel.SharedViewModel
 import com.cmc.presentation.model.SpotCategoryItem
 import com.cmc.presentation.util.toLatLng
 import com.cmc.presentation.util.toLocation
@@ -54,7 +53,6 @@ import kotlinx.coroutines.launch
 class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_around_me), OnMapReadyCallback {
 
     private val viewModel: AroundMeViewModel by viewModels()
-    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
@@ -98,8 +96,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     private fun handleEffect(effect: AroundMeSideEffect) {
         when (effect) {
             is AroundMeSideEffect.RequestLocationPermission -> { checkLocationRequest() }
-            is AroundMeSideEffect.NavigateList -> { navigateList() }
-            is AroundMeSideEffect.SendData -> { sendData(effect.spots) }
+            is AroundMeSideEffect.NavigateList -> { navigateList(effect.screenLocation) }
             is AroundMeSideEffect.NavigateAddLocation -> { navigateAddLocation(effect.location) }
             is AroundMeSideEffect.NavigateSearch -> { navigateSearch(effect.location) }
             is AroundMeSideEffect.NavigateSpotDetail -> { navigateSpotDetail(effect.spotId)}
@@ -267,9 +264,17 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
         })
     }
     private fun navigateSpotDetail(spotId: Int) { (activity as GlobalNavigation).navigateSpotDetail(spotId) }
-    private fun navigateList() { navigate(R.id.navigate_around_me_to_around_me_list) }
-
-    private fun sendData(spots: List<SpotWithMapUiModel>) { sharedViewModel.sendData(spots) }
+    private fun navigateList(screenLocation: MapScreenLocation) {
+        navigate(R.id.navigate_around_me_to_around_me_list, Bundle().apply {
+            putDouble(NavigationKeys.Location.ARGUMENT_LATITUDE, screenLocation.targetLocation.latitude)
+            putDouble(NavigationKeys.Location.ARGUMENT_LONGITUDE, screenLocation.targetLocation.longitude)
+            putDouble(NavigationKeys.Location.ARGUMENT_MIN_LATITUDE, screenLocation.minLatitude)
+            putDouble(NavigationKeys.Location.ARGUMENT_MIN_LONGITUDE, screenLocation.minLongitude)
+            putDouble(NavigationKeys.Location.ARGUMENT_MAX_LATITUDE, screenLocation.maxLatitude)
+            putDouble(NavigationKeys.Location.ARGUMENT_MAX_LONGITUDE, screenLocation.maxLongitude)
+            putBoolean(NavigationKeys.Map.ARGUMENT_WITH_SEARCH, false)
+        })
+    }
 
     private val openAppSettingsLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,12 +27,11 @@ import com.cmc.presentation.model.SpotCategoryItem
 class MapSpotHorizontalMultiImageCardAdapter(
     private val onArchiveClick: (Int) -> Unit,
     private val onImageClick: (Int) -> Unit
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    private var items: List<SpotWithMapUiModel> = emptyList()
+) : PagingDataAdapter<SpotWithMapUiModel, RecyclerView.ViewHolder>(DiffCallback()) {
 
     override fun getItemViewType(position: Int): Int {
-        return when (items[position].images.size) {
+        val spot = getItem(position)
+        return when (spot?.images?.size) {
             1 -> VIEW_TYPE_SINGLE
             2 -> VIEW_TYPE_DOUBLE
             else -> VIEW_TYPE_SCROLL // `THRESHOLD_SCROLL` 기준으로 변경 가능
@@ -56,26 +56,26 @@ class MapSpotHorizontalMultiImageCardAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder) {
-            is SingleImageViewHolder -> holder.bind(items[position], onArchiveClick, onImageClick)
-            is DoubleImageViewHolder -> holder.bind(items[position], onArchiveClick, onImageClick)
-            is ScrollImageViewHolder -> holder.bind(items[position], onArchiveClick, onImageClick)
+        val spot = getItem(position)
+        spot?.let {
+            when (holder) {
+                is SingleImageViewHolder -> holder.bind(it, onArchiveClick, onImageClick)
+                is DoubleImageViewHolder -> holder.bind(it, onArchiveClick, onImageClick)
+                is ScrollImageViewHolder -> holder.bind(it, onArchiveClick, onImageClick)
+            }
         }
     }
 
-    fun setItems(newItems: List<SpotWithMapUiModel>) {
-        if (items == newItems) {
-            notifyDataSetChanged() // 강제 UI 갱신
-            return
-        }
-        val diffCallback = DiffCallback(items, newItems)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        items = newItems
-        diffResult.dispatchUpdatesTo(this)
-    }
-
-    override fun getItemCount(): Int = items.size
-
+//    fun setItems(newItems: List<SpotWithMapUiModel>) {
+//        if (items == newItems) {
+//            notifyDataSetChanged() // 강제 UI 갱신
+//            return
+//        }
+//        val diffCallback = DiffCallback(items, newItems)
+//        val diffResult = DiffUtil.calculateDiff(diffCallback)
+//        items = newItems
+//        diffResult.dispatchUpdatesTo(this)
+//    }
 
     class SingleImageViewHolder(private val binding: ViewSpotSingleImageBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -214,22 +214,26 @@ class MapSpotHorizontalMultiImageCardAdapter(
     }
 
 
-    class DiffCallback(
-        private val oldList: List<SpotWithMapUiModel>,
-        private val newList: List<SpotWithMapUiModel>
-    ): DiffUtil.Callback() {
-        override fun getOldListSize() = oldList.size
-        override fun getNewListSize() = newList.size
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].spotId == newList[newItemPosition].spotId
+    class DiffCallback : DiffUtil.ItemCallback<SpotWithMapUiModel>() {
+        override fun areItemsTheSame(
+            oldItem: SpotWithMapUiModel,
+            newItem: SpotWithMapUiModel
+        ): Boolean {
+            return oldItem.spotId == newItem.spotId
         }
 
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition] == newList[newItemPosition]
+        override fun areContentsTheSame(
+            oldItem: SpotWithMapUiModel,
+            newItem: SpotWithMapUiModel
+        ): Boolean {
+            return oldItem == newItem
         }
 
-        override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-            return if (oldList[oldItemPosition].isScraped != newList[newItemPosition].isScraped) {
+        override fun getChangePayload(
+            oldItem: SpotWithMapUiModel,
+            newItem: SpotWithMapUiModel
+        ): Any? {
+            return if (oldItem.isScraped != newItem.isScraped) {
                 Bundle().apply { putBoolean(BundleKeys.Spot.KEY_IS_CHANGED_SCRAP, true) }
             } else null
         }

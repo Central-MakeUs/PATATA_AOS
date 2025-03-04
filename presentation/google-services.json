@@ -1,0 +1,70 @@
+{
+  "project_info": {
+    "project_number": "1091449336589",
+    "project_id": "patata-447207",
+    "storage_bucket": "patata-447207.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1091449336589:android:faf275c1b458fa77c33644",
+        "android_client_info": {
+          "package_name": "com.cmc.patata"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1091449336589-8jk662bk1u14i7dh1af4im4gm7kcv0fl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cmc.patata",
+            "certificate_hash": "9ddb3424adcbd06ffcb68bf7efe8604ab07fcde8"
+          }
+        },
+        {
+          "client_id": "1091449336589-bhonpbd9sj4o2vdcesiva0in7ksv4u8d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cmc.patata",
+            "certificate_hash": "7e2e92d40f1fe77f8685a4928abed751be96395c"
+          }
+        },
+        {
+          "client_id": "1091449336589-fe5bugniqjnaj33rjbecmo310gnh8glj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cmc.patata",
+            "certificate_hash": "1e63108c8f00732990b853806daeca347b648864"
+          }
+        },
+        {
+          "client_id": "1091449336589-os5c190fjdn5c69r8otjq32tb6qg997f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEYRJ_Y_Y5--xOXvVeAIvqJjcKPWS3uMI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1091449336589-4vgiijsc23271f8ul2t39h0e3auen0p3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1091449336589-ga0ehtpofbqi8h1dk9liksjguch1jpqv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.melon.Patata"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
