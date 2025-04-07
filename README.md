@@ -57,7 +57,7 @@ Patata_AOS
 ├── domain
 │   ├── model
 │   ├── usecase
-│   ├── viewmodel
+│   ├── repository
 ├── presentation
 │   ├── ui
 │   ├── viewmodel
