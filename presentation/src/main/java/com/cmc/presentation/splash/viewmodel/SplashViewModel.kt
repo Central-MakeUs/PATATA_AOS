@@ -44,28 +44,21 @@ class SplashViewModel @Inject constructor(
             val refreshTokenDeferred = async { getRefreshTokenUseCase.invoke() }
             val delayDeferred = async { delay(2000L) }
 
-            var onBoardingState: Boolean? = null
-            var accessToken: String? = null
-            var refreshToken: String? = null
-
-            launch {
-                onBoardingState = onBoardingStateDeferred.await()
-                accessToken = accessTokenDeferred.await()
-                Log.d("AccessToken", "accessToken: $accessToken")
-                refreshToken = refreshTokenDeferred.await()
-            }
+            val onBoardingState = onBoardingStateDeferred.await()
+            val accessToken = accessTokenDeferred.await()
+            Log.d("AccessToken", "accessToken: $accessToken")
+            val refreshToken = refreshTokenDeferred.await()
 
             delayDeferred.await()
-            val effect = if (accessToken != null && isAccessTokenValid(accessToken!!)) {
-                NavigateHome
-            } else if (refreshToken != null) {
-                val result = refreshAccessTokenUseCase.invoke()
-                if (result.isSuccess) NavigateHome
-                else NavigateLogin
-            } else if (onBoardingState != null && onBoardingState!!) {
-                NavigateLogin
-            } else {
-                NavigateOnBoarding
+
+            val effect = when {
+                accessToken != null && isAccessTokenValid(accessToken) -> NavigateHome
+                refreshToken != null -> {
+                    val result = refreshAccessTokenUseCase.invoke()
+                    if (result.isSuccess) NavigateHome else NavigateLogin
+                }
+                onBoardingState -> NavigateLogin
+                else -> NavigateOnBoarding
             }
             _sideEffect.emit(effect)
         }
