@@ -59,8 +59,10 @@ class AroundMeViewModel @Inject constructor(
         viewModelScope.launch {
             val result = getCurrentLocationUseCase.invoke()
             result.onSuccess { location ->
+                _state.update { it.copy(accessLocationPermissionGranted = true) }
                 sendSideEffect(AroundMeSideEffect.UpdateCurrentLocation(location))
-            }.onFailure { exception ->
+            }.onFailure { _ ->
+                _state.update { it.copy(accessLocationPermissionGranted = false) }
                 sendSideEffect(AroundMeSideEffect.RequestLocationPermission)
             }
         }
@@ -162,6 +164,7 @@ class AroundMeViewModel @Inject constructor(
 
     data class AroundMeState(
         val isInitialized: Boolean = false,
+        val accessLocationPermissionGranted: Boolean = false,
         val results: List<SpotWithMapUiModel>? = null,
         val selectedTabPosition: Int? = null,
         val mapScreenLocation: MapScreenLocation = MapScreenLocation.getDefault(),

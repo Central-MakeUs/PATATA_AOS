@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.view.marginBottom
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.cmc.common.base.BaseFragment
@@ -42,9 +41,11 @@ import com.cmc.presentation.util.toLatLng
 import com.cmc.presentation.util.toLocation
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.naver.maps.map.CameraUpdate
+import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.util.FusedLocationSource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -56,6 +57,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
 
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
+    private lateinit var locationSource: FusedLocationSource
     private lateinit var markerManager: MarkerManager
 
     private var dialog: com.google.android.material.bottomsheet.BottomSheetDialog? = null
@@ -78,7 +80,15 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
         setMap()
         setCategory()
         setButton()
+        setFusedLocationSource()
 
+    }
+
+    private fun setFusedLocationSource() {
+        locationSource = FusedLocationSource(
+            this,
+            LOCATION_PERMISSION_REQUEST_CODE
+        )
     }
 
     private fun updateUI(state: AroundMeViewModel.AroundMeState) {
@@ -92,6 +102,13 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
         }
 
         binding.layoutExploreThisArea.isVisible = state.exploreVisible
+
+        if (::naverMap.isInitialized) {
+            naverMap.locationTrackingMode =
+                if (state.accessLocationPermissionGranted) LocationTrackingMode.NoFollow
+                else LocationTrackingMode.None
+        }
+
     }
     private fun handleEffect(effect: AroundMeSideEffect) {
         when (effect) {
@@ -144,6 +161,7 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     override fun onMapReady(map: NaverMap) {
         naverMap = map
         viewModel.initCurrentLocation()
+        naverMap.locationSource = locationSource
 
         with(naverMap) {
             markerManager = MarkerManager(requireContext(), this@with) { spot ->
@@ -335,5 +353,9 @@ class AroundMeFragment: BaseFragment<FragmentAroundMeBinding>(R.layout.fragment_
     override fun onStop() {
         super.onStop()
         dialog?.dismiss()
+    }
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
     }
 }
