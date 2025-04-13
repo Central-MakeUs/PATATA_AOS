@@ -12,6 +12,7 @@ import com.cmc.common.constants.NavigationKeys
 import com.cmc.common.util.ClipboardUtil
 import com.cmc.design.component.BottomSheetDialog
 import com.cmc.design.component.PatataAlert
+import com.cmc.design.component.PatataAppBar
 import com.cmc.design.util.SnackBarUtil
 import com.cmc.design.util.animateClickEffect
 import com.cmc.domain.model.SpotCategory
@@ -118,6 +119,8 @@ class SpotDetailFragment: BaseFragment<FragmentSpotDetailBinding>(R.layout.fragm
                 viewModel.clickFooterButton(isAuthor)
             },
         )
+        val footerType = if (isAuthor) PatataAppBar.FooterType.MORE else PatataAppBar.FooterType.COMPLAINT
+        binding.appbar.setFooterType(footerType)
     }
 
     private fun updateTags(tags: List<String>?) {
