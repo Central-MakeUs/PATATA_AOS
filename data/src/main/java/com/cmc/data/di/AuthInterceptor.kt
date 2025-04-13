@@ -22,7 +22,7 @@ class AuthInterceptor @Inject constructor (
 
         // "Refresh" 헤더가 포함된 요청은 RefreshToken 을 삽입
         if (request.header("Refresh") != null) {
-            val refreshToken = runBlocking { tokenPreferences.getRefreshToken() }
+            val refreshToken = tokenPreferences.getCachedRefreshToken()
             val newRequest = request.newBuilder()
                 .removeHeader("Refresh")
                 .addHeader("RefreshToken", "Bearer $refreshToken")
@@ -32,8 +32,8 @@ class AuthInterceptor @Inject constructor (
 
         // "Google" 헤더가 포함된 요청은 GoogleAccessToken 을 추가 삽입
         if (request.header("Google") != null) {
-            val accessToken = runBlocking { tokenPreferences.getAccessToken() }
-            val googleAccessToken = runBlocking { tokenPreferences.getGoogleAccessToken() }
+            val accessToken = tokenPreferences.getCachedAccessToken()
+            val googleAccessToken = tokenPreferences.getCachedGoogleAccessToken()
 
             val newRequest = request.newBuilder()
                 .removeHeader("Google")

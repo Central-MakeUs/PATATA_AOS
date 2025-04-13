@@ -18,8 +18,25 @@ val Context.tokenPreferences by preferencesDataStore(TOKEN_PREFERENCES)
 class TokenPreferences @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
+    private var cachedAccessToken: String? = null
+    private var cachedRefreshToken: String? = null
+    private var cachedGoogleAccessToken: String? = null
+
+    fun getCachedAccessToken(): String? {
+        return cachedAccessToken
+    }
+
+    fun getCachedRefreshToken(): String? {
+        return cachedRefreshToken
+    }
+
+    fun getCachedGoogleAccessToken(): String? {
+        return cachedGoogleAccessToken
+    }
 
     suspend fun saveTokens(accessToken: String, refreshToken: String) {
+        cachedAccessToken = accessToken
+        cachedRefreshToken = refreshToken
         context.tokenPreferences.edit { preferences ->
             preferences[KEY_ACCESS_TOKEN] = accessToken
             preferences[KEY_REFRESH_TOKEN] = refreshToken
@@ -27,36 +44,50 @@ class TokenPreferences @Inject constructor(
     }
 
     suspend fun saveAccessToken(accessToken: String) {
+        cachedAccessToken = accessToken
         context.tokenPreferences.edit { preferences ->
             preferences[KEY_ACCESS_TOKEN] = accessToken
         }
     }
 
     suspend fun saveGoogleAccessToken(googleAccessToken: String) {
+        cachedGoogleAccessToken = googleAccessToken
         context.tokenPreferences.edit { preferences ->
             preferences[KEY_GOOGLE_ACCESS_TOKEN] = googleAccessToken
         }
     }
 
     suspend fun getAccessToken(): String? {
-        return context.tokenPreferences.data
-            .map { preferences -> preferences[KEY_ACCESS_TOKEN] }
-            .first()
+        if (cachedAccessToken == null) {
+            cachedAccessToken = context.tokenPreferences.data
+                .map { preferences -> preferences[KEY_ACCESS_TOKEN] }
+                .first()
+        }
+        return cachedAccessToken
     }
 
     suspend fun getRefreshToken(): String? {
-        return context.tokenPreferences.data
-            .map { preferences -> preferences[KEY_REFRESH_TOKEN] }
-            .first()
+        if (cachedRefreshToken == null) {
+            cachedRefreshToken = context.tokenPreferences.data
+                .map { preferences -> preferences[KEY_REFRESH_TOKEN] }
+                .first()
+        }
+        return cachedRefreshToken
     }
 
     suspend fun getGoogleAccessToken(): String? {
-        return context.tokenPreferences.data
-            .map { preferences -> preferences[KEY_GOOGLE_ACCESS_TOKEN] }
-            .first()
+        if (cachedGoogleAccessToken == null) {
+            cachedGoogleAccessToken = context.tokenPreferences.data
+                .map { preferences -> preferences[KEY_GOOGLE_ACCESS_TOKEN] }
+                .first()
+        }
+        return cachedGoogleAccessToken
     }
 
     suspend fun clearTokens() {
+        cachedAccessToken = null
+        cachedRefreshToken = null
+        cachedGoogleAccessToken = null
         context.tokenPreferences.edit { preferences ->
             preferences.remove(KEY_ACCESS_TOKEN)
             preferences.remove(KEY_REFRESH_TOKEN)
