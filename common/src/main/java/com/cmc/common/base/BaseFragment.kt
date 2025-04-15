@@ -14,13 +14,19 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.cmc.common.R
+import com.cmc.common.network.NetworkManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 abstract class BaseFragment<T: ViewDataBinding>(@LayoutRes val layoutRes: Int)
     : Fragment() {
     private var _binding: T? = null
     val binding get() = _binding!!
+
+    @Inject
+    lateinit var networkManager: NetworkManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,6 +42,17 @@ abstract class BaseFragment<T: ViewDataBinding>(@LayoutRes val layoutRes: Int)
         super.onViewCreated(view, savedInstanceState)
         initView()
         initObserving()
+        observeNetworkStatus()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        networkManager.registerNetworkCallback()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        networkManager.unregisterNetworkCallback()
     }
 
     abstract fun initObserving()
@@ -71,6 +88,25 @@ abstract class BaseFragment<T: ViewDataBinding>(@LayoutRes val layoutRes: Int)
             fragmentManager.popBackStack()
         } else {
             activity?.onBackPressedDispatcher?.onBackPressed()
+        }
+    }
+
+    /**
+     * Network 연결 상태 감지
+     * */
+    private fun observeNetworkStatus() {
+        repeatWhenUiStarted {
+            networkManager.isConnected.collect { isConnected ->
+                Log.d("testLog", "isConnected $isConnected")
+                if (!isConnected) {
+                    handleNetworkDisconnected()
+                }
+            }
+        }
+    }
+    protected open fun handleNetworkDisconnected() {
+        if (activity is GlobalNavigation) {
+            (activity as GlobalNavigation).navigateNetworkError()
         }
     }
 }

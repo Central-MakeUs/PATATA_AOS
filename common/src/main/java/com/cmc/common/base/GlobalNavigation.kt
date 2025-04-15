@@ -11,4 +11,5 @@ interface GlobalNavigation {
     fun navigateSelectLocation(latitude: Double, longitude: Double, isEdit: Boolean = false)
     fun navigateAddSpot(addressName: String, latitude: Double, longitude: Double)
     fun navigateWebView(url: String)
+    fun navigateNetworkError()
 }

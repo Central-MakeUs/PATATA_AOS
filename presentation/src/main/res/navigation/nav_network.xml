@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/NetworkErrorFragment"
+    android:id="@+id/nav_network">
+
+    <fragment
+        android:id="@+id/NetworkErrorFragment"
+        android:name="com.cmc.presentation.network.view.NetworkErrorFragment"
+        tools:layout="@layout/fragment_network_error"/>
+
+</navigation>

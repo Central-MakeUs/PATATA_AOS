@@ -13,6 +13,8 @@ class NetworkManager @Inject constructor(
     private val _isConnected = MutableStateFlow(false)
     val isConnected: StateFlow<Boolean> = _isConnected
 
+    private var isRegistered = false
+
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
             _isConnected.value = true
@@ -24,10 +26,16 @@ class NetworkManager @Inject constructor(
     }
 
     fun registerNetworkCallback() {
-        connectivityManager.registerDefaultNetworkCallback(networkCallback)
+        if (!isRegistered) {
+            connectivityManager.registerDefaultNetworkCallback(networkCallback)
+            isRegistered = true
+        }
     }
 
     fun unregisterNetworkCallback() {
-        connectivityManager.unregisterNetworkCallback(networkCallback)
+        if (isRegistered) {
+            connectivityManager.unregisterNetworkCallback(networkCallback)
+            isRegistered = false
+        }
     }
 }

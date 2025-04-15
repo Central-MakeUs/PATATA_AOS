@@ -102,6 +102,12 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             putString(NavigationKeys.WebView.ARGUMENT_WEB_VIEW_URL, url)
         })
     }
+    override fun navigateNetworkError() {
+        val navController = navHostFragment.navController
+        if (navController.currentDestination?.id != com.cmc.presentation.R.id.NetworkErrorFragment) {
+            navController.navigate(R.id.nav_network)
+        }
+    }
 
     private fun navigate(navId: Int, bundle: Bundle? = null) {
         navHostFragment.navController.navigate(navId, bundle)

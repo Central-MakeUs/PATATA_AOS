@@ -19,6 +19,7 @@
     <include app:graph="@navigation/nav_report"/>
     <include app:graph="@navigation/nav_select_location"/>
     <include app:graph="@navigation/nav_web_view"/>
+    <include app:graph="@navigation/nav_network"/>
 
     <action
         android:id="@+id/nav_onboarding"
@@ -70,5 +71,9 @@
     <action
         android:id="@+id/nav_web_view"
         app:destination="@+id/nav_web_view"/>
+
+    <action
+        android:id="@+id/nav_network"
+        app:destination="@+id/nav_network"/>
 
 </navigation>
