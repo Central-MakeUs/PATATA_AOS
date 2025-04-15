@@ -17,7 +17,6 @@ import com.cmc.presentation.home.adapter.SpotPolaroidAdapter
 import com.cmc.presentation.home.viewmodel.HomeViewModel
 import com.cmc.presentation.home.viewmodel.HomeViewModel.HomeSideEffect
 import com.cmc.presentation.home.viewmodel.HomeViewModel.HomeState
-import com.cmc.presentation.map.model.TodayRecommendedSpotUiModel
 import com.cmc.presentation.map.model.TodayRecommendedSpotWithHomeUiModel
 import com.cmc.presentation.model.SpotCategoryItem
 import com.google.android.material.tabs.TabLayout

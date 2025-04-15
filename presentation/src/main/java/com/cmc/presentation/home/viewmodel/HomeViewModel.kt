@@ -1,19 +1,17 @@
 package com.cmc.presentation.home.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LATITUDE
 import com.cmc.common.constants.PrimitiveValues.Location.DEFAULT_LONGITUDE
+import com.cmc.common.network.NetworkManager
 import com.cmc.domain.feature.location.GetCurrentLocationUseCase
 import com.cmc.domain.feature.location.Location
 import com.cmc.domain.feature.spot.usecase.GetCategorySpotsUseCase
 import com.cmc.domain.feature.spot.usecase.GetHomeTodayRecommendedSpotsUseCase
-import com.cmc.domain.feature.spot.usecase.GetTodayRecommendedSpotsUseCase
 import com.cmc.domain.feature.spot.usecase.ToggleSpotScrapUseCase
 import com.cmc.domain.model.CategorySortType
 import com.cmc.domain.model.SpotCategory
-import com.cmc.presentation.map.model.TodayRecommendedSpotUiModel
 import com.cmc.presentation.map.model.TodayRecommendedSpotWithHomeUiModel
 import com.cmc.presentation.map.model.toListUiModel
 import com.cmc.presentation.spot.model.SpotWithStatusUiModel
@@ -34,6 +32,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val networkManager: NetworkManager,
     private val getHomeTodayRecommendedSpotsUseCase: GetHomeTodayRecommendedSpotsUseCase,
     private val getCategorySpotsUseCase: GetCategorySpotsUseCase,
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
@@ -49,6 +48,11 @@ class HomeViewModel @Inject constructor(
     fun refreshHomeScreen() {
         fetchTodayRecommendedSpots()
         observeStateChanges()
+    }
+
+    init {
+        networkManager.registerNetworkCallback()
+        observeNetworkConnection()
     }
 
     private fun fetchTodayRecommendedSpots() {
@@ -149,6 +153,16 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun observeNetworkConnection() {
+        viewModelScope.launch {
+            networkManager.isConnected.collectLatest { isConnected ->
+                _state.update {
+                    it.copy(isConnected = isConnected)
+                }
+            }
+        }
+    }
+
     private fun sendSideEffect(effect: HomeSideEffect) {
         viewModelScope.launch {
             _sideEffect.emit(effect)
@@ -156,6 +170,7 @@ class HomeViewModel @Inject constructor(
     }
 
     data class HomeState(
+        val isConnected: Boolean = true,
         val isLoading: Boolean = true,
         var recommendedSpots: List<TodayRecommendedSpotWithHomeUiModel> = emptyList(),
         var categorySpots: List<SpotWithStatusUiModel> = emptyList(),
@@ -168,5 +183,10 @@ class HomeViewModel @Inject constructor(
         data class NavigateCategorySpot(val categoryId: Int): HomeSideEffect()
         data object NavigateSearch: HomeSideEffect()
         data object NavigateTodayRecommendedSpot: HomeSideEffect()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        networkManager.unregisterNetworkCallback()
     }
 }
