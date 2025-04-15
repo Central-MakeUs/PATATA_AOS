@@ -31,6 +31,8 @@
     <string name="title_user_report">사용자 신고하기</string>
     <string name="select_location_to_share">공유하고 싶은 장소를 선택해주세요!</string>
     <string name="explore_this_area">이 지역에서 탐색</string>
+    <string name="title_network_disconnected">네트워크 연결이\n원활하지 않습니다.</string>
+    <string name="title_network_connection_retry">네트워크 상태를 확인 후 다시 시도해주세요.</string>
 
     <string name="hint_input_nickname">최소 2글자, 최대 10로 입력해 주세요</string>
     <string name="hint_input_title">제목을 입력하세요 (15자 이내)</string>
@@ -68,6 +70,7 @@
     <string name="setting">설정</string>
     <string name="report_submit">신고하기</string>
     <string name="selection_complete">선택 완료</string>
+    <string name="retry">다시 시도하기</string>
     <string name="zero">0</string>
 
     <string name="sort_by_distance">거리순</string>

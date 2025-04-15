@@ -1,7 +1,6 @@
 package com.cmc.common.base
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.cmc.common.R
 import com.cmc.common.network.NetworkManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -97,7 +95,6 @@ abstract class BaseFragment<T: ViewDataBinding>(@LayoutRes val layoutRes: Int)
     private fun observeNetworkStatus() {
         repeatWhenUiStarted {
             networkManager.isConnected.collect { isConnected ->
-                Log.d("testLog", "isConnected $isConnected")
                 if (!isConnected) {
                     handleNetworkDisconnected()
                 }

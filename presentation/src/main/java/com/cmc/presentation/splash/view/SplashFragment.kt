@@ -43,6 +43,9 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(R.layout.fragment_spl
             is SplashSideEffect.NavigateHome -> navigateHome()
         }
     }
+
+    override fun handleNetworkDisconnected() {}
+
     private fun checkLocationRequest() {
         val permissions = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,

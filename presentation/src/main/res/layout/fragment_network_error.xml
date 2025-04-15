@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:maxLines="2"
-            android:text="네트워크 연결이\n워활하지 않습니다."
+            android:text="@string/title_network_disconnected"
             android:layout_marginTop="36dp"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintTop_toBottomOf="@+id/iv_network_disconnected"
@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="네트워크 상태를 확인 후 다시 시도해주세요."
+            android:text="@string/title_network_connection_retry"
             android:layout_marginTop="@dimen/default_spacing"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintTop_toBottomOf="@+id/tv_network_disconnected"
@@ -64,7 +64,7 @@
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="다시 시도하기"/>
+                android:text="@string/retry"/>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
