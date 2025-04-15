@@ -51,7 +51,7 @@
             android:id="@+id/layout_retry_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/selector_profile_complete"
+            android:background="@drawable/bg_rounded_38_navy_ripple"
             android:layout_marginHorizontal="60dp"
             android:paddingVertical="15dp"
             android:layout_marginTop="36dp"
