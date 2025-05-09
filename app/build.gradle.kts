@@ -21,8 +21,8 @@ android {
         applicationId = "com.cmc.patata"
         minSdk = 24
         targetSdk = 34
-        versionCode = 15
-        versionName = "1.14"
+        versionCode = 16
+        versionName = "1.15"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         resValue("string", "naver_map_client_id", properties["NAVER_MAP_CLIENT_ID"] as String)
