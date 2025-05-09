@@ -6,7 +6,9 @@ import com.cmc.common.base.BaseFragment
 import com.cmc.common.constants.NavigationKeys
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentWebViewBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class WebViewFragment: BaseFragment<FragmentWebViewBinding>(R.layout.fragment_web_view) {
 
     private lateinit var webView: WebView

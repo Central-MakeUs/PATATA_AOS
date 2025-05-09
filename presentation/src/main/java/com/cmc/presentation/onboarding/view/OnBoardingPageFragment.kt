@@ -12,7 +12,9 @@ import com.cmc.design.util.Util.dp
 import com.cmc.design.util.Util.dpToFloat
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentOnboardingPageBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class OnBoardingPageFragment : BaseFragment<FragmentOnboardingPageBinding>(R.layout.fragment_onboarding_page) {
 
     override fun initObserving() {

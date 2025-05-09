@@ -4,7 +4,9 @@ import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentSignUpSuccessBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SignUpSuccessFragment: BaseFragment<FragmentSignUpSuccessBinding>(R.layout.fragment_sign_up_success) {
     override fun initObserving() {
     }
