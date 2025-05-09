@@ -48,8 +48,14 @@ class SettingViewModel @Inject constructor(
     }
     fun onClickLogoutButton() {
         viewModelScope.launch {
-            clearTokenUseCase.invoke()
-            sendSideEffect(SettingSideEffect.NavigateLogin)
+            val result = clearTokenUseCase()
+            result
+                .onSuccess {
+                    sendSideEffect(SettingSideEffect.NavigateLogin)
+                }
+                .onFailure {
+                    sendSideEffect(SettingSideEffect.ShowSnackbar("로그인에 실패했습니다."))
+                }
         }
     }
     fun onClickSignOutButton() {
@@ -74,5 +80,6 @@ class SettingViewModel @Inject constructor(
         data object ShowDialog: SettingSideEffect()
         data object OpenAppReview: SettingSideEffect()
         data class OpenNotionPage(val url: String): SettingSideEffect()
+        data class ShowSnackbar(val message: String): SettingSideEffect()
     }
 }

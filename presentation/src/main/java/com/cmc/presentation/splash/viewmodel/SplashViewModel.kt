@@ -1,14 +1,15 @@
 package com.cmc.presentation.splash.viewmodel
 
 import android.util.Base64
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc.domain.feature.auth.usecase.GetAccessTokenUseCase
 import com.cmc.domain.feature.auth.usecase.GetOnboardingStatusUseCase
 import com.cmc.domain.feature.auth.usecase.GetRefreshTokenUseCase
 import com.cmc.domain.feature.auth.usecase.RefreshTokenUseCase
-import com.cmc.presentation.splash.viewmodel.SplashViewModel.SplashSideEffect.*
+import com.cmc.presentation.splash.viewmodel.SplashViewModel.SplashSideEffect.NavigateHome
+import com.cmc.presentation.splash.viewmodel.SplashViewModel.SplashSideEffect.NavigateLogin
+import com.cmc.presentation.splash.viewmodel.SplashViewModel.SplashSideEffect.NavigateOnBoarding
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -46,7 +47,6 @@ class SplashViewModel @Inject constructor(
 
             val onBoardingState = onBoardingStateDeferred.await()
             val accessToken = accessTokenDeferred.await()
-            Log.d("AccessToken", "accessToken: $accessToken")
             val refreshToken = refreshTokenDeferred.await()
 
             delayDeferred.await()

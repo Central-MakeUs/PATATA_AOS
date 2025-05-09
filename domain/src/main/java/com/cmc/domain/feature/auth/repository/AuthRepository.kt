@@ -21,7 +21,7 @@ interface AuthRepository {
 
     suspend fun refreshAccessToken(): Result<Unit>
 
-    suspend fun clearTokens()
+    suspend fun clearTokens(): Result<Unit>
 
     suspend fun saveUserId(userId: String)
 

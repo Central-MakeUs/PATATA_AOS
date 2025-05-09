@@ -91,8 +91,8 @@ internal class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun clearTokens() {
-        tokenPreferences.clearTokens()
+    override suspend fun clearTokens(): Result<Unit> {
+        return tokenPreferences.clearTokens()
     }
 
     override suspend fun saveUserId(userId: String) {

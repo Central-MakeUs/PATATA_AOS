@@ -1,7 +1,10 @@
 package com.cmc.data.di
 
 import com.cmc.data.preferences.TokenPreferences
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
@@ -9,7 +12,28 @@ import javax.inject.Inject
 class AuthInterceptor @Inject constructor (
     private val tokenPreferences: TokenPreferences,
 ) : Interceptor {
+
+    @Volatile
+    private var cachedAccessToken: String? = null
+
+    @Volatile
+    private var cachedGoogleAccessToken: String? = null
+
+    init {
+        // 앱 전체 생명주기에서 토큰을 감시
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            tokenPreferences.accessTokenFlow.collect { token ->
+                cachedAccessToken = token
+            }
+            tokenPreferences.googleAccessTokenFlow.collect { token ->
+                cachedGoogleAccessToken = token
+            }
+        }
+    }
+
     override fun intercept(chain: Interceptor.Chain): Response {
+        val accessToken = cachedAccessToken
+        val googleAccessToken = cachedGoogleAccessToken
         val request = chain.request()
 
         // "No-Auth" 헤더가 포함된 요청은 Access Token을 삽입하지 않음
@@ -22,7 +46,7 @@ class AuthInterceptor @Inject constructor (
 
         // "Refresh" 헤더가 포함된 요청은 RefreshToken 을 삽입
         if (request.header("Refresh") != null) {
-            val refreshToken = tokenPreferences.getCachedRefreshToken()
+            val refreshToken = accessToken
             val newRequest = request.newBuilder()
                 .removeHeader("Refresh")
                 .addHeader("RefreshToken", "Bearer $refreshToken")
@@ -32,9 +56,6 @@ class AuthInterceptor @Inject constructor (
 
         // "Google" 헤더가 포함된 요청은 GoogleAccessToken 을 추가 삽입
         if (request.header("Google") != null) {
-            val accessToken = tokenPreferences.getCachedAccessToken()
-            val googleAccessToken = tokenPreferences.getCachedGoogleAccessToken()
-
             val newRequest = request.newBuilder()
                 .removeHeader("Google")
                 .addHeader("Authorization", "Bearer $accessToken")
@@ -45,7 +66,6 @@ class AuthInterceptor @Inject constructor (
 
 
         // Access Token 삽입
-        val accessToken = runBlocking { tokenPreferences.getAccessToken() }
         val authenticatedRequest = request.newBuilder()
             .addHeader("Authorization", "Bearer $accessToken")
             .build()

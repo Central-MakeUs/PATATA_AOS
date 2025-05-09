@@ -7,6 +7,7 @@ import android.net.Uri
 import androidx.fragment.app.viewModels
 import com.cmc.common.base.BaseFragment
 import com.cmc.common.base.GlobalNavigation
+import com.cmc.design.util.SnackBarUtil
 import com.cmc.presentation.R
 import com.cmc.presentation.databinding.FragmentSettingBinding
 import com.cmc.presentation.my.viewmodel.SettingViewModel
@@ -50,6 +51,7 @@ class SettingFragment: BaseFragment<FragmentSettingBinding>(R.layout.fragment_se
             is SettingSideEffect.ShowDialog -> {}
             is SettingSideEffect.OpenAppReview -> { openPlayStoreForRating() }
             is SettingSideEffect.OpenNotionPage -> { openNotionPage(effect.url) }
+            is SettingSideEffect.ShowSnackbar -> { showSnackBar(effect.message) }
         }
     }
 
@@ -104,4 +106,5 @@ class SettingFragment: BaseFragment<FragmentSettingBinding>(R.layout.fragment_se
     private fun openNotionPage(url: String) { (activity as GlobalNavigation).navigateWebView(url) }
     private fun navigateLogin() { (activity as GlobalNavigation).navigateLogin() }
     private fun navigateSignOut() { navigate(R.id.navigate_signout) }
+    private fun showSnackBar(message: String) { SnackBarUtil.show(binding.root, message) }
 }
